@@ -34,6 +34,7 @@ public class ElevatorController extends CommandBase {
   @Override
   public void execute() {
     m_elevatorSubsystem.setPercentOutput(e_controller.getLeftY());
+    System.out.println("test");
   }
 
   // Called once the command ends or is interrupted.
