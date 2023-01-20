@@ -5,7 +5,8 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
-import edu.wpi.first.wpilibj.XboxController;
+import frc.lib.RebelUtil;
+import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 
@@ -15,6 +16,8 @@ public class Drive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Drivetrain m_driveSubsystem;
   private final XboxController xboxDriver;
+  private final double MAX_FORWARD_SPEED = 3;
+  private final double MAX_TURN_SPEED = 3;
   /**
    * Creates a new ExampleCommand.
    *
@@ -34,7 +37,9 @@ public class Drive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_driveSubsystem.drive(xboxDriver.getLeftY() * 3, xboxDriver.getRightX());
+    double forwardSpeed = RebelUtil.linearDeadband(xboxDriver.getLeftY(), 0.1) * MAX_FORWARD_SPEED;
+    double turnSpeed = RebelUtil.linearDeadband(-xboxDriver.getRightX(), 0.1) * MAX_TURN_SPEED;
+    m_driveSubsystem.drive(forwardSpeed, turnSpeed);
   }
 
   // Called once the command ends or is interrupted.

@@ -6,8 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.ClawController;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.lib.input.XboxController;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ElevatorController;
 import frc.robot.subsystems.Claw;
@@ -26,8 +26,8 @@ import frc.robot.subsystems.Elevator;
 public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   private final Drivetrain drive = new Drivetrain();
-  private final Elevator elevatorController = new Elevator();
-  private final Claw clawController = new Claw();
+  private final Elevator elevator = new Elevator();
+  private final Claw claw = new Claw();
   
   // The robot's controllers
   private final XboxController xboxDriver;
@@ -49,11 +49,12 @@ public class RobotContainer {
     this.drive.setDefaultCommand(
         new Drive(drive, xboxDriver));
     
-    this.elevatorController.setDefaultCommand(
-        new ElevatorController(elevatorController, xboxOperator)); // added, works
+    this.elevator.setDefaultCommand(
+        new ElevatorController(elevator, xboxOperator)); // added, works
     
-    this.clawController.setDefaultCommand(
-        new ClawController(clawController, xboxOperator)); // added, untested
+    this.xboxOperator.getAButton().onTrue(
+      new InstantCommand(() -> this.claw.toggle())
+    );
   }
 
   /**

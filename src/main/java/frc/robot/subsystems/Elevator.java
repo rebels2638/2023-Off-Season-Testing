@@ -48,18 +48,18 @@ public class Elevator extends SubsystemBase {
     public void setPercentOutput(double percent) {
         System.out.println(percent);
         
-        if (Math.abs(percent) < 0.1) {
-            percent = lastPercentSpeed;
-            System.out.println("PERCENT EXPECTED: " + lastPercentSpeed);
-        }
+        // if (Math.abs(percent) < 0.1) {
+        //     percent = lastPercentSpeed;
+        //     System.out.println("PERCENT EXPECTED: " + lastPercentSpeed);
+        // }
         
-        else {       
-            lastPercentSpeed = percent;
-        }
+        // else {       
+        //     lastPercentSpeed = percent;
+        // }
 
-        if(percent < 0) {
-            percent += lastPercentSpeed;
-        }
+        // if(percent < 0) {
+        //     percent += lastPercentSpeed;
+        // }
         
         victor.set(ControlMode.PercentOutput, percent); // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed???? where speed is in range -1,1 and the xbox controller left joy stick is also -1,1???
       

@@ -6,7 +6,7 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
-import edu.wpi.first.wpilibj.XboxController;
+import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
@@ -33,7 +33,7 @@ public class ElevatorController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.setPercentOutput(e_controller.getLeftY());
+    m_elevatorSubsystem.setPercentOutput(e_controller.getLeftY() * 0.5);
     System.out.println("test");
   }
 

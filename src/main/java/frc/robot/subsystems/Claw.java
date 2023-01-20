@@ -20,7 +20,7 @@ public class Claw extends SubsystemBase {
     public Claw() {
         // this.victor = new VictorSPX(0); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
         
-        this.solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
+        this.solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 2);
         state = true;
     }
 
@@ -51,6 +51,11 @@ public class Claw extends SubsystemBase {
         solenoid.set(DoubleSolenoid.Value.kForward);
         state = false;
 
+    }
+
+    public void toggle() {
+        if(state) pull();
+        else push();
     }
 
 }
