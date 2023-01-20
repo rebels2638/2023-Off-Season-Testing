@@ -21,7 +21,7 @@ public class Claw extends SubsystemBase {
         // this.victor = new VictorSPX(0); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
         
         this.solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 2);
-        state = true;
+        this.push();
     }
 
     // Singleton class, call getInstance to access instead of the constructor.
