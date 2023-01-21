@@ -73,7 +73,7 @@ public class ElevatorPID extends SubsystemBase {
         // control for constant position
         //double ff = m_feedforward.calculate(m_setpoint, 0.0);
         //double pid = m_motorPIDController.calculate(m_motor.getSelectedSensorVelocity(), m_setpoint);
-        TrapeZoidProfile.State goal = m_trapezoidProfile.calculate(m_motor.getSelectedSensorePosition());
+        TrapezoidProfile.State goal = m_trapezoidProfile.calculate(m_motor.getSelectedSensorePosition());
         // set voltage
         m_motor.setVoltage(pid);
     }
