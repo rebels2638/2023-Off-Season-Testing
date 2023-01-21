@@ -33,7 +33,8 @@ public class ElevatorController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.setPercentOutput(e_controller.getLeftY() * 0.5);
+    double desiredHeight = e_controller.getLeftY() * 0.5;
+    m_elevatorSubsystem.setSetpoint(desiredHeight);
     System.out.println("test");
   }
 

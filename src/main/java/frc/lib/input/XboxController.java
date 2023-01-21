@@ -4,7 +4,7 @@ import static frc.lib.input.ControllerConstants.XboxConstants.*;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class XboxController implements Controller {
     private Joystick joystick;
 
-    private Button aButton, bButton, xButton, yButton, leftMiddleButton, rightMiddleButton, leftBumper, rightBumper,
+    private Trigger aButton, bButton, xButton, yButton, leftMiddleButton, rightMiddleButton, leftBumper, rightBumper,
             leftStick, rightStick, leftTriggerButton, rightTriggerButton, rightStickYButton,
             upDpad, downDpad, leftDpad, rightDpad;
 
@@ -89,84 +89,84 @@ public class XboxController implements Controller {
     /**
      * @return the A button
      */
-    public Button getAButton() {
+    public Trigger getAButton() {
         return aButton;
     }
 
     /**
      * @return the B button
      */
-    public Button getBButton() {
+    public Trigger getBButton() {
         return bButton;
     }
 
     /**
      * @return the X button
      */
-    public Button getXButton() {
+    public Trigger getXButton() {
         return xButton;
     }
 
     /**
      * @return the Y button
      */
-    public Button getYButton() {
+    public Trigger getYButton() {
         return yButton;
     }
 
     /**
      * @return the left middle button (start button? view button?)
      */
-    public Button getLeftMiddleButton() {
+    public Trigger getLeftMiddleButton() {
         return leftMiddleButton;
     }
 
     /**
      * @return the right middle button (select button? menu button?)
      */
-    public Button getRightMiddleButton() {
+    public Trigger getRightMiddleButton() {
         return rightMiddleButton;
     }
 
     /**
      * @return the left bumper
      */
-    public Button getLeftBumper() {
+    public Trigger getLeftBumper() {
         return leftBumper;
     }
 
     /**
      * @return the right bumper
      */
-    public Button getRightBumper() {
+    public Trigger getRightBumper() {
         return rightBumper;
     }
 
     /**
      * @return the left stick
      */
-    public Button getLeftStick() {
+    public Trigger getLeftStick() {
         return leftStick;
     }
 
     /**
      * @return the right stick
      */
-    public Button getRightStick() {
+    public Trigger getRightStick() {
         return rightStick;
     }
 
     /**
      * @return the right trigger as a button
      */
-    public Button getRightTriggerButton() {
+    public Trigger getRightTriggerButton() {
         return rightTriggerButton;
     }
 
     /**
      * @return the left trigger as a button
      */
-    public Button getLeftTriggerButton() {
+    public Trigger getLeftTriggerButton() {
         return leftTriggerButton;
     }
 
@@ -174,35 +174,35 @@ public class XboxController implements Controller {
      * @return the right stick's y axis as a button
      */
 
-    public Button getRightStickYButton() {
+    public Trigger getRightStickYButton() {
         return rightStickYButton;
     }
 
     /**
      * @return the up D-pad button
      */
-    public Button getUpDpad() {
+    public Trigger getUpDpad() {
         return upDpad;
     }
 
     /**
      * @return the down D-pad button
      */
-    public Button getDownDpad() {
+    public Trigger getDownDpad() {
         return downDpad;
     }
 
     /**
      * @return the left D-pad button
      */
-    public Button getLeftDpad() {
+    public Trigger getLeftDpad() {
         return leftDpad;
     }
 
     /**
      * @return the right D-pad button
      */
-    public Button getRightDpad() {
+    public Trigger getRightDpad() {
         return rightDpad;
     }
 
