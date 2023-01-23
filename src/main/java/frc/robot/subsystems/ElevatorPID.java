@@ -16,6 +16,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 /** Elevator subsystem with feed-forward and PID for position */
 public class ElevatorPID extends SubsystemBase {
+    
     public static final double kMaxSpeed = 3.0; // meters per second
     public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second
 
@@ -47,6 +48,24 @@ public class ElevatorPID extends SubsystemBase {
 
         // Reset encoders
         m_motor.getSensorCollection().setIntegratedSensorPosition(0, 30);
+        
+        TalonFXConfiguration falconConfig = new TalonFXConfiguration();
+        
+        falconConfig.slot0.kP = 0;
+        falconConfig.slot0.kI = 0;
+        falconConfig.slot0.kD = 0;
+
+        falconConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+        falconConfig.voltageCompSaturation = 12;
+
+        falconConfig.nominalOutputForward = 0;
+        falconConfig.nominalOutputReverse = 0;
+        falconConfig.peakOutputForward = 1;
+        falconConfig.peakOutputReverse = -1;
+        
+        m_motor.configAllSettings(falconConfig);
+        m_motor.setNeutralMode(NeutralMode.Coast);
+        
     }
 
     /*
