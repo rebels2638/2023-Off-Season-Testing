@@ -7,6 +7,7 @@ package frc.robot.commands;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.lib.input.XboxController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
@@ -14,6 +15,8 @@ public class ElevatorController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Elevator m_elevatorSubsystem;
   private final XboxController e_controller; // e_controller is elevator's controller
+  private final DigitalInput toplimitSwitch;
+  private final DigitalInput bottomlimitSwitch;
   /**
    * Creates a new ExampleCommand.
    *
@@ -22,6 +25,8 @@ public class ElevatorController extends CommandBase {
   public ElevatorController(Elevator elevatorSubsystem, XboxController controller) {
     e_controller = controller;
     m_elevatorSubsystem = elevatorSubsystem;
+    toplimitSwitch = new DigitalInput(0);
+    bottomlimitSwitch = new DigitalInput(1);
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_elevatorSubsystem);
   }
@@ -33,7 +38,24 @@ public class ElevatorController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem(e_controller.getLeftY()*0.5);
+    
+    if (e_controller.getLeftY() > 0) {
+        if (toplimitSwitch.get()) {
+            // We are going up and top limit is tripped so stop
+             m_elevatorSubsystem(0);
+        } else {
+            // We are going up but top limit is not tripped so go at commanded speed
+             m_elevatorSubsystem(e_controller.getLeftY()*0.5);
+        }
+    } else {
+        if (bottomlimitSwitch.get()) {
+            // We are going down and bottom limit is tripped so stop
+             m_elevatorSubsystem(0);
+        } else {
+            // We are going down but bottom limit is not tripped so go at commanded speed
+             m_elevatorSubsystem(e_controller.getLeftY()*0.5);
+        }
+    }
   }
 
   // Called once the command ends or is interrupted.
