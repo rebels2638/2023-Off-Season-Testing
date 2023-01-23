@@ -86,6 +86,6 @@ public class ElevatorPID extends SubsystemBase {
         pid = m_controller.calculate(encoder.getDistance(), goal); //idk what encoder is i built off of other code
         feedforward = m_feedforward.calculate(goal, 0); //velocitySetpoint usually 0
   
-        motor.set(m_pid + m_feedforward);
+        motor.set(pid + feedforward);
     }  
 }
