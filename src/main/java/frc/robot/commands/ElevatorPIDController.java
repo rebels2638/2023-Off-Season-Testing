@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 /** An example command that uses an example subsystem. */
 public class ElevatorPIDController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ElevatorPID m_elevatorPIDSubsystem;
+  private final ElevatorPID elevator_PID;
   private final XboxController e_controller; // e_controller is elevator's controller
   
   DigitalInput toplimitSwitch = new DigitalInput(0);
@@ -26,9 +26,9 @@ public class ElevatorPIDController extends CommandBase {
    */
   public ElevatorController(ElevatorPID elevatorPIDSubsystem, XboxController controller) {
     e_controller = controller;
-    m_elevatorPIDSubsystem = elevatorPIDSubsystem;
+    elevator_PID = elevatorPIDSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_elevatorSubsystem);
+    addRequirements(elevator_PID);
   }
 
   // Called when the command is initially scheduled.
@@ -39,7 +39,7 @@ public class ElevatorPIDController extends CommandBase {
   @Override
   public void execute() {
     double desiredHeight = e_controller.getLeftY() * 0.5;
-    m_elevatorSubsystem.setSetpoint(desiredHeight);
+    elevator_PID.setSetpoint(desiredHeight);
   }
 
   // Called once the command ends or is interrupted.
