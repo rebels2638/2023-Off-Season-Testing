@@ -35,6 +35,12 @@ public class ElevatorPID extends SubsystemBase {
     private TrapezoidProfile m_trapezoidProfile;
     private double m_setpoint;
 
+    public final feedforward = new ElevatorFeedforward(kS, kG, kV, kG);
+    public final controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration));
+
+    public final double m_feedforward;
+    public final double m_pid;
+    public final double setpoint;
     /**
      * Reset elevator to bottom
      */
@@ -74,6 +80,11 @@ public class ElevatorPID extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     TrapezoidProfile.State goal = m_trapezoidProfile.calculate(m_motor.getSelectedSensorVelocity());
-    m_motor.set(ControlMode.Velocity, goal.velocity);
+    controller.setGoal(goal);
+    setpoint = controller.getSetpoint();
+    m_pid = pid.calculate(encoder.getDistance(), setpoint)
+    m_feedforward = feedforward.calculate(setpoint, velocitySetpoint); //velocitySetpoint usually 0
+  
+    motor.set(m_pid + m_feedforward);
   }  
 }
