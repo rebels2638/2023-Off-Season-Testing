@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 
+import edu.wpi.first.wpilibj.controller.TrapezoidProfile;
+import edu.wpi.first.wpilibj.controller.TrapezoidProfile.State;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
@@ -29,7 +32,7 @@ public class ElevatorPID extends SubsystemBase {
 
     // Gains are for example purposes only - must be determined for your own robot!
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(0, 0, 0, 0);
-
+    private TrapezoidProfile m_trapezoidProfile;
     private double m_setpoint;
 
     /**
@@ -57,21 +60,20 @@ public class ElevatorPID extends SubsystemBase {
      * Set setpoint
      */
     public void setSetpoint(double setpoint) {
-        m_setpoint = heightToNative(setpoint);
-    }
+    m_setpoint = heightToNative(setpoint);
+    m_trapezoidProfile = new TrapezoidProfile(
+        new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAngularSpeed),
+        new TrapezoidProfile.State(m_motor.getSelectedSensorVelocity(), 0),
+        new TrapezoidProfile.State(m_setpoint, 0));
+}
 
     /*
      * Compute voltages using feedforward and pid
      */
     @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-
-        // control for constant position
-        double ff = m_feedforward.calculate(m_setpoint, 0.0);
-        double pid = m_motorPIDController.calculate(m_motor.getSelectedSensorVelocity(), m_setpoint);
-
-        // set voltage
-        m_motor.setVoltage(pid);
-    }
+  public void periodic() {
+    // This method will be called once per scheduler run
+    TrapezoidProfile.State goal = m_trapezoidProfile.calculate(m_motor.getSelectedSensorVelocity());
+    m_motor.set(ControlMode.Velocity, goal.velocity);
+  }  
 }
