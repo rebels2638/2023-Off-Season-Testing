@@ -41,7 +41,7 @@ public class ElevatorPID extends SubsystemBase {
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV);
 
     private TrapezoidProfile m_trapezoidProfile;
-    private double goal;
+    private TrapezoidProfile.State goal;
     private double feedforward;
     private double pid;
     /**
@@ -81,10 +81,10 @@ public class ElevatorPID extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        TrapezoidProfile.State goal = m_trapezoidProfile.calculate(m_motor.getSelectedSensorVelocity());
+        // kush said he would set the setpoint from somewhere else idk
         goal = m_controller.getGoal();
-        pid = m_controller.calculate(encoder.getDistance(), goal); //idk what encoder is i built off of other code
-        feedforward = m_feedforward.calculate(goal, 0); //velocitySetpoint usually 0
+        pid = m_controller.calculate(encoder.getDistance(), goal); // idk what encoder is i built off of other code
+        feedforward = m_feedforward.calculate(goal.velocity)
   
         motor.set(pid + feedforward);
     }  
