@@ -84,7 +84,7 @@ public class ElevatorPID extends SubsystemBase {
         TrapezoidProfile.State goal = m_trapezoidProfile.calculate(m_motor.getSelectedSensorVelocity());
         m_controller.setGoal(goal);
         setpoint = m_controller.getSetpoint();
-        pid = m_controller.calculate(encoder.getDistance(), setpoint); //idk what encoder is i stole this code
+        pid = m_controller.calculate(encoder.getDistance(), setpoint); //idk what encoder is i built off of other code
         feedforward = m_feedforward.calculate(setpoint, 0); //velocitySetpoint usually 0
   
         motor.set(m_pid + m_feedforward);
