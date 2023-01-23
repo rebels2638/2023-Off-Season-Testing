@@ -11,12 +11,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
 
-    private final WPI_TalonFX victor;
+    private final WPI_TalonFX talon;
     private static Elevator instance = null;
     private static double lastPercentSpeed; 
 
     public Elevator() {
-        this.victor = new WPI_TalonFX(6); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
+        this.talon = new WPI_TalonFX(6); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
         lastPercentSpeed = 0;
         TalonFXConfiguration falconConfig = new TalonFXConfiguration();
 
@@ -32,8 +32,8 @@ public class Elevator extends SubsystemBase {
         falconConfig.peakOutputForward = 1;
         falconConfig.peakOutputReverse = -1;
 
-        victor.configAllSettings(falconConfig);
-        victor.setNeutralMode(NeutralMode.Coast);
+        talon.configAllSettings(falconConfig);
+        talon.setNeutralMode(NeutralMode.Coast);
         
     }
 
@@ -61,7 +61,7 @@ public class Elevator extends SubsystemBase {
         //     percent += lastPercentSpeed;
         // }
         
-        victor.set(ControlMode.PercentOutput, percent); // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed???? where speed is in range -1,1 and the xbox controller left joy stick is also -1,1???
+        talon.set(ControlMode.PercentOutput, percent); // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed???? where speed is in range -1,1 and the xbox controller left joy stick is also -1,1???
       
     }
 }
