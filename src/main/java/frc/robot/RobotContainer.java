@@ -10,9 +10,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lib.input.XboxController;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ElevatorController;
+import frc.robot.commands.ElevatorPIDController;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.ElevatorPID;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -27,6 +29,7 @@ public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   private final Drivetrain drive = new Drivetrain();
   private final Elevator elevator = new Elevator();
+  private final ElevatorPID elevatorPID = new ElevatorPID();
   private final Claw claw = new Claw();
   
   // The robot's controllers
@@ -51,6 +54,9 @@ public class RobotContainer {
     
     this.elevator.setDefaultCommand(
         new ElevatorController(elevator, xboxOperator)); // added, works
+    
+     // this.elevatorPID.setDefaultCommand(
+        //new ElevatorPIDController(elevatorPID,xboxOperator)); // added, untested
     
     this.xboxOperator.getAButton().onTrue(
       new InstantCommand(() -> this.claw.toggle())
