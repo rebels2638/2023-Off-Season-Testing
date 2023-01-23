@@ -16,31 +16,34 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 /** Elevator subsystem with feed-forward and PID for position */
 public class ElevatorPID extends SubsystemBase {
-    public static final double kMaxSpeed = 3.0; // meters per second
-    public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second
+    public static final double kMaxSpeed = 0.0; // meters per second
+    public static final double kMaxAngularSpeed = 0 * Math.PI; // one rotation per second
 
-    private static final double kWheelRadius = 0.0508; // meters
-    private static final int kEncoderResolution = 4096;
+    private static final double kWheelRadius = 0.0; // meters
+    private static final int kEncoderResolution = 0;
+    
+    private static final double kP = 0;
+    private static final double kI = 0;
+    private static final double kD = 0;
+    
+    private static final double kS = 0;
+    private static final double kG = 0;
+    private static final double kV = 0;
 
-    private static final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
-    private static final double kRotationsPerMeter = 1/kMetersPerRotation;
+    private static final double kMetersPerRotation = 0 * Math.PI * kWheelRadius;
+    private static final double kRotationsPerMeter = 0/kMetersPerRotation;
     private static final double kNativeUnitsPerRotation = kEncoderResolution;
 
-    private final WPI_TalonFX m_motor = new WPI_TalonFX(6);
+    private final WPI_TalonFX m_motor = new WPI_TalonFX(0);
 
-    private final PIDController m_motorPIDController = new PIDController(0.00045, 0.0015, 0.00002);
+    private final PIDController m_motorPIDController = new PIDController(0.0, 0.0, 0.0);
+    private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, 0)); // not using max acceleration
+    private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV);
 
-    // Gains are for example purposes only - must be determined for your own robot!
-    private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(0, 0, 0, 0);
     private TrapezoidProfile m_trapezoidProfile;
-    private double m_setpoint;
-
-    public final feedforward = new ElevatorFeedforward(kS, kG, kV, kG);
-    public final controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration));
-
-    public final double m_feedforward;
-    public final double m_pid;
-    public final double setpoint;
+    private double setpoint;
+    private double feedforward;
+    private double pid;
     /**
      * Reset elevator to bottom
      */
@@ -77,14 +80,13 @@ public class ElevatorPID extends SubsystemBase {
      * Compute voltages using feedforward and pid
      */
     @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    TrapezoidProfile.State goal = m_trapezoidProfile.calculate(m_motor.getSelectedSensorVelocity());
-    controller.setGoal(goal);
-    setpoint = controller.getSetpoint();
-    m_pid = pid.calculate(encoder.getDistance(), setpoint)
-    m_feedforward = feedforward.calculate(setpoint, velocitySetpoint); //velocitySetpoint usually 0
+    public void periodic() {
+        TrapezoidProfile.State goal = m_trapezoidProfile.calculate(m_motor.getSelectedSensorVelocity());
+        m_controller.setGoal(goal);
+        setpoint = m_controller.getSetpoint();
+        pid = m_controller.calculate(encoder.getDistance(), setpoint); //idk what encoder is i stole this code
+        feedforward = m_feedforward.calculate(setpoint, 0); //velocitySetpoint usually 0
   
-    motor.set(m_pid + m_feedforward);
-  }  
+        motor.set(m_pid + m_feedforward);
+    }  
 }
