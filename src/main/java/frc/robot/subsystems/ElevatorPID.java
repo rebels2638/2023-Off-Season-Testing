@@ -34,7 +34,7 @@ public class ElevatorPID extends SubsystemBase {
     private final WPI_TalonSRX encoder = new WPI_TalonSRX(0); // add encoder
 
     private final PIDController m_motorPIDController = new PIDController(kP, kI, kD);
-    private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAngularSpeed));
+    public final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAngularSpeed));
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV);
 
     private TrapezoidProfile m_traprivate TrapezoidProfile m_trapezoidProfile;
