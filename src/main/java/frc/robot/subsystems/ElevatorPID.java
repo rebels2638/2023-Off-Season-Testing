@@ -57,31 +57,31 @@ public class ElevatorPID extends SubsystemBase {
     /*
     * Convert from TalonFX elevator position to native units
     */
-public double heightToNative(double heightUnits) {
-    return heightUnits * kRotationsPerMeter * kNativeUnitsPerRotation;
-}
+    public double heightToNative(double heightUnits) {
+        return heightUnits * kRotationsPerMeter * kNativeUnitsPerRotation;
+    }
 
-/*
- * Set setpoint
- */
-public void setSetpoint(double setpoint) {
-    m_setpoint = new TrapezoidProfile.State(heightToNative(setpoint), 0);
-    m_trapezoidProfile = new TrapezoidProfile(
-        new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAngularSpeed),
-        new TrapezoidProfile.State(encoder.getSelectedSensorVelocity(), 0));
-}
+    /*
+    * Set setpoint
+    */
+    public void setSetpoint(double setpoint) {
+        m_setpoint = new TrapezoidProfile.State(heightToNative(setpoint), 0);
+        m_trapezoidProfile = new TrapezoidProfile(
+            new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAngularSpeed),
+            new TrapezoidProfile.State(encoder.getSelectedSensorVelocity(), 0));
+    }
 
-/*
- * Compute voltages using feedforward and pid
- */
-@Override
-public void periodic() {
-    TrapezoidProfile.State goal = m_trapezoidProfile.calculate(encoder.getSelectedSensorVelocity());
-    m_controller.setGoal(goal);
-    m_setpoint = m_controller.getSetpoint();
-    feedforward = m_feedforward.calculate(goal.velocity, goal.position);
-    pid = m_motorPIDController.calculate(encoder.getSelectedSensorPosition(), 0);
-    m_motor.set(ControlMode.PercentOutput, feedforward + pid);
-}
+    /*
+    * Compute voltages using feedforward and pid
+    */
+    @Override
+        public void periodic() {
+        TrapezoidProfile.State goal = m_trapezoidProfile.calculate(encoder.getSelectedSensorVelocity());
+        m_controller.setGoal(goal);
+        m_setpoint = m_controller.getSetpoint();
+        feedforward = m_feedforward.calculate(goal.velocity, goal.position);
+        pid = m_motorPIDController.calculate(encoder.getSelectedSensorPosition(), 0);
+        m_motor.set(ControlMode.PercentOutput, feedforward + pid);
+    }
 }
 
