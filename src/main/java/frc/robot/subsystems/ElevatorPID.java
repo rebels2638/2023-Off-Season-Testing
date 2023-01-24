@@ -80,7 +80,7 @@ public void periodic() {
     m_controller.setGoal(goal);
     m_setpoint = m_controller.getSetpoint();
     feedforward = m_feedforward.calculate(goal.velocity, goal.position);
-    pid = m_motorPIDController.calculate(encoder.getSelectedSensorPosition(), setpoint);
+    pid = m_motorPIDController.calculate(encoder.getSelectedSensorPosition(), 0);
     m_motor.set(ControlMode.PercentOutput, feedforward + pid);
 }
 }

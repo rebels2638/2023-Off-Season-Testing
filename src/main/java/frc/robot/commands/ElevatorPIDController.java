@@ -16,8 +16,8 @@ public class ElevatorPIDController extends CommandBase {
   private final ElevatorPID m_elevatorPID;
   private final XboxController e_controller; // e_controller is elevator's controller
   
-  // DigitalInput toplimitSwitch = new DigitalInput(0);
-  // DigitalInput bottomlimitSwitch = new DigitalInput(1);
+  DigitalInput toplimitSwitch = new DigitalInput(2);
+  DigitalInput bottomlimitSwitch = new DigitalInput(1);
 
   /**
    * Creates a new ExampleCommand.

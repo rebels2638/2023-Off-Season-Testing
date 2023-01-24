@@ -4,32 +4,26 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.Arm;
 import frc.lib.input.XboxController;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class ClawController extends CommandBase {
+public class ArmController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Claw m_clawSubsystem;
+  private final Arm m_armSubsystem;
   private final XboxController e_controller; // e_controller is elevator's controller
-  private final DigitalInput linebreak;
-  private boolean lastLineBreak;
+
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ClawController(Claw clawSubsystem, XboxController controller) {
+  public ArmController(Arm armSubsystem, XboxController controller) {
     e_controller = controller;
-    m_clawSubsystem = clawSubsystem;
-    linebreak = new DigitalInput(3);
-    lastLineBreak = false;
-
+    m_armSubsystem = armSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_clawSubsystem);
+    addRequirements(m_armSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -39,13 +33,9 @@ public class ClawController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-    System.out.println("LINEBREAK: " + linebreak.get());
-    if (linebreak.get() && !lastLineBreak) {
-      m_clawSubsystem.pull();
-    }
-    lastLineBreak = linebreak.get();
-      
+    double inputPercent = e_controller.getRightY();
+
+    m_armSubsystem.setPercentOutput(inputPercent);
   }
 
   // Called once the command ends or is interrupted.

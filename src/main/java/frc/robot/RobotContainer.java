@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lib.input.XboxController;
+import frc.robot.commands.ArmController;
+import frc.robot.commands.ClawController;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ElevatorController;
 import frc.robot.commands.ElevatorPIDController;
@@ -15,6 +17,7 @@ import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ElevatorPID;
+import frc.robot.subsystems.Arm;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -29,6 +32,7 @@ public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   private final Drivetrain drive = new Drivetrain();
   private final Elevator elevator = new Elevator();
+  private final Arm arm = new Arm();
   // private final ElevatorPID elevatorPID = new ElevatorPID();
   private final Claw claw = new Claw();
   
@@ -54,10 +58,18 @@ public class RobotContainer {
     
     this.elevator.setDefaultCommand(
         new ElevatorController(elevator, xboxOperator)); // added, works
-    
-     this.elevatorPID.setDefaultCommand(
-        new ElevatorPIDController(elevatorPID,xboxOperator)); // added, untested
-    
+  
+    this.arm.setDefaultCommand(
+      new ArmController(arm, xboxOperator)
+    );
+
+    //  this.elevatorPID.setDefaultCommand(
+        // new ElevatorPIDController(elevatorPID,xboxOperator)); // added, untested
+
+    this.claw.setDefaultCommand(
+      new ClawController(claw, xboxOperator)
+    );
+
     this.xboxOperator.getAButton().onTrue(
       new InstantCommand(() -> this.claw.toggle())
     );
