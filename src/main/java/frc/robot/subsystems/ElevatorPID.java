@@ -38,26 +38,24 @@ public class ElevatorPID extends SubsystemBase {
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV);
 
     private TrapezoidProfile m_traprivate TrapezoidProfile m_trapezoidProfile;
-private double setpoint;
-private double feedforward;
-private double pid;
-/**
-* Reset elevator to bottom
-*/
-public ElevatorPID() {
-// Reset elevator to zero velocity at bottom position
-m_motor.set(ControlMode.PercentOutput, 0);
-   // Reset setpoint to 0
+    private double setpoint;
+    private double feedforward;
+    private double pid;
+    /**
+    * Reset elevator to bottom
+    */
+    public ElevatorPID() {
+    m_motor.set(ControlMode.PercentOutput, 0);
     setSetpoint(0);
 
     // Reset encoders
     m_motor.getSensorCollection().setIntegratedSensorPosition(0, 30);
     encoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-}
+    }
 
-/*
- * Convert from TalonFX elevator position to native units
- */
+    /*
+    * Convert from TalonFX elevator position to native units
+    */
 public double heightToNative(double heightUnits) {
     return heightUnits * kRotationsPerMeter * kNativeUnitsPerRotation;
 }
