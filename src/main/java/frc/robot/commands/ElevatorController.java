@@ -25,7 +25,7 @@ public class ElevatorController extends CommandBase {
   public ElevatorController(Elevator elevatorSubsystem, XboxController controller) {
     e_controller = controller;
     m_elevatorSubsystem = elevatorSubsystem;
-    toplimitSwitch = new DigitalInput(0);
+    toplimitSwitch = new DigitalInput(2);
     bottomlimitSwitch = new DigitalInput(1);
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_elevatorSubsystem);
@@ -38,22 +38,26 @@ public class ElevatorController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-    if (e_controller.getLeftY() > 0) {
+
+    double inputPercent = e_controller.getLeftY();
+
+    System.out.println(bottomlimitSwitch.get());
+
+    if (inputPercent > 0) {
         if (toplimitSwitch.get()) {
             // We are going up and top limit is tripped so stop
-             m_elevatorSubsystem(0);
+             m_elevatorSubsystem.setPercentOutput(0);
         } else {
             // We are going up but top limit is not tripped so go at commanded speed
-             m_elevatorSubsystem(e_controller.getLeftY()*0.5);
+             m_elevatorSubsystem.setPercentOutput(inputPercent);
         }
     } else {
-        if (bottomlimitSwitch.get()) {
+        if (!bottomlimitSwitch.get()) {
             // We are going down and bottom limit is tripped so stop
-             m_elevatorSubsystem(0);
+             m_elevatorSubsystem.setPercentOutput(0);
         } else {
             // We are going down but bottom limit is not tripped so go at commanded speed
-             m_elevatorSubsystem(e_controller.getLeftY()*0.5);
+            m_elevatorSubsystem.setPercentOutput(inputPercent);
         }
     }
   }

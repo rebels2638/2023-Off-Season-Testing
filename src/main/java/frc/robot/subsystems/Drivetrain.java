@@ -26,13 +26,13 @@ public class Drivetrain extends SubsystemBase {
   private static final double kWheelRadius = 0.0508; // meters
   private static final int kEncoderResolution = 4096;
 
-  private final MotorController m_leftLeader = new WPI_TalonSRX(1);
-  private final MotorController m_leftFollower = new WPI_TalonSRX(2); 
-  private final MotorController m_rightLeader = new WPI_TalonSRX(3);
-  private final MotorController m_rightFollower = new WPI_TalonSRX(4);
+  private final MotorController m_leftLeader = new WPI_TalonSRX(4);
+  private final MotorController m_leftFollower = new WPI_TalonSRX(3); 
+  private final MotorController m_rightLeader = new WPI_TalonSRX(2);
+  private final MotorController m_rightFollower = new WPI_TalonSRX(1);
 
-  private final Encoder m_leftEncoder = new Encoder(0, 1);
-  private final Encoder m_rightEncoder = new Encoder(2, 3);
+  private final Encoder m_leftEncoder = new Encoder(5, 6);
+  private final Encoder m_rightEncoder = new Encoder(7, 8);
 
   private final MotorControllerGroup m_leftGroup =
       new MotorControllerGroup(m_leftLeader, m_leftFollower);

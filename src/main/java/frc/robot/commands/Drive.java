@@ -16,8 +16,8 @@ public class Drive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Drivetrain m_driveSubsystem;
   private final XboxController xboxDriver;
-  private final double MAX_FORWARD_SPEED = 3;
-  private final double MAX_TURN_SPEED = 3;
+  private final double MAX_FORWARD_SPEED = 5;
+  private final double MAX_TURN_SPEED = 5;
   /**
    * Creates a new ExampleCommand.
    *

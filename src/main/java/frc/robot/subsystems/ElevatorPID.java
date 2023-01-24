@@ -8,8 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 
-import edu.wpi.first.wpilibj.controller.TrapezoidProfile;
-import edu.wpi.first.wpilibj.controller.TrapezoidProfile.State;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;

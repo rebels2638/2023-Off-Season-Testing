@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.ElevatorPID;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -16,15 +16,15 @@ public class ElevatorPIDController extends CommandBase {
   private final ElevatorPID elevator_PID;
   private final XboxController e_controller; // e_controller is elevator's controller
   
-  DigitalInput toplimitSwitch = new DigitalInput(0);
-  DigitalInput bottomlimitSwitch = new DigitalInput(1);
+  // DigitalInput toplimitSwitch = new DigitalInput(0);
+  // DigitalInput bottomlimitSwitch = new DigitalInput(1);
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ElevatorController(ElevatorPID elevatorPIDSubsystem, XboxController controller) {
+  public ElevatorPIDController(ElevatorPID elevatorPIDSubsystem, XboxController controller) {
     e_controller = controller;
     elevator_PID = elevatorPIDSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
