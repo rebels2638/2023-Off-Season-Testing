@@ -55,8 +55,8 @@ public class RobotContainer {
     this.elevator.setDefaultCommand(
         new ElevatorController(elevator, xboxOperator)); // added, works
     
-     // this.elevatorPID.setDefaultCommand(
-        //new ElevatorPIDController(elevatorPID,xboxOperator)); // added, untested
+     this.elevatorPID.setDefaultCommand(
+        new ElevatorPIDController(elevatorPID,xboxOperator)); // added, untested
     
     this.xboxOperator.getAButton().onTrue(
       new InstantCommand(() -> this.claw.toggle())
