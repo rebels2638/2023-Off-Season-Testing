@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 /** An example command that uses an example subsystem. */
 public class ElevatorPIDController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ElevatorPID elevator_PID;
+  private final ElevatorPID m_elevatorPID;
   private final XboxController e_controller; // e_controller is elevator's controller
   
   // DigitalInput toplimitSwitch = new DigitalInput(0);
@@ -26,9 +26,9 @@ public class ElevatorPIDController extends CommandBase {
    */
   public ElevatorPIDController(ElevatorPID elevatorPIDSubsystem, XboxController controller) {
     e_controller = controller;
-    elevator_PID = elevatorPIDSubsystem;
+    m_elevatorPID = elevatorPIDSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(elevator_PID);
+    addRequirements(m_elevatorPID);
   }
 
   // Called when the command is initially scheduled.
@@ -38,8 +38,26 @@ public class ElevatorPIDController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double desiredHeight = e_controller.getLeftY() * 0.5;
-    elevator_PID.setSetpoint(desiredHeight);
+    
+     double desiredHeight = e_controller.getLeftY();
+    
+    if (desiredHeight > 0) {
+        if (toplimitSwitch.get()) {
+            // We are going up and top limit is tripped so stop
+             m_elevatorPID.setSetpoint(0);
+        } else {
+            // We are going up but top limit is not tripped so go at commanded speed
+             m_elevatorPID.setSetpoint(desiredHeight);
+        }
+    } else {
+        if (bottomlimitSwitch.get()) {
+            // We are going down and bottom limit is tripped so stop
+             m_elevatorPID.setSetpoint(0);
+        } else {
+            // We are going down but bottom limit is not tripped so go at commanded speed
+             m_elevatorPID.setSetpoint(desiredHeight);
+        }
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -49,6 +67,6 @@ public class ElevatorPIDController extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_elevatorPID.m_controller.atGoal();
   }
 }
