@@ -34,7 +34,7 @@ public class ElevatorPID extends SubsystemBase {
     private static final double kRotationsPerMeter = 0/kMetersPerRotation;
     private static final double kNativeUnitsPerRotation = kEncoderResolution;
 
-    private final WPI_TalonFX m_motor = new WPI_TalonFX(0);
+    private final WPI_TalonFX m_motor = new WPI_TalonFX(6);
 
     private final PIDController m_motorPIDController = new PIDController(0.0, 0.0, 0.0);
     private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, 0)); // not using max acceleration
@@ -69,23 +69,25 @@ public class ElevatorPID extends SubsystemBase {
      * Set setpoint
      */
     public void setSetpoint(double setpoint) {
-    m_setpoint = heightToNative(setpoint);
-    m_trapezoidProfile = new TrapezoidProfile(
-        new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAngularSpeed),
-        new TrapezoidProfile.State(m_motor.getSelectedSensorVelocity(), 0),
-        new TrapezoidProfile.State(m_setpoint, 0));
-}
+        m_controller.setGoal(new TrapezoidProfile.State(setpoint, 0));
+        /*
+        m_setpoint = heightToNative(setpoint);
+        m_trapezoidProfile = new TrapezoidProfile(
+            new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAngularSpeed),
+            new TrapezoidProfile.State(m_motor.getSelectedSensorVelocity(), 0),
+            new TrapezoidProfile.State(m_setpoint, 0));
+        */
+    }
 
     /*
      * Compute voltages using feedforward and pid
      */
     @Override
     public void periodic() {
-        // kush said he would set the setpoint from somewhere else idk
-        goal = m_controller.getGoal();
+        goal = m_controller.getSetpoint();
         pid = m_controller.calculate(encoder.getDistance(), goal); // idk what encoder is i built off of other code
         feedforward = m_feedforward.calculate(goal.velocity)
   
-        motor.set(pid + feedforward);
+        m_motor.set(pid + feedforward);
     }  
 }
