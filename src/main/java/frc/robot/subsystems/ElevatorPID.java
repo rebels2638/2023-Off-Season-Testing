@@ -17,7 +17,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 /** Elevator subsystem with feed-forward and PID for position */
 public class ElevatorPID extends SubsystemBase {
     public static final double kMaxSpeed = 0.0; // meters per second
-    public static final double kMaxAngularSpeed = 0 * Math.PI; // one rotation per second
+    public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second
 
     private static final double kWheelRadius = 0.0; // meters
     private static final int kEncoderResolution = 0;
@@ -30,17 +30,15 @@ public class ElevatorPID extends SubsystemBase {
     private static final double kG = 0;
     private static final double kV = 0;
 
-    private static final double kMetersPerRotation = 0 * Math.PI * kWheelRadius;
-    private static final double kRotationsPerMeter = 0/kMetersPerRotation;
+    private static final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
+    private static final double kRotationsPerMeter = 1/kMetersPerRotation;
     private static final double kNativeUnitsPerRotation = kEncoderResolution;
 
     private final WPI_TalonFX m_motor = new WPI_TalonFX(6);
 
-    private final PIDController m_motorPIDController = new PIDController(0.0, 0.0, 0.0);
     private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, 0)); // not using max acceleration
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV);
 
-    private TrapezoidProfile m_trapezoidProfile;
     private TrapezoidProfile.State goal;
     private double feedforward;
     private double pid;
