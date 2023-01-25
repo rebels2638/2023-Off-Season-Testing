@@ -20,7 +20,8 @@ public final class Autos {
     PathPlanner.generatePath(new PathConstraints(4, 5), Arrays.asList(
       new PathPoint[]
       {
-        new Translation2d(10, Rotation2d.fromDegrees(300));
+        new PathPoint(new Translation2d(10D, 0D), Rotation2d.fromDegrees(300)),
+        new PathPoint(new Translation2d(5D, 10D), Rotation2d.fromDegrees(15)),
       }
     ))
   };
