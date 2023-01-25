@@ -94,7 +94,7 @@ public class ElevatorPID extends SubsystemBase {
         m_controller.setGoal(m_setpoint); 
         goal = m_controller.getSetpoint();
         feedforward = m_feedforward.calculate(goal.velocity);
-        pid = m_controller.calculate(encoder.getSelectedSensorPosition(), goal.velocity);
+        pid = m_controller.calculate(encoder.getSelectedSensorPosition(), goal);
         m_motor.set(ControlMode.PercentOutput, feedforward + pid);
         
             
