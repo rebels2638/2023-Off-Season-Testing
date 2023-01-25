@@ -38,10 +38,12 @@ public class ElevatorPID extends SubsystemBase {
     public final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAngularSpeed));
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV);
 
-    private TrapezoidProfile m_trapezoidProfile;
-    private State m_setpoint;
+    // private TrapezoidProfile m_trapezoidProfile;
+    private TrapezoidProfile.State m_setpoint;
     private double feedforward;
     private double pid;
+    private TrapezoidProfile.State goal;
+        
     /**
     * Reset elevator to bottom
     */
@@ -61,14 +63,14 @@ public class ElevatorPID extends SubsystemBase {
         return heightUnits * kRotationsPerMeter * kNativeUnitsPerRotation;
     }
 
-    /*
-    * Set setpoint
-    */
+    // set setpoint
     public void setSetpoint(double setpoint) {
         m_setpoint = new TrapezoidProfile.State(heightToNative(setpoint), 0);
+        /* (i think this is wrong and ireelavatn)
         m_trapezoidProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAngularSpeed),
-            new TrapezoidProfile.State(encoder.getSelectedSensorVelocity(), 0));
+            new TrapezoidProfile.State(encoder.getSelectedSensorVelocity(), 0)); // i think it's supposed position not velocity
+        */
     }
 
     /*
@@ -76,12 +78,27 @@ public class ElevatorPID extends SubsystemBase {
     */
     @Override
         public void periodic() {
-        TrapezoidProfile.State goal = m_trapezoidProfile.calculate(encoder.getSelectedSensorVelocity());
-        m_controller.setGoal(goal);
-        m_setpoint = m_controller.getSetpoint();
-        feedforward = m_feedforward.calculate(goal.velocity, goal.position);
-        pid = m_motorPIDController.calculate(encoder.getSelectedSensorPosition(), 0);
+        /* (previous code)
+        TrapezoidProfile.State goal = m_trapezoidProfile.calculate(encoder.getSelectedSensorVelocity()); 
+            // this is wrong, profile.calculate takes the time not the velocity. but idek what it returns so i think we need a different thing
+        m_controller.setGoal(goal); // pass m_setpoint
+        m_setpoint = m_controller.getSetpoint(); // supposed goal
+        feedforward = m_feedforward.calculate(goal.velocity, goal.position); // you can't give it the position
+        pid = m_motorPIDController.calculate(encoder.getSelectedSensorPosition(), 0); // the 2nd argument is supposed to be a State, not acceleration
+        m_motor.set(ControlMode.PercentOutput, feedforward + pid); // what is ControlMode. we do not know what this is
+            
+        // "goal" and "setpoint" mixed up bc wpilib sucks
+        */
+            
+        
+        m_controller.setGoal(m_setpoint); 
+        goal = m_controller.getSetpoint();
+        feedforward = m_feedforward.calculate(goal.velocity);
+        pid = m_motorPIDController.calculate(encoder.getSelectedSensorPosition(), goal);
         m_motor.set(ControlMode.PercentOutput, feedforward + pid);
+        
+            
+            
     }
 }
 
