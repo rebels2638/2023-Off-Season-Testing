@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.controller.PIDController;
+// import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -34,7 +34,7 @@ public class ElevatorPID extends SubsystemBase {
     private final WPI_TalonFX m_motor = new WPI_TalonFX(6);
     private final WPI_TalonSRX encoder = new WPI_TalonSRX(0); // add encoder
 
-    private final PIDController m_motorPIDController = new PIDController(kP, kI, kD);
+    // private final PIDController m_motorPIDController = new PIDController(kP, kI, kD);
     public final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAngularSpeed));
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV);
 
@@ -94,7 +94,7 @@ public class ElevatorPID extends SubsystemBase {
         m_controller.setGoal(m_setpoint); 
         goal = m_controller.getSetpoint();
         feedforward = m_feedforward.calculate(goal.velocity);
-        pid = m_motorPIDController.calculate(encoder.getSelectedSensorPosition(), goal.velocity);
+        pid = m_controller.calculate(encoder.getSelectedSensorPosition(), goal);
         m_motor.set(ControlMode.PercentOutput, feedforward + pid);
         
             
