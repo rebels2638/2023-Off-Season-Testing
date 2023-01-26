@@ -153,6 +153,7 @@ public class Drivetrain extends SubsystemBase {
     setSpeeds(m_odometry.expose_kinematics().toWheelSpeeds(new ChassisSpeeds(xSpeed, 0D, rot)));
   }
 
+
   public void resetOdom()
   {
     m_odometry.expose_odometry().resetPosition(m_gyro.getRotation2d(), m_odometry.left_encoder(), m_odometry.right_encoder(), Odometry.construct_p2(m_odometry.left_encoder(), m_odometry.right_encoder(), m_gyro.getAngle()));
