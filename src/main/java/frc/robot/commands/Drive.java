@@ -35,9 +35,7 @@ public class Drive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double forwardSpeed = RebelUtil.linearDeadband(xboxDriver.getLeftY(), 0.1) * MAX_FORWARD_SPEED;
-    double turnSpeed = RebelUtil.linearDeadband(-xboxDriver.getRightX(), 0.1) * MAX_TURN_SPEED;
-    m_driveSubsystem.drive(forwardSpeed, turnSpeed);
+    m_driveSubsystem.drive(RebelUtil.linearDeadband(xboxDriver.getLeftY(), 0.1) * MAX_FORWARD_SPEED, RebelUtil.linearDeadband(-xboxDriver.getRightX(), 0.1) * MAX_TURN_SPEED);
   }
 
   // Called once the command ends or is interrupted.
