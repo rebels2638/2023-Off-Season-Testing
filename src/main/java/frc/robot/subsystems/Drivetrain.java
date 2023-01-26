@@ -105,10 +105,16 @@ public class Drivetrain extends SubsystemBase {
     var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0.0, rot));
     setSpeeds(wheelSpeeds);
   }
-
+  //I need this for ChaseTag.java
+  public void drive(ChassisSpeeds fromFieldRelativeSpeeds) {
+    var wheelSpeeds = m_kinematics.toWheelSpeeds(fromFieldRelativeSpeeds);
+    setSpeeds(wheelSpeeds);
+  }
   /** Updates the field-relative position. */
   public void updateOdometry() {
     m_odometry.update(
         m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
   }
+
+
 }
