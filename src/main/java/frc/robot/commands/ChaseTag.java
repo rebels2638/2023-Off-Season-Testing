@@ -86,7 +86,7 @@ public class ChaseTag extends CommandBase {
             }   
         }
         if(lastTarget == null){
-            //drivetrainSubsystem.stop();
+            drivetrainSubsystem.drive(0, 0);
         }
         else{
             var xSpeed = xController.calculate(robotPose.getX());
@@ -108,7 +108,7 @@ public class ChaseTag extends CommandBase {
 
     @Override
     public void end(boolean interrupted){
-        //drivetrainSubsystem.stop()
+        drivetrainSubsystem.drive(0, 0);
     }
 
 
