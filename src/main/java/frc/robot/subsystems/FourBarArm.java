@@ -11,21 +11,21 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Arm extends SubsystemBase {
+public class FourBarArm extends SubsystemBase {
     private final WPI_TalonFX victor;
     private final CanSparkMax spark;
     
-    private static Arm instance = null;
+    private static FourBarArm instance = null;
 
-    public Arm() {
+    public FourBarArm() {
         this.talon = new WPI_TalonFX(0); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
         this.spark = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
     }
 
     // Singleton class, call getInstance to access instead of the constructor.
-    public static Arm getInstance() {
+    public static FourBarArm getInstance() {
         if (instance == null) {
-            instance = new Arm();
+            instance = new FourBarArm();
         }
         return instance;
     }
