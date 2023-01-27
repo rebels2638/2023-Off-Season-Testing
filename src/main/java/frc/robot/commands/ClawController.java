@@ -17,6 +17,7 @@ public class ClawController extends CommandBase {
   private final XboxController e_controller; // e_controller is elevator's controller
   private final DigitalInput linebreak;
   private boolean lastLineBreak;
+  private boolean lastToggle;
   /**
    * Creates a new ExampleCommand.
    *
@@ -27,6 +28,7 @@ public class ClawController extends CommandBase {
     m_clawSubsystem = clawSubsystem;
     linebreak = new DigitalInput(3);
     lastLineBreak = false;
+    lastToggle = false;
     System.out.print("initilized");
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_clawSubsystem);
@@ -41,12 +43,25 @@ public class ClawController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("toggled");
+    //System.out.println(e_controller.getAButton().getAsBoolean());
     //System.out.println("LINEBREAK: " + linebreak.get());
+    /*
     if (linebreak.get() && !lastLineBreak) {
       m_clawSubsystem.toggle();
     }
-    lastLineBreak = linebreak.get();
+    */
+
+
+    if (e_controller.getAButton().getAsBoolean() && !lastToggle) {
+      lastToggle = true;
+      m_clawSubsystem.toggle();
+    } 
+
+    if(!e_controller.getAButton().getAsBoolean()) {
+      lastToggle = false;
+    }
+
+    //lastLineBreak = linebreak.get();
       
   }
 

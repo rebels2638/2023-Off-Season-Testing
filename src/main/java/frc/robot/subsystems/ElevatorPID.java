@@ -19,9 +19,9 @@ public class ElevatorPID extends SubsystemBase {
     private static final double kWheelRadius = 0; // meters
     private static final int kEncoderResolution = 4096;
     
-    private static final double kP = 0;
-    private static final double kI = 0.;
-    private static final double kD = 0;
+    private static final double kP = 0.0;
+    private static final double kI = 0.0;
+    private static final double kD = 0.0;
     
     private static final double kS = 0.0;
     private static final double kG = 0.0;

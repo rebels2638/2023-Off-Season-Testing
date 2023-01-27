@@ -24,6 +24,7 @@ public class Claw extends SubsystemBase {
         this.solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 2);
         this.push();
         System.out.print("initilized"); 
+        state = true;
     }
 
     // Singleton class, call getInstance to access instead of the constructor.
@@ -35,40 +36,30 @@ public class Claw extends SubsystemBase {
     }
   
     public void push() {
-        // prevent duplicating run
-        System.out.print("toggled");
-        if (state) {
-            return;
-        }
-
         solenoid.set(DoubleSolenoid.Value.kReverse);
         state = true;
     }
 
-    public void pull() {
-        // prevent duplicating run
-        if (!state) {
-            return;
-        }
-      
+    public void pull() {      
         solenoid.set(DoubleSolenoid.Value.kForward);
         state = false;
 
     }
 
     public void toggle() {
-        System.err.println("toggled");
         if(state) {
             pull();
+            System.out.println("pull");
         }
         else{
             push();
+            System.out.println("push");
         }
     }
-    @Override
-        public void periodic() {
-            CommandScheduler.getInstance().run();
-            System.out.println("runing");
-        }
+    // @Override
+    //     public void periodic() {
+    //         CommandScheduler.getInstance().run();
+    //         System.out.println("runing");
+    //     }
 
 }

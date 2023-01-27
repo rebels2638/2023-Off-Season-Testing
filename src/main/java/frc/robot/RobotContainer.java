@@ -40,9 +40,8 @@ public class RobotContainer {
   private final XboxController xboxOperator;
 
   private final Arm arm = new Arm();
+  private final Claw claw = new Claw();
   // private final ElevatorPID elevatorPID = new ElevatorPID();
-  private final Claw claw; 
-  private final ClawController clawController;
   
   
 
@@ -58,8 +57,6 @@ public class RobotContainer {
     this.xboxDriver = new XboxController(3);
     this.xboxOperator = new XboxController(2);
 
-    claw = new Claw();
-    clawController = new ClawController(claw, xboxOperator);
 
     // Controler Throttle Mappings
     this.drive.setDefaultCommand(
@@ -70,11 +67,14 @@ public class RobotContainer {
   
     this.arm.setDefaultCommand(
       new ArmController(arm, xboxOperator)
-
     );
     
-    this.xboxOperator.getAButton().onTrue(
-     new InstantCommand(() -> this.clawController.execute())
+    // this.xboxOperator.getAButton().onTrue(
+    //  new InstantCommand(() -> this.clawController.execute())
+    // );
+
+    this.claw.setDefaultCommand(
+      new ClawController(claw, xboxOperator)
     );
 
     //testc.b().onTrue(new InstantCommand(() -> this.claw.toggle()));
