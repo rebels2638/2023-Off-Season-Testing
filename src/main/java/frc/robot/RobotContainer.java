@@ -35,9 +35,6 @@ public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   private final Drivetrain drive = new Drivetrain();
   private final Elevator elevator = new Elevator();
-  private final Arm arm = new Arm();
-  // private final ElevatorPID elevatorPID = new ElevatorPID();
-  private final Claw claw = new Claw();
   
   // The robot's controllers
   private final XboxController xboxDriver;

@@ -19,17 +19,17 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 /** Represents a differential drive style drivetrain. */
 public class Drivetrain extends SubsystemBase {
-  public static final double kMaxSpeed = 3.0; // meters per second
-  public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second
+  public static final double kMaxSpeed = 3.0 * 0.25; // meters per second
+  public static final double kMaxAngularSpeed = 2 * Math.PI * 0.25; // one rotation per second
 
   private static final double kTrackWidth = 0.381 * 2; // meters
   private static final double kWheelRadius = 0.0508; // meters
   private static final int kEncoderResolution = 4096;
 
-  private final MotorController m_leftLeader = new WPI_TalonSRX(4);
-  private final MotorController m_leftFollower = new WPI_TalonSRX(3); 
-  private final MotorController m_rightLeader = new WPI_TalonSRX(2);
-  private final MotorController m_rightFollower = new WPI_TalonSRX(1);
+  private final MotorController m_leftLeader = new WPI_TalonSRX(1);
+  private final MotorController m_leftFollower = new WPI_TalonSRX(2); 
+  private final MotorController m_rightLeader = new WPI_TalonSRX(3);
+  private final MotorController m_rightFollower = new WPI_TalonSRX(4);
 
   private final Encoder m_leftEncoder = new Encoder(5, 6);
   private final Encoder m_rightEncoder = new Encoder(7, 8);
@@ -63,7 +63,7 @@ public class Drivetrain extends SubsystemBase {
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
     m_rightGroup.setInverted(true); // changed back to true
-
+    //m_leftGroup.setInverted(true);
     // Set the distance per pulse for the drive encoders. We can simply use the
     // distance traveled for one rotation of the wheel divided by the encoder
     // resolution.
@@ -105,16 +105,7 @@ public class Drivetrain extends SubsystemBase {
     var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0.0, rot));
     setSpeeds(wheelSpeeds);
   }
-  /**
-   * Drives the robot with the given linear velocity and angular velocity.
-   *
-   * @param xSpeed Linear velocity in m/s.
-   * @param rot Angular velocity in rad/s.
-   */
-  public void drive(double xSpeed, double rot) {
-    var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0.0, rot));
-    setSpeeds(wheelSpeeds);
-  }
+
   /** Updates the field-relative position. */
   public void updateOdometry() {
     m_odometry.update(
