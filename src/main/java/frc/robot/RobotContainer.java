@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.input.XboxController;
 import frc.robot.commands.ArmController;
 import frc.robot.commands.ClawController;
@@ -32,13 +34,17 @@ public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   private final Drivetrain drive = new Drivetrain();
   private final Elevator elevator = new Elevator();
-  private final Arm arm = new Arm();
-  // private final ElevatorPID elevatorPID = new ElevatorPID();
-  private final Claw claw = new Claw();
-  
+
   // The robot's controllers
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
+
+  private final Arm arm = new Arm();
+  // private final ElevatorPID elevatorPID = new ElevatorPID();
+  private final Claw claw; 
+  private final ClawController clawController;
+  
+  
 
   // Create a Sendable Chooser, which allows us to select between Commands (in
   // this case, auto commands)
@@ -52,6 +58,9 @@ public class RobotContainer {
     this.xboxDriver = new XboxController(3);
     this.xboxOperator = new XboxController(2);
 
+    claw = new Claw();
+    clawController = new ClawController(claw, xboxOperator);
+
     // Controler Throttle Mappings
     this.drive.setDefaultCommand(
         new Drive(drive, xboxDriver));
@@ -63,10 +72,12 @@ public class RobotContainer {
       new ArmController(arm, xboxOperator)
 
     );
-
+    
     this.xboxOperator.getAButton().onTrue(
-     new InstantCommand(() -> this.claw.toggle())
+     new InstantCommand(() -> this.clawController.execute())
     );
+
+    //testc.b().onTrue(new InstantCommand(() -> this.claw.toggle()));
 
     //  this.elevatorPID.setDefaultCommand(
         // new ElevatorPIDController(elevatorPID,xboxOperator)); // added, untested
@@ -75,9 +86,9 @@ public class RobotContainer {
     //   new ClawController(claw, xboxOperator)
     // );
 
-    this.xboxOperator.getAButton().onTrue(
-      new InstantCommand(() -> this.claw.toggle())
-    );
+    //this.xboxOperator.getAButton().onTrue(
+   //   new InstantCommand(() -> this.claw.toggle())
+   // );
   }
 
   /**

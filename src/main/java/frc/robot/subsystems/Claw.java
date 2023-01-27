@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Claw extends SubsystemBase {
@@ -22,6 +23,7 @@ public class Claw extends SubsystemBase {
         
         this.solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 2);
         this.push();
+        System.out.print("initilized"); 
     }
 
     // Singleton class, call getInstance to access instead of the constructor.
@@ -34,6 +36,7 @@ public class Claw extends SubsystemBase {
   
     public void push() {
         // prevent duplicating run
+        System.out.print("toggled");
         if (state) {
             return;
         }
@@ -54,8 +57,18 @@ public class Claw extends SubsystemBase {
     }
 
     public void toggle() {
-        if(state) pull();
-        else push();
+        System.err.println("toggled");
+        if(state) {
+            pull();
+        }
+        else{
+            push();
+        }
     }
+    @Override
+        public void periodic() {
+            CommandScheduler.getInstance().run();
+            System.out.println("runing");
+        }
 
 }

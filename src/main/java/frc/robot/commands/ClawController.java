@@ -27,22 +27,24 @@ public class ClawController extends CommandBase {
     m_clawSubsystem = clawSubsystem;
     linebreak = new DigitalInput(3);
     lastLineBreak = false;
-
+    System.out.print("initilized");
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_clawSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    System.out.print("in");
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+    System.out.println("toggled");
     //System.out.println("LINEBREAK: " + linebreak.get());
     if (linebreak.get() && !lastLineBreak) {
-      m_clawSubsystem.pull();
+      m_clawSubsystem.toggle();
     }
     lastLineBreak = linebreak.get();
       
