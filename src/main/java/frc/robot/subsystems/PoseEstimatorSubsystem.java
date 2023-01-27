@@ -42,7 +42,7 @@
     
 //     private static final Vector<N7> stateStDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5), 0.05, 0.05, 0.05, 0.05);
 //     private static final Vector<N5> local = VecBuilder.fill(Units.degreesToRadians(0.01), 0.01, 0.01, 0.01, 0.01);
-//     private static final Vector<N3> measurment = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
+//     private static final Vector<N3> vision = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
 //     private static DifferentialDrivePoseEstimator poseEstimator;
 //     private final Field2d field2d = new Field2d();
@@ -55,7 +55,7 @@
 //          Nat.N5(),
 //          gyro.getRoll(),
 //          Constants.DRIVE_KINEMATICS, 
-//          new Pose2d(), driveTrainSubsytem, localMeasurementStdDevs, visionMeasurementStdDevs));
+//          new Pose2d(), driveTrainSubsytem, local, vision));
 
 //   //needs to be finished
 //   tab.addString("Pose", this::getFormattedPose).withPosition(0)
