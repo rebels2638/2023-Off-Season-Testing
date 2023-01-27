@@ -39,12 +39,12 @@ public class Drivetrain extends SubsystemBase {
   private final MotorControllerGroup m_rightGroup =
       new MotorControllerGroup(m_rightLeader, m_rightFollower);
 
-  private final AnalogGyro m_gyro = new AnalogGyro(0);
+  public final AnalogGyro m_gyro = new AnalogGyro(0);
 
   private final PIDController m_leftPIDController = new PIDController(1, 0, 0);
   private final PIDController m_rightPIDController = new PIDController(1, 0, 0);
 
-  private final DifferentialDriveKinematics m_kinematics =
+  public final DifferentialDriveKinematics m_kinematics =
       new DifferentialDriveKinematics(kTrackWidth);
 
   private final DifferentialDriveOdometry m_odometry;
@@ -95,16 +95,6 @@ public class Drivetrain extends SubsystemBase {
     m_rightGroup.setVoltage(rightOutput + rightFeedforward);
   }
 
-  /**
-   * Drives the robot with the given linear velocity and angular velocity.
-   *
-   * @param xSpeed Linear velocity in m/s.
-   * @param rot Angular velocity in rad/s.
-   */
-  public void drive(double xSpeed, double rot) {
-    var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0.0, rot));
-    setSpeeds(wheelSpeeds);
-  }
   /**
    * Drives the robot with the given linear velocity and angular velocity.
    *
