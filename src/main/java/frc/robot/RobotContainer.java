@@ -12,6 +12,8 @@ import frc.robot.commands.ArmController;
 import frc.robot.commands.ClawController;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ElevatorController;
+import frc.robot.commands.FourBarArmController;
+import frc.robot.subsystems.FourBarArm;
 import frc.robot.commands.ElevatorPIDController;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
@@ -35,7 +37,8 @@ public class RobotContainer {
   private final Arm arm = new Arm();
   // private final ElevatorPID elevatorPID = new ElevatorPID();
   private final Claw claw = new Claw();
-  
+  private final FourBarArm fourBarArm = new FourBarArm(); 
+    
   // The robot's controllers
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
@@ -62,6 +65,10 @@ public class RobotContainer {
     this.arm.setDefaultCommand(
       new ArmController(arm, xboxOperator)
 
+    );
+    
+    this.fourBarArm.setDefaultCommand(
+        new FourBarArmController(fourBarArm, xboxOperator)
     );
 
     this.xboxOperator.getAButton().onTrue(
