@@ -10,7 +10,7 @@ import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class ElevatorController extends CommandBase {
+public class FourBarArmController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final FourBarArm m_armSubsystem;
   private final XboxController controller; // controller is arm's controller
@@ -36,8 +36,8 @@ public class ElevatorController extends CommandBase {
   @Override
   public void execute() {
 
-    double victorInputPercent = controller.getLeftY(); // not sure which joystick yet
-    double sparkInputPercent = controller.getRightY(); // not sure which joystick
+    double victorInputPercent = controller.getRightY(); // not sure which joystick yet
+    double sparkInputPercent = controller.getLeftY(); // not sure which joystick
     m_armSubsystem.setPercentOutputVictor(victorInputPercent); 
     m_armSubsystem.setSpeedSpark(sparkInputPercent); // takes percent. trust
     
