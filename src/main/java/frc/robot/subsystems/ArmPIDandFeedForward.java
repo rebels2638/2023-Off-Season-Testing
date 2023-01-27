@@ -43,8 +43,15 @@ public class ArmPIDandFeedForward extends SubsystemBase {
 
         talon.configAllSettings(falconConfig);
         talon.setNeutralMode(NeutralMode.Coast);
+        
+        // kS and kG should have units of volts, kV should have units of volts * seconds / radians, and kA should have units of volts * seconds^2 / radians.
+        // Units must be consistent! TODO: get feedfowrward gains tuned
+        kS = 0.0;
+        kG = 0.0;
+        kV = 0.0;
+        kA = 0.0;
       
-        feedforward = new Arm
+        feedforward = new ArmFeedforward(kS, kG, kV, kA);
         
     }
 
