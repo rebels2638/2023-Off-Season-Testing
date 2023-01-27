@@ -15,7 +15,7 @@ public class Arm extends SubsystemBase {
     private static double lastPercentSpeed; 
 
     public Arm() {
-        this.talon = new WPI_TalonFX(0); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
+        this.talon = new WPI_TalonFX(5); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
         lastPercentSpeed = 0;
         TalonFXConfiguration falconConfig = new TalonFXConfiguration();
 
@@ -48,12 +48,13 @@ public class Arm extends SubsystemBase {
         
         if(Math.abs(percent) < 0.08) {
             percent = 0;
+            //talon.enableBrakeMode(true); 
         }
       
         if(percent == 0) {
             //talon.enableBrakeMode(true);    
         }
-        System.out.println(percent);
+        // System.out.println(percent);
 
         talon.set(ControlMode.PercentOutput, percent); 
         // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed, where both the speed and the left joy stick is in range -1,1

@@ -40,7 +40,7 @@ public class ClawController extends CommandBase {
   @Override
   public void execute() {
     
-    System.out.println("LINEBREAK: " + linebreak.get());
+    //System.out.println("LINEBREAK: " + linebreak.get());
     if (linebreak.get() && !lastLineBreak) {
       m_clawSubsystem.pull();
     }

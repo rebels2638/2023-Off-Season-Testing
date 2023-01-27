@@ -56,19 +56,24 @@ public class RobotContainer {
     this.drive.setDefaultCommand(
         new Drive(drive, xboxDriver));
     
-    this.elevator.setDefaultCommand(
-        new ElevatorController(elevator, xboxOperator)); // added, works
+     this.elevator.setDefaultCommand(
+     new ElevatorController(elevator, xboxOperator)); // added, works
   
     this.arm.setDefaultCommand(
       new ArmController(arm, xboxOperator)
+
+    );
+
+    this.xboxOperator.getAButton().onTrue(
+     new InstantCommand(() -> this.claw.toggle())
     );
 
     //  this.elevatorPID.setDefaultCommand(
         // new ElevatorPIDController(elevatorPID,xboxOperator)); // added, untested
 
-    this.claw.setDefaultCommand(
-      new ClawController(claw, xboxOperator)
-    );
+    // this.claw.setDefaultCommand(
+    //   new ClawController(claw, xboxOperator)
+    // );
 
     this.xboxOperator.getAButton().onTrue(
       new InstantCommand(() -> this.claw.toggle())

@@ -41,25 +41,28 @@ public class ElevatorController extends CommandBase {
 
     double inputPercent = e_controller.getLeftY();
 
-    System.out.println(bottomlimitSwitch.get());
+    //System.out.println(bottomlimitSwitch.get());
 
-    if (inputPercent > 0) {
-        if (toplimitSwitch.get()) {
-            // We are going up and top limit is tripped so stop
-             m_elevatorSubsystem.setPercentOutput(0);
-        } else {
-            // We are going up but top limit is not tripped so go at commanded speed
-             m_elevatorSubsystem.setPercentOutput(inputPercent);
-        }
-    } else {
-        if (!bottomlimitSwitch.get()) {
-            // We are going down and bottom limit is tripped so stop
-             m_elevatorSubsystem.setPercentOutput(0);
-        } else {
-            // We are going down but bottom limit is not tripped so go at commanded speed
-            m_elevatorSubsystem.setPercentOutput(inputPercent);
-        }
-    }
+    // if (inputPercent > 0) {
+    //     if (toplimitSwitch.get()) {
+    //         // We are going up and top limit is tripped so stop
+    //          m_elevatorSubsystem.setPercentOutput(0);
+    //     } else {
+    //         // We are going up but top limit is not tripped so go at commanded speed
+    //          m_elevatorSubsystem.setPercentOutput(inputPercent);
+    //     }
+    // } else {
+    //     if (!bottomlimitSwitch.get()) {
+    //         // We are going down and bottom limit is tripped so stop
+    //          m_elevatorSubsystem.setPercentOutput(0);
+    //     } else {
+    //         // We are going down but bottom limit is not tripped so go at commanded speed
+    //         m_elevatorSubsystem.setPercentOutput(inputPercent);
+    //     }
+    // }
+
+    m_elevatorSubsystem.setPercentOutput(-inputPercent);
+
   }
 
   // Called once the command ends or is interrupted.
