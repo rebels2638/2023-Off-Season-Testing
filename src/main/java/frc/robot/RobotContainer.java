@@ -14,6 +14,7 @@ import frc.robot.commands.ArmController;
 import frc.robot.commands.ClawController;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ElevatorController;
+
 import frc.robot.commands.ElevatorPIDController;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
@@ -34,7 +35,10 @@ public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   private final Drivetrain drive = new Drivetrain();
   private final Elevator elevator = new Elevator();
-
+  private final Arm arm = new Arm();
+  // private final ElevatorPID elevatorPID = new ElevatorPID();
+  private final Claw claw = new Claw();
+  
   // The robot's controllers
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
@@ -68,13 +72,9 @@ public class RobotContainer {
     this.arm.setDefaultCommand(
       new ArmController(arm, xboxOperator)
     );
-    
-    // this.xboxOperator.getAButton().onTrue(
-    //  new InstantCommand(() -> this.clawController.execute())
-    // );
 
-    this.claw.setDefaultCommand(
-      new ClawController(claw, xboxOperator)
+    this.xboxOperator.getAButton().onTrue(
+     new InstantCommand(() -> this.claw.toggle())
     );
 
     //testc.b().onTrue(new InstantCommand(() -> this.claw.toggle()));
