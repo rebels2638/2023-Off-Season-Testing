@@ -32,73 +32,46 @@ public class ElevatorPID extends SubsystemBase {
     private static final double kNativeUnitsPerRotation = kEncoderResolution;
 
     private final WPI_TalonFX m_motor = new WPI_TalonFX(6);
-    private final WPI_TalonSRX encoder = new WPI_TalonSRX(0); // add encoder
 
-    // private final PIDController m_motorPIDController = new PIDController(kP, kI, kD);
     public final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAngularSpeed));
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV);
 
-    // private TrapezoidProfile m_trapezoidProfile;
     private TrapezoidProfile.State m_setpoint;
     private double feedforward;
     private double pid;
     private TrapezoidProfile.State goal;
         
-    /**
-    * Reset elevator to bottom
-    */
+    // reset elevator (make sure to just like. push it to the bottom thx)
     public ElevatorPID() {
     m_motor.set(ControlMode.PercentOutput, 0);
     setSetpoint(0);
-
-    // Reset encoders
-    m_motor.getSensorCollection().setIntegratedSensorPosition(0, 30);
-    encoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+    m_motor.getSensorCollection().setIntegratedSensorPosition(0, 30); // reset encoders
+    // encoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative); (i dont think this does anything????)
     }
 
-    /*
-    * Convert from TalonFX elevator position to native units
-    */
-    public double heightToNative(double heightUnits) {
-        return heightUnits * kRotationsPerMeter * kNativeUnitsPerRotation;
-    }
+//     /*
+//     * Convert from TalonFX elevator position to native units
+//     */
+//     public double heightToNative(double heightUnits) {
+//         return heightUnits * kRotationsPerMeter * kNativeUnitsPerRotation;
+//     }
 
     // set setpoint
-    public void setSetpoint(double setpoint) {
-        m_setpoint = new TrapezoidProfile.State(heightToNative(setpoint), 0);
-        /* (i think this is wrong and ireelavatn)
-        m_trapezoidProfile = new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAngularSpeed),
-            new TrapezoidProfile.State(encoder.getSelectedSensorVelocity(), 0)); // i think it's supposed position not velocity
-        */
+    public void setSetpoint(double setpoint) // setpoint in meters
+    {
+        m_setpoint = new TrapezoidProfile.State(setpoint, 0);
     }
 
     /*
     * Compute voltages using feedforward and pid
     */
     @Override
-        public void periodic() {
-        /* (previous code)
-        TrapezoidProfile.State goal = m_trapezoidProfile.calculate(encoder.getSelectedSensorVelocity()); 
-            // this is wrong, profile.calculate takes the time not the velocity. but idek what it returns so i think we need a different thing
-        m_controller.setGoal(goal); // pass m_setpoint
-        m_setpoint = m_controller.getSetpoint(); // supposed goal
-        feedforward = m_feedforward.calculate(goal.velocity, goal.position); // you can't give it the position
-        pid = m_motorPIDController.calculate(encoder.getSelectedSensorPosition(), 0); // the 2nd argument is supposed to be a State, not acceleration
-        m_motor.set(ControlMode.PercentOutput, feedforward + pid); // what is ControlMode. we do not know what this is
-            
-        // "goal" and "setpoint" mixed up bc wpilib sucks
-        */
-            
-        
+    public void periodic() {           
         m_controller.setGoal(m_setpoint); 
         goal = m_controller.getSetpoint();
         feedforward = m_feedforward.calculate(goal.velocity);
-        pid = m_controller.calculate(encoder.getSelectedSensorPosition(), goal);
-        m_motor.set(ControlMode.PercentOutput, feedforward + pid);
-        
-            
-            
+        pid = m_controller.calculate(m_motor.getSensorCollection().getIntegratedSensorPosition(), goal);
+        m_motor.setVoltage(feedforward + pid);
+
     }
 }
-
