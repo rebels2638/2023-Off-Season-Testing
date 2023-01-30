@@ -158,6 +158,11 @@ public class Drivetrain extends SubsystemBase {
     return m_odometry.p2;
   }
 
+  public DifferentialDriveKinematics expose_odom_kinematics()
+  {
+    return m_odometry.expose_kinematics();
+  }
+
   public void resetOdom()
   {
     m_odometry.expose_odometry().resetPosition(m_gyro.getRotation2d(), m_odometry.left_encoder(), m_odometry.right_encoder(), Odometry.construct_p2(m_odometry.left_encoder(), m_odometry.right_encoder(), m_gyro.getAngle()));
