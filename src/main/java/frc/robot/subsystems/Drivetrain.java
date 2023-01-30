@@ -98,7 +98,7 @@ public class Drivetrain extends SubsystemBase {
   private final PIDController m_leftPIDController = new PIDController(1, 0, 0);
   private final PIDController m_rightPIDController = new PIDController(1, 0, 0);
 
-  private final Odometry m_odometry;
+  public final Odometry m_odometry;
   // Gains are for example purposes only - must be determined for your own robot!
   private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
 
@@ -153,6 +153,10 @@ public class Drivetrain extends SubsystemBase {
     setSpeeds(m_odometry.expose_kinematics().toWheelSpeeds(new ChassisSpeeds(xSpeed, 0D, rot)));
   }
 
+  public Pose2d get_odom_pose()
+  {
+    return m_odometry.p2;
+  }
 
   public void resetOdom()
   {

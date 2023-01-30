@@ -18,7 +18,7 @@ import com.pathplanner.lib.*;
 public final class Autos 
     extends CommandBase
 {
-  private boolean isFinished = false;
+  private boolean isFinished = false, run = false;
   private PathPlannerTrajectory pl;
   private final Drivetrain drive;
   private Consumer<Pose2d> user;
@@ -67,7 +67,12 @@ public final class Autos
 
   @Override public void execute()
   {
-    44
+    pl.getStates().forEach(x -> {
+      if(run)
+      {
+        user.accept(x.poseInMeters);
+      }
+    });
   }
 
   @Override public boolean isFinished()
