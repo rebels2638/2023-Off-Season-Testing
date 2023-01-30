@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -24,7 +25,6 @@ import frc.robot.subsystems.Arm;
 import frc.robot.commands.FourBarArmController;
 import frc.robot.subsystems.FourBarArm;
 
-
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
@@ -38,18 +38,16 @@ public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   private final Drivetrain drive = new Drivetrain();
   private final Elevator elevator = new Elevator();
-  
+
   // The robot's controllers
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
 
   // private final Arm arm = new Arm();
-  private final FourBarArm fourBarArm = new FourBarArm(); 
+  private final FourBarArm fourBarArm = new FourBarArm();
 
   private final Claw claw = new Claw();
   // private final ElevatorPID elevatorPID = new ElevatorPID();
-  
-  
 
   // Create a Sendable Chooser, which allows us to select between Commands (in
   // this case, auto commands)
@@ -63,39 +61,39 @@ public class RobotContainer {
     this.xboxDriver = new XboxController(3);
     this.xboxOperator = new XboxController(2);
 
+    // Shuffleboard.getTab("SmartDashboard")
+    //     .add("Reset Arm", new InstantCommand(() -> this.arm.reset()));
 
     // Controler Throttle Mappings
     this.drive.setDefaultCommand(
         new Drive(drive, xboxDriver));
-    
-     this.elevator.setDefaultCommand(
-     new ElevatorController(elevator, xboxOperator)); // added, works
-  
-    // this.arm.setDefaultCommand(
-    //   new ArmController(arm, xboxOperator)
-    // );
 
+    this.elevator.setDefaultCommand(
+        new ElevatorController(elevator, xboxOperator)); // added, works
+
+    // this.arm.setDefaultCommand(
+    //     new ArmController(arm, xboxOperator));
 
     this.fourBarArm.setDefaultCommand(
-        new FourBarArmController(fourBarArm, xboxOperator)
+    new FourBarArmController(fourBarArm, xboxOperator)
     );
 
     this.xboxOperator.getAButton().onTrue(
-     new InstantCommand(() -> this.claw.toggle())
-    );
+        new InstantCommand(() -> this.claw.toggle()));
 
-    //testc.b().onTrue(new InstantCommand(() -> this.claw.toggle()));
+    // testc.b().onTrue(new InstantCommand(() -> this.claw.toggle()));
 
-    //  this.elevatorPID.setDefaultCommand(
-        // new ElevatorPIDController(elevatorPID,xboxOperator)); // added, untested
+    // this.elevatorPID.setDefaultCommand(
+    // new ElevatorPIDController(elevatorPID,xboxOperator)); // added, untested
 
     // this.claw.setDefaultCommand(
-    //   new ClawController(claw, xboxOperator)
+    // new ClawController(claw, xboxOperator)
     // );
 
-    //this.xboxOperator.getAButton().onTrue(
-   //   new InstantCommand(() -> this.claw.toggle())
-   // );
+    // this.xboxOperator.getAButton().onTrue(
+    // new InstantCommand(() -> this.claw.toggle())
+    // );
+
   }
 
   /**

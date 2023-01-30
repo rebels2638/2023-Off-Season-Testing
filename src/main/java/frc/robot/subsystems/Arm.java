@@ -6,12 +6,17 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm extends SubsystemBase {
     private final WPI_TalonFX talon;
     private static Arm instance = null;
     private static double lastPercentSpeed; 
+    private static double kUpperLimit = 69000.0;
+    private static double kLowerLimit = -86000.0;
 
     public Arm() {
         this.talon = new WPI_TalonFX(5); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
@@ -45,17 +50,32 @@ public class Arm extends SubsystemBase {
 
     public void setPercentOutput(double percent) {
         
-        if(Math.abs(percent) < 0.08) {
-            percent = 0;
-            //talon.enableBrakeMode(true); 
-        }
+        double currentEncoder = talon.getSensorCollection().getIntegratedSensorPosition();
+        System.out.println(currentEncoder);
+        System.out.println("Precent: " + percent);
+        
+        // if(Math.abs(percent) < 0.08) {
+        //     percent = 0;
+        //     //talon.enableBrakeMode(true); 
+        // }
       
-        if(percent == 0) {
-            //talon.enableBrakeMode(true);    
+        // if(percent == 0) {
+        //     //talon.enableBrakeMode(true);    
+        // }
+        // // System.out.println(percent);
+
+        if (currentEncoder >= kUpperLimit && percent > 0.0) {
+            percent = 0.0;
         }
-        // System.out.println(percent);
+        else if (currentEncoder <= kLowerLimit && percent < 0.0) {
+            percent = 0;
+        }
 
         talon.set(ControlMode.PercentOutput, percent); 
         // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed, where both the speed and the left joy stick is in range -1,1
+    }
+
+    public void reset(){
+        talon.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
 }

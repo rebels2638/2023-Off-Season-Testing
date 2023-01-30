@@ -28,13 +28,15 @@ public class ArmController extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     double inputPercent = e_controller.getRightY();
-
+  
     m_armSubsystem.setPercentOutput(inputPercent);
   }
 
