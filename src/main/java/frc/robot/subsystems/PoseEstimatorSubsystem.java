@@ -10,6 +10,7 @@ import java.util.List;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 
+import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
@@ -34,8 +35,8 @@ import frc.robot.Constants.DrivetrainConstants;
 
 public class PoseEstimatorSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  private final PhotonCamera photonCamera = new PhotonCamera("camera");
-  private final Drivetrain driveTrainSubsytem = new Drivetrain();
+  private PhotonCamera photonCamera = new PhotonCamera("camera");
+  private Drivetrain driveTrainSubsytem = new Drivetrain();
   private final GyroSubystem gyro = new GyroSubystem();
    private static final List<Pose3d> targetPoses = Collections.unmodifiableList
    (List.of(new Pose3d(0, 0, 0, new Rotation3d(0, 0, degreesToRadians(180))),
@@ -53,12 +54,15 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     public PoseEstimatorSubsystem(PhotonCamera camera, Drivetrain drive, GyroSubystem gyro){
         this.photonCamera = camera;
         this.driveTrainSubsytem = drive;
-        poseEstimator = new DifferentialDrivePoseEstimator<N7,N7,N5>(Nat.N7(), Nat.N7(), Nat.N5(),
-        drive.m_gyro.getRotation2d(),
-        drive.getDriveTrainState().getDifferentialModelPositions(),
-        new Pose2d(), 
-        drive.m_kinematics,
-        driveTrainSubsytem, local, vision);
+        // poseEstimator = new DifferentialDrivePoseEstimator(drive.expose_odom_kinematics(), 
+        //                 driveTrainSubsytem.m_gyro.getRotation2d(), 
+        //                 driveTrainSubsytem.m_leftEncoder.getDistance(), 
+        //                 driveTrainSubsytem.m_rightEncoder.getDistance(), 
+        //                 new Pose2d(), 
+        //                 local, vision);
+        poseEstimator = new DifferentialDrivePoseEstimator(drive.expose_odom_kinematics(), driveTrainSubsytem.m_gyro.getRotation2d(), driveTrainSubsytem.m_leftEncoder.getDistance(), driveTrainSubsytem.m_rightEncoder.getDistance(), new Pose2d(),
+        new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), // Local measurement standard deviations. Left encoder, right encoder, gyro.
+        new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)); // Global measurement standard deviations. X, Y, and theta.
 
         tab.addString("Pose", this::getFormattedPose).withPosition(0, 0);
         tab.add("Field", field2d).withPosition(2,0);
@@ -82,9 +86,9 @@ public void periodic(){
           poseEstimator.addVisionMeasurement(visionMeasurment.toPose2d(), resultTimestamp);
       }
   }
-  var drivetrainState = driveTrainSubsytem.getDriveTrainState();
+
   poseEstimator.update(driveTrainSubsytem.m_gyro.getRotation2d(), 
-  drivetrainState.getDifferentialModelStates(), drivetrainState.getDifferentialModelPositions());
+  driveTrainSubsytem.m_leftEncoder.getDistance(), driveTrainSubsytem.m_rightEncoder.getDistance());
 
   field2d.setRobotPose(getCurrentPose());
 
