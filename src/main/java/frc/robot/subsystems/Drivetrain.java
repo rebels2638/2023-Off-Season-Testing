@@ -158,6 +158,11 @@ public class Drivetrain extends SubsystemBase {
     return m_odometry.p2;
   }
 
+  public double left_travelled()
+  {
+    
+  }
+
   public DifferentialDriveKinematics expose_odom_kinematics()
   {
     return m_odometry.expose_kinematics();
