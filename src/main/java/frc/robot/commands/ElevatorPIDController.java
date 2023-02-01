@@ -15,6 +15,8 @@ public class ElevatorPIDController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorPID m_elevatorPID;
   private final XboxController e_controller; // e_controller is elevator's controller
+
+  private final double MAX_VELO = 0.05;
   
   DigitalInput toplimitSwitch = new DigitalInput(2);
   DigitalInput bottomlimitSwitch = new DigitalInput(1);
@@ -39,9 +41,9 @@ public class ElevatorPIDController extends CommandBase {
   @Override
   public void execute() {
     
-     double desiredHeight = e_controller.getLeftY();
+     double desiredVelo = e_controller.getLeftY() * MAX_VELO;
     
-    if (desiredHeight > 0) {
+    /*if (desiredHeight > 0) {
         if (toplimitSwitch.get()) {
             // We are going up and top limit is tripped so stop
              m_elevatorPID.setSetpoint(0);
@@ -57,7 +59,8 @@ public class ElevatorPIDController extends CommandBase {
             // We are going down but bottom limit is not tripped so go at commanded speed
              m_elevatorPID.setSetpoint(desiredHeight);
         }
-    }
+    }*/
+    m_elevatorPID.setSetpoint(desiredVelo);
   }
 
   // Called once the command ends or is interrupted.

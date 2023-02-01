@@ -37,7 +37,7 @@ import frc.robot.subsystems.FourBarArm;
 public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   private final Drivetrain drive = new Drivetrain();
-  private final Elevator elevator = new Elevator();
+  // private final Elevator elevator = new Elevator();
 
   // The robot's controllers
   private final XboxController xboxDriver;
@@ -47,7 +47,7 @@ public class RobotContainer {
   private final FourBarArm fourBarArm = new FourBarArm();
 
   private final Claw claw = new Claw();
-  // private final ElevatorPID elevatorPID = new ElevatorPID();
+  private final ElevatorPID elevatorPID = new ElevatorPID();
 
   // Create a Sendable Chooser, which allows us to select between Commands (in
   // this case, auto commands)
@@ -68,15 +68,14 @@ public class RobotContainer {
     this.drive.setDefaultCommand(
         new Drive(drive, xboxDriver));
 
-    this.elevator.setDefaultCommand(
-        new ElevatorController(elevator, xboxOperator)); // added, works
+    // this.elevator.setDefaultCommand(
+        // new ElevatorController(elevator, xboxOperator)); // added, works
 
     // this.arm.setDefaultCommand(
     //     new ArmController(arm, xboxOperator));
 
     this.fourBarArm.setDefaultCommand(
-    new FourBarArmController(fourBarArm, xboxOperator)
-    );
+        new FourBarArmController(fourBarArm, xboxOperator));
 
     this.xboxOperator.getAButton().onTrue(
         new InstantCommand(() -> this.claw.toggle()));

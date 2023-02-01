@@ -12,16 +12,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class FourBarArm extends SubsystemBase {
     private final WPI_TalonSRX talon;
     //private final WPI_VictorSPX victor;
-    //private final CANSparkMax spark;
+    private final CANSparkMax spark;
     
     private static FourBarArm instance = null;
 
     public FourBarArm() {
         //this.victor = new WPI_VictorSPX(5);
         this.talon = new WPI_TalonSRX(5); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
-        //this.spark = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
+        this.spark = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
         talon.setNeutralMode(NeutralMode.Brake);
-
+        spark.setInverted(true);
     }
 
     // Singleton class, call getInstance to access instead of the constructor.
@@ -39,7 +39,7 @@ public class FourBarArm extends SubsystemBase {
     
     public void setSpeedSpark(double speed) {
         
-        //spark.set(speed);
+        spark.set(speed);
         
     }
     
