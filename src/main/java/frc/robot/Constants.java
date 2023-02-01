@@ -45,9 +45,14 @@ public final class Constants {
     public static final int kClawId = 6;
   }
   public static class ElevatorPIDConstants{
-    public static final double kP = 0.00045;
-    public static final double kI = 0.0015;
-    public static final double kD = 0.00002;
+    // pid values for velocity loop
+    public static final double kP = 5.8924; // for position loop: 252.69
+    public static final double kI = 0; 
+    public static final double kD = 0; // for position loop: 80.731
+
+    public static final double kS = 0.027516;
+    public static final double kV = 58.275;
+    public static final double kA = 6.2261;
   }
 
 }
