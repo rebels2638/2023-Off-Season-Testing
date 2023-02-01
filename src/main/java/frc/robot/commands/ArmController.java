@@ -4,22 +4,25 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.Arm;
+//import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.ArmPIDandFeedForward;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
 public class ArmController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Arm m_armSubsystem;
+ // private final Arm m_armSubsystem;
+  private final ArmPIDandFeedForward m_armSubsystem;
   private final XboxController e_controller; // e_controller is elevator's controller
+  private final double kRotationMultiplier = 0.1;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ArmController(Arm armSubsystem, XboxController controller) {
+  public ArmController(ArmPIDandFeedForward armSubsystem, XboxController controller) {
     e_controller = controller;
     m_armSubsystem = armSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -36,8 +39,9 @@ public class ArmController extends CommandBase {
   @Override
   public void execute() {
     double inputPercent = e_controller.getRightY();
-  
-    m_armSubsystem.setPercentOutput(inputPercent);
+    
+    double currentAngle = m_armSubsystem.getRadRotation();
+    m_armSubsystem.setAngle(currentAngle + inputPercent * kRotationMultiplier);
   }
 
   // Called once the command ends or is interrupted.

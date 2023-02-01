@@ -21,7 +21,8 @@ import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ElevatorPID;
-import frc.robot.subsystems.Arm;
+//import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.ArmPIDandFeedForward;
 import frc.robot.commands.FourBarArmController;
 import frc.robot.subsystems.FourBarArm;
 
@@ -43,7 +44,7 @@ public class RobotContainer {
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
 
-  // private final Arm arm = new Arm();
+  private final ArmPIDandFeedForward arm = new ArmPIDandFeedForward();
   private final FourBarArm fourBarArm = new FourBarArm();
 
   private final Claw claw = new Claw();
@@ -61,8 +62,8 @@ public class RobotContainer {
     this.xboxDriver = new XboxController(3);
     this.xboxOperator = new XboxController(2);
 
-    // Shuffleboard.getTab("SmartDashboard")
-    //     .add("Reset Arm", new InstantCommand(() -> this.arm.reset()));
+    Shuffleboard.getTab("SmartDashboard")
+        .add("Reset Arm", new InstantCommand(() -> this.arm.reset()));
 
     // Controler Throttle Mappings
     this.drive.setDefaultCommand(
@@ -71,12 +72,12 @@ public class RobotContainer {
     this.elevator.setDefaultCommand(
         new ElevatorController(elevator, xboxOperator)); // added, works
 
-    // this.arm.setDefaultCommand(
-    //     new ArmController(arm, xboxOperator));
+    this.arm.setDefaultCommand(
+        new ArmController(arm, xboxOperator));
 
-    this.fourBarArm.setDefaultCommand(
-    new FourBarArmController(fourBarArm, xboxOperator)
-    );
+    // this.fourBarArm.setDefaultCommand(
+    // new FourBarArmController(fourBarArm, xboxOperator)
+    // );
 
     this.xboxOperator.getAButton().onTrue(
         new InstantCommand(() -> this.claw.toggle()));
