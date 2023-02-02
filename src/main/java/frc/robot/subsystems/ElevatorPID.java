@@ -2,11 +2,13 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
-// import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.wpilibj.Timer;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -14,16 +16,16 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 /** Elevator subsystem with feed-forward and PID for position */
 public class ElevatorPID extends SubsystemBase {
-    public static final double kMaxSpeed =2.0; // meters per second
-    public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second
+    public static final double kMaxSpeed = 1.0; // meters per second
+    public static final double kMaxAcceleration = 3.0; // meters per second squared
 
     private static final double kWheelRadius = 0.03; // meters
     private static final int kEncoderResolution = 2048;
     private static final int kGearingRatio = 100;
         
-    public static final double kP = 1.8924; // for position loop: 252.69
+    public static final double kP = 252.69; // for velocity loop: 1.8924
     public static final double kI = 0; 
-    public static final double kD = 0; // for position loop: 80.731
+    public static final double kD = 80.731; // for velocity loop: 0
 
     public static final double kS = 0.027516;
     public static final double kV = 58.275;
@@ -36,26 +38,33 @@ public class ElevatorPID extends SubsystemBase {
 
     private final WPI_TalonFX m_motor = new WPI_TalonFX(6);
 
-    public final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAngularSpeed));
-    private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(kS, kV);
+    private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
+    private final PIDController m_velocityController = new PIDController(1.8924, 0, 0);
+    private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(kS, kV, kA);
 
-    private TrapezoidProfile.State m_setpoint;
-    private double feedforward;
-    private double pid;
-    private TrapezoidProfile.State goal;
-    private double velocitySetpoint;
-        
-    // reset elevator (make sure to just like. push it to the bottom thx)
+    private boolean m_velocityControlEnabled = true;
+
+    private TrapezoidProfile.State m_goal;
+    private double m_velocitySetpoint = 0;
+
+    private double m_lastVelocitySetpoint = 0;
+    private double m_lastTime = Timer.getFPGATimestamp();
+
     public ElevatorPID() {
-        m_motor.setInverted(true);
+        m_motor.setInverted(true); // invert motor output
+        m_motor.setSensorPhase(true); // invert encoder
+
+        // reset elevator
         m_motor.set(ControlMode.PercentOutput, 0);
-        setSetpoint(0);
+        setGoal(new TrapezoidProfile.State(0, 0));
+        m_velocityControlEnabled = true;
+        m_velocitySetpoint = 0;
+
         m_motor.getSensorCollection().setIntegratedSensorPosition(0, 30); // reset encoders
-    //  encoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative); (i dont think this does anything????)
     }
 
     /*
-    * Convert from TalonFX elevator position to native units
+    * Convert from TalonFX elevator position in meters to native units and vice versa
     */
     public double heightToNative(double heightUnits) {
         return heightUnits * kRotationsPerMeter * kNativeUnitsPerRotation;
@@ -66,28 +75,40 @@ public class ElevatorPID extends SubsystemBase {
         return encoderUnits * kRotationsPerNativeUnit * kMetersPerRotation;
     }
 
-    // set setpoint
-    public void setSetpoint(double setpoint) // setpoint in meters
-    {
-        //m_setpoint = new TrapezoidProfile.State(setpoint, 0);
-        velocitySetpoint = setpoint;
+    public void setGoal(TrapezoidProfile.State goalState) {
+        m_goal = goalState;
+    }
+
+    public boolean atGoal() {
+        return m_controller.atGoal();
+    }
+
+    public void setVelocitySetpoint(double velocitySetpoint) {
+        m_velocitySetpoint = velocitySetpoint;
+    }
+
+    public void setToVelocityControlMode(boolean on) {
+        m_velocityControlEnabled = on;
+    }
+
+    public double getCurrentHeight() {
+        return nativeToHeight(m_motor.getSensorCollection().getIntegratedSensorPosition());
     }
 
     /*
     * Compute voltages using feedforward and pid
     */
     @Override
-    public void periodic() {           
-        //m_controller.setGoal(m_setpoint); 
-        //goal = m_controller.getSetpoint();
-        feedforward = m_feedforward.calculate(velocitySetpoint); //goal.velocity
+    public void periodic() {
+        double velocitySetpoint = m_velocityControlEnabled ? m_velocitySetpoint : m_controller.getSetpoint().velocity;
+        double accelerationSetpoint = m_velocityControlEnabled ? 0.0 : (velocitySetpoint - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
 
-        double currentVelocity = nativeToHeight(m_motor.getSensorCollection().getIntegratedSensorVelocity());
-
-        // System.out.println("voltage: " + (feedforward + pid) + "    encoder: " + m_motor.getSensorCollection().getIntegratedSensorVelocity());
-        pid = m_controller.calculate(currentVelocity, velocitySetpoint);
-        // System.out.println(feedforward + pid);
+        double feedforward = m_feedforward.calculate(velocitySetpoint, accelerationSetpoint);
+        double pid = m_velocityControlEnabled ? m_velocityController.calculate(velocitySetpoint) : m_controller.calculate(getCurrentHeight());
 
         m_motor.setVoltage(feedforward + pid);
+
+        m_lastVelocitySetpoint = velocitySetpoint;
+        m_lastTime = Timer.getFPGATimestamp();
     }
 }
