@@ -14,7 +14,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 /** Elevator subsystem with feed-forward and PID for position */
 public class ElevatorPID extends SubsystemBase {
-    public static final double kMaxSpeed =2.0; // meters per second
+    public static final double kMaxSpeed = 2.0; // meters per second
     public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second
 
     private static final double kWheelRadius = 0.03; // meters
