@@ -15,7 +15,7 @@ public class ArmController extends CommandBase {
  // private final Arm m_armSubsystem;
   private final ArmPIDandFeedForward m_armSubsystem;
   private final XboxController e_controller; // e_controller is elevator's controller
-  private final double kRotationMultiplier = 0.1;
+  private final double kRotationMultiplier = 1.0;
 
   /**
    * Creates a new ExampleCommand.

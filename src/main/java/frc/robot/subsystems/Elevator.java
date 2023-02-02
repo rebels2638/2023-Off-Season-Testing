@@ -58,4 +58,13 @@ public class Elevator extends SubsystemBase {
 
         talon.set(ControlMode.PercentOutput, percent); // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed???? where speed is in range -1,1 and the xbox controller left joy stick is also -1,1???
     }
+
+    public void resetEncoder() {
+        talon.getSensorCollection().setIntegratedSensorPosition(0, 30);
+    }
+
+    // public boolean getLimitSwitch() {return limswitch.get();}
+
+    public double getEncoderValue() {return talon.getSensorCollection().getIntegratedSensorPosition();}
+
 }

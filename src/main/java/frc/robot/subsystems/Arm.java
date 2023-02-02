@@ -75,7 +75,9 @@ public class Arm extends SubsystemBase {
         // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed, where both the speed and the left joy stick is in range -1,1
     }
 
-    public void reset(){
+    public void resetEncoder(){
         talon.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
+
+    public double getEncoderValue() {return talon.getSensorCollection().getIntegratedSensorPosition();}
 }

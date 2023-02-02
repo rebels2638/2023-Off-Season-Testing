@@ -23,6 +23,7 @@ public class ArmPIDandFeedForward extends SubsystemBase {
     private static double kUpperLimit = 69000.0;
     private static double kLowerLimit = -86000.0;
     
+    private static double kAngleIncrement;
     
     private static ArmFeedforward m_feedforward;
 
@@ -49,11 +50,12 @@ public class ArmPIDandFeedForward extends SubsystemBase {
         talon.configAllSettings(falconConfig);
         talon.setNeutralMode(NeutralMode.Coast);
         
-        // kS and kG should have units of volts, kV should have units of volts * seconds / radians, and kA should have units of volts * seconds^2 / radians.
+        // kS and kG should have units of volts, kVk should have units of volts * seconds / radians, and kA should have units of volts * seconds^2 / radians.
         // Units must be consistent! TODO: get feedfowrward gains tuned
       
         m_feedforward = new ArmFeedforward(kS, kG, kV, kA);
         
+        kAngleIncrement = (4096/360);
         
     }
 
