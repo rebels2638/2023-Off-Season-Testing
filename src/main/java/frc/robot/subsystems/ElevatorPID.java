@@ -23,11 +23,11 @@ public class ElevatorPID extends SubsystemBase {
     private static final int kEncoderResolution = 2048;
     private static final int kGearingRatio = 100;
         
-    public static final double kP = 100; // for velocity loop: 1.8924
+    public static final double kP = 1.2832; // 1.2832 as of 020323
     public static final double kI = 0; 
-    public static final double kD = 0; // for velocity loop: 0
+    public static final double kD = 0; // 
 
-    public static final double kS = 0.059082;
+    public static final double kS = 0.059082; // 0.059082
     public static final double kV = 58.393;
     public static final double kA = 1.7428;
     public static final double kG = 0.029112;

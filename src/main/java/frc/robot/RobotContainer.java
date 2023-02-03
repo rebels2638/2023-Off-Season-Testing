@@ -44,8 +44,8 @@ public class RobotContainer {
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
 
-  // private final Arm arm = new Arm();
-  private final FourBarArm fourBarArm = new FourBarArm();
+  private final Arm arm = new Arm();
+  // private final FourBarArm fourBarArm = new FourBarArm();
 
   private final Claw claw = new Claw();
   private final ElevatorPID elevatorPID = new ElevatorPID();
@@ -72,8 +72,8 @@ public class RobotContainer {
     // this.elevator.setDefaultCommand(
     // new ElevatorController(elevator, xboxOperator)); // added, works
 
-    // this.arm.setDefaultCommand(
-    // new ArmController(arm, xboxOperator));
+    this.arm.setDefaultCommand(
+    new ArmController(arm, xboxOperator));
 
     // this.fourBarArm.setDefaultCommand(
     // new FourBarArmController(fourBarArm, xboxOperator));
