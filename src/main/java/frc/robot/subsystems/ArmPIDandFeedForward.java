@@ -20,10 +20,11 @@ public class ArmPIDandFeedForward extends SubsystemBase {
     private static final double kV = 0.0;
     private static final double kA = 0.0;
 
-    private static double kUpperLimit = 69000.0;
+    private static double kDegUpperLimit = 30.0;
+    private static double kDegLowerLimit = -25.0;
     
     private static final double kAngleIncrement;
-    private static double kLowerLimit = -86000.0;
+    
     
     private static double kAngleIncrement;
     
@@ -73,10 +74,12 @@ public class ArmPIDandFeedForward extends SubsystemBase {
         return instance;
     }
 
-    public void setAngle(double pos) {
+    public void setAngle(double precent) {
 
         double currentEncoder = talon.getSensorCollection().getIntegratedSensorPosition();
         System.out.println(currentEncoder);
+        
+        double pos = 
 
         System.out.println("Goal angle:" + pos);
         
@@ -100,9 +103,12 @@ public class ArmPIDandFeedForward extends SubsystemBase {
         talon.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
 
-    public double getRadRotation(){
-        return (kStartAngle + talon.getSelectedSensorPosition() * kAngleIncrement) * (Math.PI / 180);
+    public double convertRadToDeg(double rad){
+        return rad * (180 / Math.PI);
     }
+    
+    public doule convertDegToRad(double deg){
+        return deg * (Math.PI / 180);
 
     
     public double NativeTo
