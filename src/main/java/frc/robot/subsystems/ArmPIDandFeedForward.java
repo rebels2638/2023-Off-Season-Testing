@@ -15,23 +15,22 @@ public class ArmPIDandFeedForward extends SubsystemBase {
     private static Arm instance = null;
   
   
-    private static final double kS = 1.0;
+    private static final double kS = 0.057774;
     private static final double kG = 0.0;
-    private static final double kV = 0.0;
-    private static final double kA = 0.0;
+    private static final double kV = 16.376;
+    private static final double kA = 0.41226;
 
-    private static double kUpperLimit = 69000.0;
-    
-    private static final double kAngleIncrement;
-    private static double kLowerLimit = -86000.0;
+    private static double kDegUpperLimit = 30.0;
+    private static double kDegLowerLimit = -25.0;
     
     private static double kAngleIncrement;
+
+    private static final double kEncoderResolution = 2048;
     
     private static ArmFeedforward m_feedforward;
 
     private static final double kStartAngle = -23.0;
 
-    private static double kAngle = kStartAngle;
 
     public ArmPIDandFeedForward() {
         this.talon = new WPI_TalonFX(5); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
@@ -57,11 +56,8 @@ public class ArmPIDandFeedForward extends SubsystemBase {
       
         m_feedforward = new ArmFeedforward(kS, kG, kV, kA);
         
-        kAngleIncrement = (360 / kEncoderResolution) / 400;
+        kAngleIncrement = (360 / kEncoderResolution) / 36;
         
-        kAngleIncrement = (360 / kEncoderResolution) / 400;
-        
-        kAngleIncrement = (4096/360);
         
     }
 
@@ -73,20 +69,22 @@ public class ArmPIDandFeedForward extends SubsystemBase {
         return instance;
     }
 
-    public void setAngle(double pos) {
+    public void setAngle(double precent) {
 
         double currentEncoder = talon.getSensorCollection().getIntegratedSensorPosition();
         System.out.println(currentEncoder);
+        
+        double pos = convertDegToRad(kStartAngle + (currentEncoder * kAngleIncrement));
 
         System.out.println("Goal angle:" + pos);
         
         // second arg is in rad/sec
         double feedOut = m_feedforward.calculate(pos, 0);
 
-        if (currentEncoder >= kUpperLimit && feedOut > 0.0) {
+        if (pos >= kDegUpperLimit && feedOut > 0.0) {
             feedOut = 0.0;
         }
-        else if (currentEncoder <= kLowerLimit && feedOut < 0.0) {
+        else if (pos <= kDegLowerLimit && feedOut < 0.0) {
             feedOut = 0;
         }
 
@@ -100,12 +98,12 @@ public class ArmPIDandFeedForward extends SubsystemBase {
         talon.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
 
-    public double getRadRotation(){
-        return (kStartAngle + talon.getSelectedSensorPosition() * kAngleIncrement) * (Math.PI / 180);
+    public double convertRadToDeg(double rad){
+        return rad * (180 / Math.PI);
+    }
+    
+    public double convertDegToRad(double deg){
+        return deg * (Math.PI / 180);
     }
 
-    
-    public double NativeTo
-
 }
-
