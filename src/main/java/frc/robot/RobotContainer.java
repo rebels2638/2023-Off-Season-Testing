@@ -45,7 +45,7 @@ public class RobotContainer {
   private final XboxController xboxOperator;
 
   private final ArmPIDandFeedForward arm = new ArmPIDandFeedForward();
-  private final FourBarArm fourBarArm = new FourBarArm();
+  //private final FourBarArm fourBarArm = new FourBarArm();
 
   private final Claw claw = new Claw();
   // private final ElevatorPID elevatorPID = new ElevatorPID();

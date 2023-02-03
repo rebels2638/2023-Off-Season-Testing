@@ -22,20 +22,12 @@ public class ArmPIDandFeedForward extends SubsystemBase {
 
     private static double kDegUpperLimit = 30.0;
     private static double kDegLowerLimit = -25.0;
-    private static final double kV = 0.0;
-    private static final double kA = 0.0;
-
-    private static double kDegUpperLimit = 30.0;
-    private static double kDegLowerLimit = -25.0;
-    
-    private static final double kAngleIncrement = 2048;
-    
     
     private static double kAngleIncrement;
 
     private static final double kEncoderResolution = 2048;
     
-    private static ArmFeedforward m_feedforward;
+    private static ArmFeedforward m_feedforward = new ArmFeedforward(kS, kG, kV, kA);
 
     private static final double kStartAngle = -23.0;
 
@@ -82,24 +74,31 @@ public class ArmPIDandFeedForward extends SubsystemBase {
         double currentEncoder = talon.getSensorCollection().getIntegratedSensorPosition();
         System.out.println(currentEncoder);
         
-        double pos = convertDegToRad(kStartAngle + (currentEncoder * kAngleIncrement))
+        double pos = convertDegToRad(kStartAngle + (currentEncoder * kAngleIncrement));
 
-        System.out.println("Goal angle:" + pos);
+        double goalAngle = pos + convertDegToRad(precent);
+        System.out.println("Goal angle:" + goalAngle);
+        System.out.println("Precent: " + precent);
+        System.out.println("Pos: " + pos);
         
         // second arg is in rad/sec
-        double feedOut = m_feedforward.calculate(pos, 0);
+        double feedOut = m_feedforward.calculate(goalAngle, 0);
 
-        if (pos >= kDegUpperLimit && feedOut > 0.0) {
-            feedOut = 0.0;
-        }
-        else if (pos <= kDegLowerLimit && feedOut < 0.0) {
-            feedOut = 0;
-        }
+        // if (pos >= kDegUpperLimit && feedOut > 0.0) {
+        //     feedOut = 0.0;
+
+        //     System.out.println("STOP!!!");
+        // }
+        // else if (pos <= kDegLowerLimit && feedOut < 0.0) {
+        //     feedOut = 0;
+
+        //     System.out.println("STOP!!!");
+        // }
 
 
         System.out.println("feedout: " + feedOut);
 
-        talon.setVoltage(feedOut);
+        // talon.setVoltage(feedOut);
     }
     
     public void reset(){
@@ -110,5 +109,8 @@ public class ArmPIDandFeedForward extends SubsystemBase {
         return rad * (180 / Math.PI);
     }
     
+    public double convertDegToRad(double deg){
+        return deg * (Math.PI / 180);
+    }
 
 }
