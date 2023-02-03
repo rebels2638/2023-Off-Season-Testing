@@ -95,6 +95,10 @@ public class ElevatorPID extends SubsystemBase {
         return nativeToHeight(m_motor.getSensorCollection().getIntegratedSensorPosition());
     }
 
+    public double getCurrentVelocity() {
+        return nativeToHeight(m_motor.getSensorCollection().getIntegratedSensorVelocity());
+    }
+
     /*
     * Compute voltages using feedforward and pid
     */
@@ -104,7 +108,7 @@ public class ElevatorPID extends SubsystemBase {
         double accelerationSetpoint = m_velocityControlEnabled ? 0.0 : (velocitySetpoint - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
 
         double feedforward = m_feedforward.calculate(velocitySetpoint, accelerationSetpoint);
-        double pid = m_velocityControlEnabled ? m_velocityController.calculate(velocitySetpoint) : m_controller.calculate(getCurrentHeight());
+        double pid = m_velocityControlEnabled ? m_velocityController.calculate(getCurrentVelocity(), velocitySetpoint) : m_controller.calculate(getCurrentHeight());
 
         m_motor.setVoltage(feedforward + pid);
 
