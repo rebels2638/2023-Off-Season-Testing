@@ -98,4 +98,8 @@ public class ArmPIDandFeedForward extends SubsystemBase {
         return (kStartAngle + talon.getSelectedSensorPosition()) * (Math.PI / 180);
     }
 
+    
+    public double NativeTo
+
 }
+
