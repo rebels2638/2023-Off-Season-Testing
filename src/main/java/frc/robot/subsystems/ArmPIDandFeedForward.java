@@ -107,8 +107,5 @@ public class ArmPIDandFeedForward extends SubsystemBase {
     public doule convertDegToRad(double deg){
         return deg * (Math.PI / 180);
 
-    
-    public double NativeTo
-
 }
 
