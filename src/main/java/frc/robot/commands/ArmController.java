@@ -40,8 +40,7 @@ public class ArmController extends CommandBase {
   public void execute() {
     double inputPercent = e_controller.getRightY();
     
-    double currentAngle = m_armSubsystem.getRadRotation();
-    m_armSubsystem.setAngle(currentAngle + inputPercent * kRotationMultiplier);
+    m_armSubsystem.setAngle(inputPercent);
   }
 
   // Called once the command ends or is interrupted.
