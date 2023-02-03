@@ -16,20 +16,21 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 /** Elevator subsystem with feed-forward and PID for position */
 public class ElevatorPID extends SubsystemBase {
-    public static final double kMaxSpeed = 1.0; // meters per second
-    public static final double kMaxAcceleration = 3.0; // meters per second squared
+    public static final double kMaxSpeed = 0.2; // meters per second
+    public static final double kMaxAcceleration = 0.1; // meters per second squared
 
     private static final double kWheelRadius = 0.03; // meters
     private static final int kEncoderResolution = 2048;
     private static final int kGearingRatio = 100;
         
-    public static final double kP = 252.69; // for velocity loop: 1.8924
+    public static final double kP = 100; // for velocity loop: 1.8924
     public static final double kI = 0; 
-    public static final double kD = 80.731; // for velocity loop: 0
+    public static final double kD = 0; // for velocity loop: 0
 
-    public static final double kS = 0.027516;
-    public static final double kV = 58.275;
-    public static final double kA = 6.2261;
+    public static final double kS = 0.059082;
+    public static final double kV = 58.393;
+    public static final double kA = 1.7428;
+    public static final double kG = 0.029112;
 
     private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
     private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
@@ -39,12 +40,11 @@ public class ElevatorPID extends SubsystemBase {
     private final WPI_TalonFX m_motor = new WPI_TalonFX(6);
 
     private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
-    private final PIDController m_velocityController = new PIDController(1.8924, 0, 0);
-    private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(kS, kV, kA);
+    private final PIDController m_velocityController = new PIDController(5, 0, 0);
+    private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
 
     private boolean m_velocityControlEnabled = true;
 
-    private TrapezoidProfile.State m_goal;
     private double m_velocitySetpoint = 0;
 
     private double m_lastVelocitySetpoint = 0;
@@ -52,7 +52,6 @@ public class ElevatorPID extends SubsystemBase {
 
     public ElevatorPID() {
         m_motor.setInverted(true); // invert motor output
-        m_motor.setSensorPhase(true); // invert encoder
 
         // reset elevator
         m_motor.set(ControlMode.PercentOutput, 0);
@@ -76,7 +75,7 @@ public class ElevatorPID extends SubsystemBase {
     }
 
     public void setGoal(TrapezoidProfile.State goalState) {
-        m_goal = goalState;
+        m_controller.setGoal(goalState);
     }
 
     public boolean atGoal() {
@@ -92,11 +91,15 @@ public class ElevatorPID extends SubsystemBase {
     }
 
     public double getCurrentHeight() {
-        return nativeToHeight(m_motor.getSensorCollection().getIntegratedSensorPosition());
+        return -nativeToHeight(m_motor.getSensorCollection().getIntegratedSensorPosition());
     }
 
     public double getCurrentVelocity() {
-        return nativeToHeight(m_motor.getSensorCollection().getIntegratedSensorVelocity());
+        return nativeToHeight(m_motor.getSensorCollection().getIntegratedSensorVelocity() * 10); // motor velocity is in ticks per 100ms
+    }
+
+    public void zeroEncoder() {
+        m_motor.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
 
     /*
@@ -110,6 +113,7 @@ public class ElevatorPID extends SubsystemBase {
         double feedforward = m_feedforward.calculate(velocitySetpoint, accelerationSetpoint);
         double pid = m_velocityControlEnabled ? m_velocityController.calculate(getCurrentVelocity(), velocitySetpoint) : m_controller.calculate(getCurrentHeight());
 
+        System.out.println(getCurrentHeight());
         m_motor.setVoltage(feedforward + pid);
 
         m_lastVelocitySetpoint = velocitySetpoint;

@@ -10,7 +10,7 @@ public class ElevatorUp extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorPID m_elevatorSubsystem;
 
-  private final double kHeightUpPosition = 1.0; // meters
+  private final double kHeightUpPosition = 0.381; // meters
   private final TrapezoidProfile.State kGoalState = new TrapezoidProfile.State(kHeightUpPosition, 0.0);
 
   public ElevatorUp(ElevatorPID subsystem) {
@@ -23,8 +23,8 @@ public class ElevatorUp extends CommandBase {
   @Override
   public void initialize() {
     // follow position control to goal state
-    m_elevatorSubsystem.setGoal(kGoalState);
     m_elevatorSubsystem.setToVelocityControlMode(false);
+    m_elevatorSubsystem.setGoal(kGoalState);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
