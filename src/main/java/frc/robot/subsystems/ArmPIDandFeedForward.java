@@ -21,6 +21,8 @@ public class ArmPIDandFeedForward extends SubsystemBase {
     private static final double kA = 0.0;
 
     private static double kUpperLimit = 69000.0;
+    
+    private static final double kAngleIncrement;
     private static double kLowerLimit = -86000.0;
     
     private static double kAngleIncrement;
@@ -54,6 +56,10 @@ public class ArmPIDandFeedForward extends SubsystemBase {
         // Units must be consistent! TODO: get feedfowrward gains tuned
       
         m_feedforward = new ArmFeedforward(kS, kG, kV, kA);
+        
+        kAngleIncrement = (360 / kEncoderResolution) / 400;
+        
+        kAngleIncrement = (360 / kEncoderResolution) / 400;
         
         kAngleIncrement = (4096/360);
         
@@ -95,7 +101,7 @@ public class ArmPIDandFeedForward extends SubsystemBase {
     }
 
     public double getRadRotation(){
-        return (kStartAngle + talon.getSelectedSensorPosition()) * (Math.PI / 180);
+        return (kStartAngle + talon.getSelectedSensorPosition() * kAngleIncrement) * (Math.PI / 180);
     }
 
     
