@@ -49,12 +49,10 @@ public class ArmPID extends SubsystemBase {
     private double m_lastVelocitySetpoint = 0;
     private double m_lastTime = Timer.getFPGATimestamp();
   
-    private final gearingRatio = 36;
-    private final radius = 0; // measure radius of the big gear, basically
+    private final double gearingRatio = 36.0;
+    private final double radius = 0.0; // measure radius of the big gear
 
     public ArmPID() {
-        m_motor.setInverted(true); // invert motor output
-
         // reset elevator
         m_motor.set(ControlMode.PercentOutput, 0);
         setGoal(new TrapezoidProfile.State(0, 0));
