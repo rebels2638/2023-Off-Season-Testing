@@ -23,7 +23,7 @@ public class ArmPIDandFeedForward extends SubsystemBase {
     private static double kDegUpperLimit = 30.0;
     private static double kDegLowerLimit = -25.0;
     
-    private static final double kAngleIncrement;
+    private static final double kAngleIncrement = 2048;
     
     
     private static double kAngleIncrement;
@@ -58,11 +58,8 @@ public class ArmPIDandFeedForward extends SubsystemBase {
       
         m_feedforward = new ArmFeedforward(kS, kG, kV, kA);
         
-        kAngleIncrement = (360 / kEncoderResolution) / 400;
+        kAngleIncrement = (360 / kEncoderResolution) / 36;
         
-        kAngleIncrement = (360 / kEncoderResolution) / 400;
-        
-        kAngleIncrement = (4096/360);
         
     }
 
@@ -79,7 +76,7 @@ public class ArmPIDandFeedForward extends SubsystemBase {
         double currentEncoder = talon.getSensorCollection().getIntegratedSensorPosition();
         System.out.println(currentEncoder);
         
-        double pos = 
+        double pos = convertDegToRad(kStartAngle + (currentEncoder * kAngleIncrement))
 
         System.out.println("Goal angle:" + pos);
         
