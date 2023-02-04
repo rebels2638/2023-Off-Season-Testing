@@ -51,8 +51,8 @@ public class Arm extends SubsystemBase {
     public void setPercentOutput(double percent) {
         
         double currentEncoder = talon.getSensorCollection().getIntegratedSensorPosition();
-        System.out.println(currentEncoder);
-        System.out.println("Precent: " + percent);
+        // System.out.println(currentEncoder);
+        // System.out.println("Precent: " + percent);
         
         // if(Math.abs(percent) < 0.08) {
         //     percent = 0;

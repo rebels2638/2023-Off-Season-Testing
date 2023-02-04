@@ -16,6 +16,10 @@ import frc.robot.commands.ClawController;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ElevatorController;
 
+import frc.robot.commands.ArmUp;
+import frc.robot.subsystems.ArmPID;
+import frc.robot.commands.ArmPIDController;
+
 import frc.robot.commands.ElevatorPIDController;
 import frc.robot.commands.ElevatorUp;
 import frc.robot.subsystems.Claw;
@@ -44,8 +48,9 @@ public class RobotContainer {
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
 
-  private final Arm arm = new Arm();
+  // private final Arm arm = new Arm();
   // private final FourBarArm fourBarArm = new FourBarArm();
+  private final ArmPID armPID = new ArmPID();
 
   private final Claw claw = new Claw();
   private final ElevatorPID elevatorPID = new ElevatorPID();
@@ -72,8 +77,7 @@ public class RobotContainer {
     // this.elevator.setDefaultCommand(
     // new ElevatorController(elevator, xboxOperator)); // added, works
 
-    this.arm.setDefaultCommand(
-    new ArmController(arm, xboxOperator));
+    // this.arm.setDefaultCommand(new ArmController(arm, xboxOperator));
 
     // this.fourBarArm.setDefaultCommand(
     // new FourBarArmController(fourBarArm, xboxOperator));
@@ -84,10 +88,16 @@ public class RobotContainer {
     this.xboxOperator.getBButton().onTrue(
         new ElevatorUp(elevatorPID));
 
+    this.xboxOperator.getYButton().onTrue(
+          new ArmUp(armPID));
+
     // testc.b().onTrue(new InstantCommand(() -> this.claw.toggle()));
 
     this.elevatorPID.setDefaultCommand(
         new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
+    
+    // this.armPID.setDefaultCommand(
+      // new ArmPIDController(armPID, xboxOperator));
 
     // this.claw.setDefaultCommand(
     // new ClawController(claw, xboxOperator)
