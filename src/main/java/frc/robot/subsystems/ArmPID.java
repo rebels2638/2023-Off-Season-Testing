@@ -15,7 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 public class ArmPID extends SubsystemBase {
-    public static final double kMaxSpeed = 0.05; // meters per second
+    public static final double kMaxSpeed = 0.2; // meters per second
     public static final double kMaxAcceleration = 0.1; // meters per second squared
 
     private static final double kWheelRadius = 0.03; // meters
@@ -109,12 +109,12 @@ public class ArmPID extends SubsystemBase {
     @Override
     public void periodic() {
         double velocitySetpoint = m_velocityControlEnabled ? m_velocitySetpoint : m_controller.getSetpoint().velocity;
-        // double accelerationSetpoint = m_velocityControlEnabled ? 0.0 : (velocitySetpoint - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
+        double accelerationSetpoint = m_velocityControlEnabled ? 0.0 : (velocitySetpoint - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
 
-        double feedforward = m_feedforward.calculate(m_controller.getSetpoint().position, velocitySetpoint);
+        double feedforward = m_feedforward.calculate(velocitySetpoint, accelerationSetpoint);
         double pid = m_velocityControlEnabled ? m_velocityController.calculate(getCurrentVelocity(), velocitySetpoint) : m_controller.calculate(getCurrentHeight());
 
-        System.out.println("x " + (getCurrentHeight()) + " zzz " + m_controller.getGoal().position);
+        System.out.println("x " + (velocitySetpoint) + " zzz" + feedforward);
         m_motor.setVoltage(feedforward);
 
         m_lastVelocitySetpoint = velocitySetpoint;
