@@ -14,6 +14,7 @@ import frc.lib.input.XboxController;
 import frc.robot.commands.ArmController;
 import frc.robot.commands.ClawController;
 import frc.robot.commands.Drive;
+import frc.robot.commands.ElevatorCancel;
 import frc.robot.commands.ElevatorController;
 import frc.robot.commands.ElevatorDown;
 import frc.robot.commands.ElevatorPIDController;
@@ -86,7 +87,8 @@ public class RobotContainer {
     this.xboxOperator.getXButton().onTrue(
       new ElevatorDown(elevatorPID));
     // testc.b().onTrue(new InstantCommand(() -> this.claw.toggle()));
-
+    this.xboxOperator.getRightBumper().onTrue(
+      new ElevatorCancel(elevatorPID));
     this.elevatorPID.setDefaultCommand(
         new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
 

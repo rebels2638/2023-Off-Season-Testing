@@ -43,7 +43,7 @@ public class ElevatorPID extends SubsystemBase {
     private final PIDController m_velocityController = new PIDController(10, 0, 0);
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
 
-    private boolean m_velocityControlEnabled = true;
+    public boolean m_velocityControlEnabled = true;
 
     private double m_velocitySetpoint = 0;
 
