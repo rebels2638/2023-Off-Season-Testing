@@ -16,7 +16,7 @@ public class ArmPIDandFeedForward extends SubsystemBase {
   
   
     private static final double kS = 0.057774;
-    private static final double kG = 0.0;
+    private static final double kG = 0.01;
     private static final double kV = 16.376;
     private static final double kA = 0.41226;
 
@@ -98,7 +98,7 @@ public class ArmPIDandFeedForward extends SubsystemBase {
 
         System.out.println("feedout: " + feedOut);
 
-        // talon.setVoltage(feedOut);
+        //talon.setVoltage(feedOut);
     }
     
     public void reset(){
