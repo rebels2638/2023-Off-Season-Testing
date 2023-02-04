@@ -76,9 +76,6 @@ public class ArmPIDandFeedForward extends SubsystemBase {
     public void setAngle(double pos) {
 
         double currentEncoder = talon.getSensorCollection().getIntegratedSensorPosition();
-        System.out.println(currentEncoder);
-
-        System.out.println("Goal angle:" + pos);
         
         // second arg is in rad/sec
         double feedOut = m_feedforward.calculate(pos, 0);
@@ -90,8 +87,6 @@ public class ArmPIDandFeedForward extends SubsystemBase {
             feedOut = 0;
         }
 
-
-        System.out.println("feedout: " + feedOut);
 
         talon.setVoltage(feedOut);
     }

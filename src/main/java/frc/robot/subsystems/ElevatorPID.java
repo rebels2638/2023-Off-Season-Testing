@@ -23,16 +23,16 @@ public class ElevatorPID extends SubsystemBase {
     private static final int kEncoderResolution = 2048;
     private static final int kGearingRatio = 100;
         
-    public static final double kP = 1.2832; // 1.2832 as of 020323
+    public static final double kP = 342; // 1.2832 as of 020323
     public static final double kI = 0; 
-    public static final double kD = 0; // 
+    public static final double kD = 32; // 
 
-    public static final double kS = 0.059082; // 0.059082
-    public static final double kV = 58.393;
-    public static final double kA = 1.7428;
-    public static final double kG = 0.029112;
+    public static final double kS = 0.048191; // 0.059082
+    public static final double kV = 58.715;
+    public static final double kA = 1.5688;
+    public static final double kG = 0.029984;
 
-    private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
+    private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio * 1.32;
     private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
     private static final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
     private static final double kRotationsPerMeter = 1 / kMetersPerRotation;
@@ -40,7 +40,7 @@ public class ElevatorPID extends SubsystemBase {
     private final WPI_TalonFX m_motor = new WPI_TalonFX(6);
 
     private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
-    private final PIDController m_velocityController = new PIDController(5, 0, 0);
+    private final PIDController m_velocityController = new PIDController(10, 0, 0);
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
 
     private boolean m_velocityControlEnabled = true;
@@ -58,6 +58,7 @@ public class ElevatorPID extends SubsystemBase {
         setGoal(new TrapezoidProfile.State(0, 0));
         m_velocityControlEnabled = true;
         m_velocitySetpoint = 0;
+        m_controller.setTolerance(0.01, 0.05);
 
         m_motor.getSensorCollection().setIntegratedSensorPosition(0, 30); // reset encoders
     }
@@ -111,12 +112,17 @@ public class ElevatorPID extends SubsystemBase {
         double accelerationSetpoint = m_velocityControlEnabled ? 0.0 : (velocitySetpoint - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
 
         double feedforward = m_feedforward.calculate(velocitySetpoint, accelerationSetpoint);
-        double pid = m_velocityControlEnabled ? m_velocityController.calculate(getCurrentVelocity(), velocitySetpoint) : m_controller.calculate(getCurrentHeight());
+        double positionPID = m_controller.calculate(getCurrentHeight());
+        double velocityPID = m_velocityController.calculate(getCurrentVelocity(), velocitySetpoint);
+        double pid = m_velocityControlEnabled ? velocityPID : positionPID;
 
-        System.out.println(getCurrentHeight());
         m_motor.setVoltage(feedforward + pid);
 
         m_lastVelocitySetpoint = velocitySetpoint;
         m_lastTime = Timer.getFPGATimestamp();
+    }
+
+    public void breakMotor() {
+        m_motor.stopMotor();
     }
 }

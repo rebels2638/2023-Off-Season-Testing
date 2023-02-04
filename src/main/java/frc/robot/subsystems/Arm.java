@@ -51,8 +51,6 @@ public class Arm extends SubsystemBase {
     public void setPercentOutput(double percent) {
         
         double currentEncoder = talon.getSensorCollection().getIntegratedSensorPosition();
-        System.out.println(currentEncoder);
-        System.out.println("Precent: " + percent);
         
         // if(Math.abs(percent) < 0.08) {
         //     percent = 0;
@@ -62,7 +60,6 @@ public class Arm extends SubsystemBase {
         // if(percent == 0) {
         //     //talon.enableBrakeMode(true);    
         // }
-        // // System.out.println(percent);
 
         if (currentEncoder >= kUpperLimit && percent > 0.0) {
             percent = 0.0;

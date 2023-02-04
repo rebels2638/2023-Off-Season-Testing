@@ -36,15 +36,14 @@ public class FourBarArmController extends CommandBase {
   @Override
   public void execute() {
 
-    double victorInputPercent = controller.getLeftY(); // not sure which joystick yet
-    double sparkInputPercent = controller.getRightY()*0.5; // not sure which joystick
+    double talonInputpercent = controller.getLeftY(); // not sure which joystick yet
+    double inputPercent775 = controller.getRightY()*0.5; // not sure which joystick
     
 
-    m_armSubsystem.setPercentOutputVictor(victorInputPercent); 
-    m_armSubsystem.setSpeedSpark(sparkInputPercent); // takes percent. trust
+    m_armSubsystem.setPercentOutputTalon(talonInputpercent); 
+    m_armSubsystem.setPercentOutput775(inputPercent775); // takes percent. trust
     
     /*
-    System.out.println(bottomlimitSwitch.get());
     if (inputPercent > 0) {
         if (toplimitSwitch.get()) {
             // We are going up and top limit is tripped so stop
