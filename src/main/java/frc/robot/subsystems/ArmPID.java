@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -22,14 +22,14 @@ public class ArmPID extends SubsystemBase {
     private static final int kEncoderResolution = 2048;
     private static final int kGearingRatio = 100;
         
-    public static final double kP = 100; // for velocity loop: 1.8924
+    public static final double kP = 8.6473;
     public static final double kI = 0; 
-    public static final double kD = 0; // for velocity loop: 0
+    public static final double kD = 0; 
 
-    public static final double kS = 0.059082;
-    public static final double kV = 58.393;
-    public static final double kA = 1.7428;
-    public static final double kG = 0.029112;
+    public static final double kS = 0.057774;
+    public static final double kV = 16.376;
+    public static final double kA = 0.41226;
+    public static final double kG = 0.029112; // inaccurate
 
     private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
     private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
@@ -50,12 +50,12 @@ public class ArmPID extends SubsystemBase {
     private double m_lastTime = Timer.getFPGATimestamp();
   
     private final double gearingRatio = 36.0;
-    private final double radius = 0.0; // measure radius of the big gear
+    private final double radius = 3.75; // measure radius of the big gear
 
     public ArmPID() {
-        // reset elevator
+        // reset 
         m_motor.set(ControlMode.PercentOutput, 0);
-        setGoal(new TrapezoidProfile.State(0, 0));
+        setGoal(0);
         m_velocityControlEnabled = true;
         m_velocitySetpoint = 0;
 
