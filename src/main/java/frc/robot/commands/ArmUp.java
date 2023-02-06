@@ -25,7 +25,7 @@ public class ArmUp extends CommandBase {
   @Override
   public void initialize() {
     // follow position control to goal state
-    m_armSubsystem.setToVelocityControlMode(false);
+    m_armSubsystem.m_posEnabled = true;
     m_armSubsystem.setGoal(goalAngle);
   }
 
@@ -36,12 +36,13 @@ public class ArmUp extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_armSubsystem.setToVelocityControlMode(true);
+    System.out.println("FKLJDSHLKJHKJL");
+    m_armSubsystem.m_posEnabled = false;
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_armSubsystem.atGoal();
+    return m_armSubsystem.atGoal() || m_armSubsystem.m_velocityControlEnabled;
   }
 }

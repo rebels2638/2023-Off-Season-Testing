@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.Arm;
+import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -29,14 +30,13 @@ public class ArmController extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double inputPercent = e_controller.getRightY();
-  
+    double inputPercent = RebelUtil.linearDeadband(e_controller.getRightY(), 0.05);
+
     m_armSubsystem.setPercentOutput(inputPercent);
   }
 

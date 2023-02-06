@@ -15,21 +15,21 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 public class ArmPID extends SubsystemBase {
-    public static final double kMaxSpeed = 0.5; // radians? per second
-    public static final double kMaxAcceleration = 0.2; // radians? per second squared
+    public static final double kMaxSpeed = 0.2; // radians? per second
+    public static final double kMaxAcceleration = 0.1; // radians? per second squared
 
     private static final double kWheelRadius = 0.0375; // meters
-    private static final int kEncoderResolution = 2048;
+    private static final int kEncoderResolution = 2048 * 360;
     private final double kGearingRatio = 36.0;
         
-    public static final double kP = 0.0015084; // 5.8146 for position loop
+    public static final double kP = 5.8146; // 5.8146
     public static final double kI = 0; 
-    public static final double kD = 0; // 0.55603 for position loop
+    public static final double kD = 0.55603;
 
-    public static final double kS = 0.056031;
-    public static final double kV = 0.60777;
-    public static final double kA = 0.02306;
-    public static final double kG = 0.042845;
+    public static final double kS = 0.057774;
+    public static final double kV = 16.376;
+    public static final double kA = 0.41226;
+    public static final double kG = 0.01;
 
     private final WPI_TalonFX m_motor = new WPI_TalonFX(5);
 
@@ -37,7 +37,8 @@ public class ArmPID extends SubsystemBase {
     private final PIDController m_velocityController = new PIDController(5, 0, 0);
     private final ArmFeedforward m_feedforward = new ArmFeedforward(kS, kG, kV, kA);
 
-    private boolean m_velocityControlEnabled = true;
+    public boolean m_velocityControlEnabled = true;
+    public boolean m_posEnabled = false;
 
     private double m_velocitySetpoint = 0;
 
@@ -52,8 +53,8 @@ public class ArmPID extends SubsystemBase {
         m_motor.set(ControlMode.PercentOutput, 0);
         setGoal(0);
         m_velocityControlEnabled = true;
+        m_posEnabled = false;
         m_velocitySetpoint = 0;
-
         m_motor.getSensorCollection().setIntegratedSensorPosition(0, 30); // reset encoders
     }
 
@@ -61,7 +62,8 @@ public class ArmPID extends SubsystemBase {
     * Convert from TalonFX elevator position in meters to native units and vice versa
     */
     public double nativeToAngle(double encoderUnits) {
-        return ((encoderUnits/kEncoderResolution) / kGearingRatio) * (2 * Math.PI);
+        // return ((encoderUnits/kEncoderResolution) / kGearingRatio) * (2 * Math.PI);
+        return (encoderUnits / kEncoderResolution) * (2 * Math.PI);
     }
 
     public void setGoal(double goalAngle) {
@@ -97,13 +99,13 @@ public class ArmPID extends SubsystemBase {
     */
     @Override
     public void periodic() {
-        double velocitySetpoint = m_velocityControlEnabled ? m_velocitySetpoint : m_controller.getSetpoint().position;
+        double velocitySetpoint = m_controller.getSetpoint().velocity;
         double accelerationSetpoint = m_velocityControlEnabled ? 0.0 : (velocitySetpoint - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
 
-        double feedforward = m_feedforward.calculate(m_controller.getSetpoint().position, m_controller.getSetpoint().velocity);
+        double feedforward = m_feedforward.calculate(m_controller.getSetpoint().position, m_controller.getSetpoint().velocity, accelerationSetpoint);
         double positionPID = m_controller.calculate(getCurrentAngle());
         double velocityPID = m_velocityController.calculate(getCurrentVelocity(), velocitySetpoint);
-        double pid = m_velocityControlEnabled ? velocityPID : positionPID;
+        double pid = m_posEnabled ? positionPID : positionPID;
 
         double currentEncoder = m_motor.getSensorCollection().getIntegratedSensorPosition();
         if (currentEncoder >= kUpperLimit && feedforward > 0.0) {
@@ -113,8 +115,8 @@ public class ArmPID extends SubsystemBase {
             feedforward = 0;
         }
 
-        System.out.println("current position: " + getCurrentAngle() + "        feedforward: " + feedforward);
-        m_motor.setVoltage(Math.max(-3, Math.min(3, feedforward)));
+        System.out.println("current position: " + getCurrentAngle() + "        voltage: " + (feedforward + pid));
+        m_motor.setVoltage(Math.max(-3, Math.min(3, feedforward + pid)));
 
         m_lastVelocitySetpoint = velocitySetpoint;
         m_lastTime = Timer.getFPGATimestamp();
@@ -123,4 +125,5 @@ public class ArmPID extends SubsystemBase {
     public void reset(){
         m_motor.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
+
 }

@@ -40,6 +40,7 @@ public class ArmPIDController extends CommandBase {
   @Override
   public void execute() {
     double desiredVelo = RebelUtil.linearDeadband(e_controller.getRightY(), 0.05) * ArmPID.kMaxSpeed;
+    if(desiredVelo != 0) m_armPID.setToVelocityControlMode(true);
     m_armPID.setVelocitySetpoint(desiredVelo);
   }
 
