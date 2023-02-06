@@ -25,7 +25,6 @@ public class ArmUp extends CommandBase {
   @Override
   public void initialize() {
     // follow position control to goal state
-    m_armSubsystem.reset();
     m_armSubsystem.setToVelocityControlMode(false);
     m_armSubsystem.setGoal(goalAngle);
   }
