@@ -22,14 +22,14 @@ public class ArmPID extends SubsystemBase {
     private static final int kEncoderResolution = 2048;
     private static final int kGearingRatio = 100;
         
-    public static final double kP = 8.6473;
+    public static final double kP = 0.0;
     public static final double kI = 0; 
     public static final double kD = 0; 
 
-    public static final double kS = 0.057774;
-    public static final double kV = 16.376;
-    public static final double kA = 0.41226;
-    public static final double kG = 0.029112; // inaccurate
+    public static final double kS = 0.0;
+    public static final double kV = 0.0;
+    public static final double kA = 0.0;
+    public static final double kG = 0.0;
 
     private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
     private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
@@ -65,18 +65,12 @@ public class ArmPID extends SubsystemBase {
     /*
     * Convert from TalonFX elevator position in meters to native units and vice versa
     */
-    public double nativeToHeight(double encoderUnits) {
-        return ((encoderUnits/2048) / gearingRatio) * (2 * Math.PI * radius);
-    }
-  
-    public double angleToHeight(double angle)
-    {
-        return radius * angle;
+    public double nativeToAngle(double encoderUnits) {
+        return ((encoderUnits/2048) / gearingRatio) * (2 * Math.PI);
     }
 
     public void setGoal(double goalAngle) {
-        TrapezoidProfile.State goalState = new TrapezoidProfile.State(angleToHeight(goalAngle), 0.0);
-        m_controller.setGoal(goalState);
+        m_controller.setGoal(goalAngle); // radians
     }
 
     public boolean atGoal() {
@@ -91,12 +85,12 @@ public class ArmPID extends SubsystemBase {
         m_velocityControlEnabled = on;
     }
 
-    public double getCurrentHeight() {
-        return nativeToHeight(m_motor.getSensorCollection().getIntegratedSensorPosition());
+    public double getCurrentAngle() {
+        return nativeToAngle(m_motor.getSensorCollection().getIntegratedSensorPosition());
     }
 
     public double getCurrentVelocity() {
-        return nativeToHeight(m_motor.getSensorCollection().getIntegratedSensorVelocity() * 10); // motor velocity is in ticks per 100ms
+        return nativeToAngle(m_motor.getSensorCollection().getIntegratedSensorVelocity() * 10); // motor velocity is in ticks per 100ms
     }
 
     public void zeroEncoder() {
@@ -112,10 +106,10 @@ public class ArmPID extends SubsystemBase {
         double accelerationSetpoint = m_velocityControlEnabled ? 0.0 : (velocitySetpoint - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
 
         double feedforward = m_feedforward.calculate(velocitySetpoint, accelerationSetpoint);
-        double pid = m_velocityControlEnabled ? m_velocityController.calculate(getCurrentVelocity(), velocitySetpoint) : m_controller.calculate(getCurrentHeight());
+        double pid = m_velocityControlEnabled ? m_velocityController.calculate(getCurrentVelocity(), velocitySetpoint) : m_controller.calculate(getCurrentAngle());
 
-        System.out.println("x " + (velocitySetpoint) + " zzz" + feedforward);
-        m_motor.setVoltage(feedforward);
+        System.out.println("current position: " + getCurrentAngle() + "        feedforward: " + feedforward);
+        // m_motor.setVoltage(feedforward);
 
         m_lastVelocitySetpoint = velocitySetpoint;
         m_lastTime = Timer.getFPGATimestamp();
