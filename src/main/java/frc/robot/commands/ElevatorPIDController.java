@@ -6,8 +6,10 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorPID;
+import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 /** An example command that uses an example subsystem. */
@@ -15,8 +17,6 @@ public class ElevatorPIDController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorPID m_elevatorPID;
   private final XboxController e_controller; // e_controller is elevator's controller
-
-  private final double MAX_VELO = 0.05;
   
   DigitalInput toplimitSwitch = new DigitalInput(2);
   DigitalInput bottomlimitSwitch = new DigitalInput(1);
@@ -35,32 +35,18 @@ public class ElevatorPIDController extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_elevatorPID.setToVelocityControlMode(true);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-     double desiredVelo = e_controller.getLeftY() * MAX_VELO;
-    
-    /*if (desiredHeight > 0) {
-        if (toplimitSwitch.get()) {
-            // We are going up and top limit is tripped so stop
-             m_elevatorPID.setSetpoint(0);
-        } else {
-            // We are going up but top limit is not tripped so go at commanded speed
-             m_elevatorPID.setSetpoint(desiredHeight);
-        }
-    } else {
-        if (bottomlimitSwitch.get()) {
-            // We are going down and bottom limit is tripped so stop
-             m_elevatorPID.setSetpoint(0);
-        } else {
-            // We are going down but bottom limit is not tripped so go at commanded speed
-             m_elevatorPID.setSetpoint(desiredHeight);
-        }
-    }*/
-    m_elevatorPID.setSetpoint(desiredVelo);
+    double desiredVelo = RebelUtil.linearDeadband(e_controller.getLeftY(), 0.05) * ElevatorPID.kMaxSpeed;
+    // if (desiredVelo != 0) {
+    //   m_elevatorPID.breakMotor();
+    // }
+    m_elevatorPID.setVelocitySetpoint(desiredVelo);
   }
 
   // Called once the command ends or is interrupted.
@@ -70,6 +56,6 @@ public class ElevatorPIDController extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_elevatorPID.m_controller.atGoal();
+    return false;
   }
 }

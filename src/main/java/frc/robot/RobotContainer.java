@@ -14,9 +14,11 @@ import frc.lib.input.XboxController;
 import frc.robot.commands.ArmController;
 import frc.robot.commands.ClawController;
 import frc.robot.commands.Drive;
+import frc.robot.commands.ElevatorCancel;
 import frc.robot.commands.ElevatorController;
-
+import frc.robot.commands.ElevatorDown;
 import frc.robot.commands.ElevatorPIDController;
+import frc.robot.commands.ElevatorUp;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -43,8 +45,8 @@ public class RobotContainer {
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
 
-  // private final Arm arm = new Arm();
-  private final FourBarArm fourBarArm = new FourBarArm();
+  private final Arm arm = new Arm();
+  // private final FourBarArm fourBarArm = new FourBarArm();
 
   private final Claw claw = new Claw();
   private final ElevatorPID elevatorPID = new ElevatorPID();
@@ -62,28 +64,33 @@ public class RobotContainer {
     this.xboxOperator = new XboxController(2);
 
     // Shuffleboard.getTab("SmartDashboard")
-    //     .add("Reset Arm", new InstantCommand(() -> this.arm.reset()));
+    // .add("Reset Arm", new InstantCommand(() -> this.arm.reset()));
 
     // Controler Throttle Mappings
     this.drive.setDefaultCommand(
         new Drive(drive, xboxDriver));
 
     // this.elevator.setDefaultCommand(
-        // new ElevatorController(elevator, xboxOperator)); // added, works
+    // new ElevatorController(elevator, xboxOperator)); // added, works
 
-    // this.arm.setDefaultCommand(
-    //     new ArmController(arm, xboxOperator));
+    this.arm.setDefaultCommand(
+    new ArmController(arm, xboxOperator));
 
-    this.fourBarArm.setDefaultCommand(
-        new FourBarArmController(fourBarArm, xboxOperator));
+    // this.fourBarArm.setDefaultCommand(
+    // new FourBarArmController(fourBarArm, xboxOperator));
 
     this.xboxOperator.getAButton().onTrue(
         new InstantCommand(() -> this.claw.toggle()));
 
+    this.xboxOperator.getYButton().onTrue(
+        new ElevatorUp(elevatorPID));
+    this.xboxOperator.getXButton().onTrue(
+      new ElevatorDown(elevatorPID));
     // testc.b().onTrue(new InstantCommand(() -> this.claw.toggle()));
-
-    // this.elevatorPID.setDefaultCommand(
-    // new ElevatorPIDController(elevatorPID,xboxOperator)); // added, untested
+    this.xboxOperator.getRightBumper().onTrue(
+      new ElevatorCancel(elevatorPID));
+    this.elevatorPID.setDefaultCommand(
+        new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
 
     // this.claw.setDefaultCommand(
     // new ClawController(claw, xboxOperator)
@@ -93,6 +100,8 @@ public class RobotContainer {
     // new InstantCommand(() -> this.claw.toggle())
     // );
 
+    Shuffleboard.getTab("Commands").add("Zero Elevator Position",
+        new InstantCommand(() -> this.elevatorPID.zeroEncoder()));
   }
 
   /**

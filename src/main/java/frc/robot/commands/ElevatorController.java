@@ -49,8 +49,6 @@ public class ElevatorController extends CommandBase {
 
     double inputPercent = e_controller.getLeftY();
 
-    //System.out.println(bottomlimitSwitch.get());
-
     // if (inputPercent > 0) {
     //     if (toplimitSwitch.get()) {
     //         // We are going up and top limit is tripped so stop

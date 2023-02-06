@@ -17,7 +17,6 @@ public class GyroSubystem extends SubsystemBase {
 
     // Reset the gyro Yaw and reconnect -> Used for restart
     public void zeroGyro() {
-      //System.out.println("NavX Connected: " + gyro.isConnected());
       gyro.reset();
     }
 

@@ -23,7 +23,6 @@ public class Claw extends SubsystemBase {
         
         this.solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 2);
         this.push();
-        System.out.print("initilized"); 
         state = true;
     }
 
@@ -49,17 +48,14 @@ public class Claw extends SubsystemBase {
     public void toggle() {
         if(state) {
             pull();
-            System.out.println("pull");
         }
         else{
             push();
-            System.out.println("push");
         }
     }
     // @Override
     //     public void periodic() {
     //         CommandScheduler.getInstance().run();
-    //         System.out.println("runing");
     //     }
 
 }
