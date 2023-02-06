@@ -15,8 +15,8 @@ public class Arm extends SubsystemBase {
     private final WPI_TalonFX talon;
     private static Arm instance = null;
     private static double lastPercentSpeed; 
-    private static double kUpperLimit = 69000.0;
-    private static double kLowerLimit = -86000.0;
+    private static double kUpperLimit = 609000.0;
+    private static double kLowerLimit = -866000.0;
 
     public Arm() {
         this.talon = new WPI_TalonFX(5); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
@@ -75,7 +75,7 @@ public class Arm extends SubsystemBase {
         // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed, where both the speed and the left joy stick is in range -1,1
     }
 
-    public void reset(){
+    public void zeroEncoder() {
         talon.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
 }

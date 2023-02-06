@@ -48,7 +48,7 @@ public class RobotContainer {
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
 
-  // private final Arm arm = new Arm();
+  private final Arm arm = new Arm();
   // private final FourBarArm fourBarArm = new FourBarArm();
   private final ArmPID armPID = new ArmPID();
 
@@ -77,7 +77,8 @@ public class RobotContainer {
     // this.elevator.setDefaultCommand(
     // new ElevatorController(elevator, xboxOperator)); // added, works
 
-    // this.arm.setDefaultCommand(new ArmController(arm, xboxOperator));
+    this.arm.setDefaultCommand(
+        new ArmController(arm, xboxOperator));
 
     // this.fourBarArm.setDefaultCommand(
     // new FourBarArmController(fourBarArm, xboxOperator));
@@ -109,6 +110,9 @@ public class RobotContainer {
 
     Shuffleboard.getTab("Commands").add("Zero Elevator Position",
         new InstantCommand(() -> this.elevatorPID.zeroEncoder()));
+
+    Shuffleboard.getTab("Commands").add("Zero Arm Position",
+        new InstantCommand(() -> this.arm.zeroEncoder()));
   }
 
   /**
