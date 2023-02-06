@@ -13,6 +13,7 @@ public class ArmController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Arm m_armSubsystem;
   private final XboxController e_controller; // e_controller is elevator's controller
+  private boolean done;
 
   /**
    * Creates a new ExampleCommand.
@@ -22,6 +23,7 @@ public class ArmController extends CommandBase {
   public ArmController(Arm armSubsystem, XboxController controller) {
     e_controller = controller;
     m_armSubsystem = armSubsystem;
+    done = false;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_armSubsystem);
   }
@@ -35,9 +37,19 @@ public class ArmController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    if (!done) {
+
+      m_armSubsystem.setPercentOutput(0.5); 
+      m_armSubsystem.resetEncoder();
+
+      if (m_armSubsystem.getLimitSwitch()) {done = true;}
+    
+    }
+
     double inputPercent = e_controller.getRightY();
-  
     m_armSubsystem.setPercentOutput(inputPercent);
+
   }
 
   // Called once the command ends or is interrupted.

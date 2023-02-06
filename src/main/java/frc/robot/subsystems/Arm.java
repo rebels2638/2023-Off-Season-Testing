@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Arm extends SubsystemBase {
     private final WPI_TalonFX talon;
@@ -17,11 +18,14 @@ public class Arm extends SubsystemBase {
     private static double lastPercentSpeed; 
     private static double kUpperLimit = 69000.0;
     private static double kLowerLimit = -86000.0;
+    private final DigitalInput limswitch;
 
     public Arm() {
         this.talon = new WPI_TalonFX(5); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
         lastPercentSpeed = 0;
         TalonFXConfiguration falconConfig = new TalonFXConfiguration();
+
+        limswitch = new DigitalInput(0); // change when found
 
         falconConfig.slot0.kP = 0;
         falconConfig.slot0.kI = 0;
@@ -72,7 +76,11 @@ public class Arm extends SubsystemBase {
         // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed, where both the speed and the left joy stick is in range -1,1
     }
 
-    public void reset(){
+    public void resetEncoder(){
         talon.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
+
+    public double getEncoderValue() {return talon.getSensorCollection().getIntegratedSensorPosition();}
+
+    public boolean getLimitSwitch() {return limswitch.get();}
 }

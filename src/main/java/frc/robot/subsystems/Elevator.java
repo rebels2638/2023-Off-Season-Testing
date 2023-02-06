@@ -14,7 +14,7 @@ public class Elevator extends SubsystemBase {
 
     private final WPI_TalonFX talon;
     private static Elevator instance = null;
-    private static double lastPercentSpeed;
+    private static double lastPercentSpeed; 
     private final DigitalInput limswitch;
 
     public Elevator() {
@@ -22,7 +22,7 @@ public class Elevator extends SubsystemBase {
         lastPercentSpeed = 0;
         TalonFXConfiguration falconConfig = new TalonFXConfiguration();
 
-        limswitch = new DigitalInput(3); // replace port
+        limswitch = new DigitalInput(0); // change this
 
         falconConfig.slot0.kP = 0;
         falconConfig.slot0.kI = 0;
@@ -62,13 +62,14 @@ public class Elevator extends SubsystemBase {
         talon.set(ControlMode.PercentOutput, percent); // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed???? where speed is in range -1,1 and the xbox controller left joy stick is also -1,1???
     }
 
-    public void reset() {
+    public void resetEncoder() {
         talon.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
 
-//     public void bottomOut() { // put in the command bruh
+    public boolean getLimitSwitch() {return limswitch.get();}
 
-//         while (!limswitch.get()) {talon.set}
+    public double getEncoderValue() {return talon.getSensorCollection().getIntegratedSensorPosition();}
 
-//     }
+    // public void setPosition(double thing) {talon.set(null, thing);, thing);;}
+
 }
