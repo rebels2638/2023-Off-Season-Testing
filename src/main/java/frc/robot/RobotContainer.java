@@ -45,11 +45,11 @@ public class RobotContainer {
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
 
-  private final Arm arm = new Arm();
-  // private final FourBarArm fourBarArm = new FourBarArm();
+  //private final Arm arm = new Arm();
+  private final FourBarArm fourBarArm = new FourBarArm();
 
   private final Claw claw = new Claw();
-  private final ElevatorPID elevatorPID = new ElevatorPID();
+  //private final ElevatorPID elevatorPID = new ElevatorPID();
 
   // Create a Sendable Chooser, which allows us to select between Commands (in
   // this case, auto commands)
@@ -73,35 +73,37 @@ public class RobotContainer {
     // this.elevator.setDefaultCommand(
     // new ElevatorController(elevator, xboxOperator)); // added, works
 
-    this.arm.setDefaultCommand(
-    new ArmController(arm, xboxOperator));
+    // this.arm.setDefaultCommand(
+    // new ArmController(arm, xboxOperator));
 
-    // this.fourBarArm.setDefaultCommand(
-    // new FourBarArmController(fourBarArm, xboxOperator));
+    this.fourBarArm.setDefaultCommand(
+    new FourBarArmController(fourBarArm, xboxOperator));
 
+    // this.claw.setDefaultCommand(
+    //   new ClawController(claw, xboxOperator)
+    //   );
+      
     this.xboxOperator.getAButton().onTrue(
         new InstantCommand(() -> this.claw.toggle()));
 
-    this.xboxOperator.getYButton().onTrue(
-        new ElevatorUp(elevatorPID));
-    this.xboxOperator.getXButton().onTrue(
-      new ElevatorDown(elevatorPID));
-    // testc.b().onTrue(new InstantCommand(() -> this.claw.toggle()));
-    this.xboxOperator.getRightBumper().onTrue(
-      new ElevatorCancel(elevatorPID));
-    this.elevatorPID.setDefaultCommand(
-        new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
+    // this.xboxOperator.getYButton().onTrue(
+    //     new ElevatorUp(elevatorPID));
+    // this.xboxOperator.getXButton().onTrue(
+    //   new ElevatorDown(elevatorPID));
+    // // testc.b().onTrue(new InstantCommand(() -> this.claw.toggle()));
+    // this.xboxOperator.getRightBumper().onTrue(
+    //   new ElevatorCancel(elevatorPID));
+    // this.elevatorPID.setDefaultCommand(
+    //     new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
 
-    // this.claw.setDefaultCommand(
-    // new ClawController(claw, xboxOperator)
-    // );
+    
 
     // this.xboxOperator.getAButton().onTrue(
     // new InstantCommand(() -> this.claw.toggle())
     // );
 
-    Shuffleboard.getTab("Commands").add("Zero Elevator Position",
-        new InstantCommand(() -> this.elevatorPID.zeroEncoder()));
+    // Shuffleboard.getTab("Commands").add("Zero Elevator Position",
+    //     new InstantCommand(() -> this.elevatorPID.zeroEncoder()));
   }
 
   /**

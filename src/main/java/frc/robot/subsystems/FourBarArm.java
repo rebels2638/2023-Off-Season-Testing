@@ -11,7 +11,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class FourBarArm extends SubsystemBase {
-    private final WPI_TalonFX talon;
+    private final WPI_TalonSRX talon;
     private final WPI_TalonSRX motor_775;
     //private final WPI_VictorSPX victor;
     // private final CANSparkMax spark;
@@ -20,10 +20,10 @@ public class FourBarArm extends SubsystemBase {
 
     public FourBarArm() {
         //this.victor = new WPI_VictorSPX(5);
-        this.talon = new WPI_TalonFX(5); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
+        this.talon = new WPI_TalonSRX(7); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
         // this.spark = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
         talon.setNeutralMode(NeutralMode.Brake);
-        this.motor_775 = new WPI_TalonSRX(0); // change when found
+        this.motor_775 = new WPI_TalonSRX(8); // change when found
         motor_775.setNeutralMode(NeutralMode.Brake);
         // spark.setInverted(true);
     }
