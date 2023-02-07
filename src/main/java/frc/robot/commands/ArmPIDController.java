@@ -39,8 +39,7 @@ public class ArmPIDController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double desiredVelo = RebelUtil.linearDeadband(e_controller.getRightY(), 0.05) * ArmPID.kMaxSpeed;
-    if(desiredVelo != 0) m_armPID.setToVelocityControlMode(true);
+    double desiredVelo = e_controller.getRightY() * ArmPID.kMaxSpeed;
     m_armPID.setVelocitySetpoint(desiredVelo);
   }
 

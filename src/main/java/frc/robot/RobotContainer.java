@@ -67,10 +67,7 @@ public class RobotContainer {
     this.xboxDriver = new XboxController(3);
     this.xboxOperator = new XboxController(2);
 
-    // Shuffleboard.getTab("SmartDashboard")
-    // .add("Reset Arm", new InstantCommand(() -> this.arm.reset()));
-
-    // Controler Throttle Mappings
+    // Controller Throttle Mappings
     this.drive.setDefaultCommand(
         new Drive(drive, xboxDriver));
 
@@ -83,17 +80,6 @@ public class RobotContainer {
     // this.fourBarArm.setDefaultCommand(
     // new FourBarArmController(fourBarArm, xboxOperator));
 
-    this.xboxOperator.getAButton().onTrue(
-        new InstantCommand(() -> this.claw.toggle()));
-
-    this.xboxOperator.getBButton().onTrue(
-        new ElevatorUp(elevatorPID));
-
-    this.xboxOperator.getYButton().onTrue(
-          new ArmUp(armPID));
-
-    // testc.b().onTrue(new InstantCommand(() -> this.claw.toggle()));
-
     this.elevatorPID.setDefaultCommand(
         new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
     
@@ -103,10 +89,15 @@ public class RobotContainer {
     // this.claw.setDefaultCommand(
     // new ClawController(claw, xboxOperator)
     // );
+    
+    this.xboxOperator.getAButton().onTrue(
+        new InstantCommand(() -> this.claw.toggle()));
 
-    // this.xboxOperator.getAButton().onTrue(
-    // new InstantCommand(() -> this.claw.toggle())
-    // );
+    this.xboxOperator.getBButton().onTrue(
+        new ElevatorUp(elevatorPID));
+
+    this.xboxOperator.getYButton().onTrue(
+          new ArmUp(armPID));
 
     Shuffleboard.getTab("Commands").add("Zero Elevator Position",
         new InstantCommand(() -> this.elevatorPID.zeroEncoder()));
