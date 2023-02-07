@@ -4,43 +4,43 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.ArmPID;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 /** An example command that uses an example subsystem. */
-public class ArmController extends CommandBase {
+public class ArmPIDController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Arm m_armSubsystem;
+  private final ArmPID m_armPID;
   private final XboxController e_controller; // e_controller is elevator's controller
-  private boolean done;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ArmController(Arm armSubsystem, XboxController controller) {
+  public ArmPIDController(ArmPID armPIDSubsystem, XboxController controller) {
     e_controller = controller;
-    m_armSubsystem = armSubsystem;
-    done = false;
+    m_armPID = armPIDSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_armSubsystem);
+    addRequirements(m_armPID);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_armPID.setToVelocityControlMode(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double inputPercent = RebelUtil.linearDeadband(e_controller.getRightY(), 0.05);
-
-    m_armSubsystem.setPercentOutput(inputPercent);
-
+    double desiredVelo = e_controller.getRightY() * ArmPID.kMaxSpeed;
+    m_armPID.setVelocitySetpoint(desiredVelo);
   }
 
   // Called once the command ends or is interrupted.
