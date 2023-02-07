@@ -6,14 +6,14 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class ElevatorUp extends CommandBase {
+public class ElevatorDown extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorPID m_elevatorSubsystem;
 
-  private final double kHeightUpPosition = 0.381; // meters
-  private final TrapezoidProfile.State kGoalState = new TrapezoidProfile.State(kHeightUpPosition, 0.0);
+  private final double kHeightDownPosition = 0; // meters
+  private final TrapezoidProfile.State kGoalState = new TrapezoidProfile.State(kHeightDownPosition, 0.0);
 
-  public ElevatorUp(ElevatorPID subsystem) {
+  public ElevatorDown(ElevatorPID subsystem) {
     m_elevatorSubsystem = subsystem;
     
     addRequirements(subsystem);

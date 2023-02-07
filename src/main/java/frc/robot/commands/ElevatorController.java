@@ -15,8 +15,7 @@ public class ElevatorController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Elevator m_elevatorSubsystem;
   private final XboxController e_controller; // e_controller is elevator's controller
-  private final DigitalInput toplimitSwitch;
-  private final DigitalInput bottomlimitSwitch;
+  private boolean done;
   /**
    * Creates a new ExampleCommand.
    *
@@ -25,8 +24,7 @@ public class ElevatorController extends CommandBase {
   public ElevatorController(Elevator elevatorSubsystem, XboxController controller) {
     e_controller = controller;
     m_elevatorSubsystem = elevatorSubsystem;
-    toplimitSwitch = new DigitalInput(2);
-    bottomlimitSwitch = new DigitalInput(1);
+    done = false;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_elevatorSubsystem);
   }
@@ -39,9 +37,17 @@ public class ElevatorController extends CommandBase {
   @Override
   public void execute() {
 
-    double inputPercent = e_controller.getLeftY();
+    // fix this once we invert the motor pls
+    if (!done) {
 
-    //System.out.println(bottomlimitSwitch.get());
+      m_elevatorSubsystem.setPercentOutput(0.5); 
+      m_elevatorSubsystem.resetEncoder();
+
+      if (m_elevatorSubsystem.getLimitSwitch()) {done = true;}
+    
+    }
+
+    double inputPercent = e_controller.getLeftY();
 
     // if (inputPercent > 0) {
     //     if (toplimitSwitch.get()) {

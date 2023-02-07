@@ -21,9 +21,8 @@ public class Claw extends SubsystemBase {
     public Claw() {
         // this.victor = new VictorSPX(0); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
         
-        this.solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 2);
+        this.solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 4);
         this.push();
-        System.out.print("initilized"); 
         state = true;
     }
 
@@ -48,18 +47,20 @@ public class Claw extends SubsystemBase {
 
     public void toggle() {
         if(state) {
+            System.out.println("got here");
             pull();
-            System.out.println("pull");
+            return;
         }
         else{
+            System.out.println("not here");
             push();
-            System.out.println("push");
+            return;
         }
     }
     // @Override
     //     public void periodic() {
     //         CommandScheduler.getInstance().run();
-    //         System.out.println("runing");
     //     }
 
 }
+

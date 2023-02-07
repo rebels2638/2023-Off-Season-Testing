@@ -15,12 +15,12 @@ import frc.robot.commands.ArmController;
 import frc.robot.commands.ArmDown;
 import frc.robot.commands.ClawController;
 import frc.robot.commands.Drive;
+import frc.robot.commands.ElevatorCancel;
 import frc.robot.commands.ElevatorController;
-
 import frc.robot.commands.ArmUp;
 import frc.robot.subsystems.ArmPID;
 import frc.robot.commands.ArmPIDController;
-
+import frc.robot.commands.ElevatorDown;
 import frc.robot.commands.ElevatorPIDController;
 import frc.robot.commands.ElevatorUp;
 import frc.robot.subsystems.Claw;
@@ -50,7 +50,7 @@ public class RobotContainer {
   private final XboxController xboxOperator;
 
   // private final Arm arm = new Arm();
-  // private final FourBarArm fourBarArm = new FourBarArm();
+  private final FourBarArm fourBarArm = new FourBarArm();
   private final ArmPID armPID = new ArmPID();
 
   private final Claw claw = new Claw();
@@ -78,8 +78,8 @@ public class RobotContainer {
     // this.arm.setDefaultCommand(
     // new ArmController(arm, xboxOperator));
 
-    // this.fourBarArm.setDefaultCommand(
-    // new FourBarArmController(fourBarArm, xboxOperator));
+    this.fourBarArm.setDefaultCommand(
+    new FourBarArmController(fourBarArm, xboxOperator));
 
     this.elevatorPID.setDefaultCommand(
         new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
@@ -94,8 +94,15 @@ public class RobotContainer {
     this.xboxOperator.getAButton().onTrue(
         new InstantCommand(() -> this.claw.toggle()));
 
-    this.xboxOperator.getBButton().onTrue(
-        new ElevatorUp(elevatorPID));
+    // this.xboxOperator.getYButton().onTrue(
+    //     new ElevatorUp(elevatorPID));
+    // this.xboxOperator.getXButton().onTrue(
+    //   new ElevatorDown(elevatorPID));
+    // // testc.b().onTrue(new InstantCommand(() -> this.claw.toggle()));
+    // this.xboxOperator.getRightBumper().onTrue(
+    //   new ElevatorCancel(elevatorPID));
+    // this.elevatorPID.setDefaultCommand(
+    //     new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
 
     this.xboxOperator.getYButton().onTrue(
         new ArmUp(armPID));
