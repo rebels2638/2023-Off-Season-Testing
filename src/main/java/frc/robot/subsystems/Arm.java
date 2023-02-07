@@ -69,7 +69,7 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        tab.setDouble(talon.getSelectedSensorPosition());
+        tab.setDouble(talon.getSensorCollection().getIntegratedSensorPosition());
     }
 
     public void zeroEncoder() {

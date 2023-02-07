@@ -6,16 +6,16 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class ArmUp extends CommandBase {
+public class ArmDown extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ArmPID m_armSubsystem;
 
 //   private final double kHeightUpPosition = 0.381; // meters
 //   private final TrapezoidProfile.State kGoalState = new TrapezoidProfile.State(kHeightUpPosition, 0.0);
   
-  private final double goalAngle = Math.PI / 4; // radians
+  private final double goalAngle = -Math.PI / 4; // radians
 
-  public ArmUp(ArmPID subsystem) {
+  public ArmDown(ArmPID subsystem) {
     m_armSubsystem = subsystem;
     
     addRequirements(subsystem);

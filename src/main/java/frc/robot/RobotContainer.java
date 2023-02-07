@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.input.XboxController;
 import frc.robot.commands.ArmController;
+import frc.robot.commands.ArmDown;
 import frc.robot.commands.ClawController;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ElevatorController;
@@ -48,7 +49,7 @@ public class RobotContainer {
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
 
-  private final Arm arm = new Arm();
+  // private final Arm arm = new Arm();
   // private final FourBarArm fourBarArm = new FourBarArm();
   private final ArmPID armPID = new ArmPID();
 
@@ -74,22 +75,22 @@ public class RobotContainer {
     // this.elevator.setDefaultCommand(
     // new ElevatorController(elevator, xboxOperator)); // added, works
 
-    this.arm.setDefaultCommand(
-        new ArmController(arm, xboxOperator));
+    // this.arm.setDefaultCommand(
+    // new ArmController(arm, xboxOperator));
 
     // this.fourBarArm.setDefaultCommand(
     // new FourBarArmController(fourBarArm, xboxOperator));
 
     this.elevatorPID.setDefaultCommand(
         new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
-    
+
     // this.armPID.setDefaultCommand(
-      // new ArmPIDController(armPID, xboxOperator));
+    // new ArmPIDController(armPID, xboxOperator));
 
     // this.claw.setDefaultCommand(
     // new ClawController(claw, xboxOperator)
     // );
-    
+
     this.xboxOperator.getAButton().onTrue(
         new InstantCommand(() -> this.claw.toggle()));
 
@@ -97,13 +98,16 @@ public class RobotContainer {
         new ElevatorUp(elevatorPID));
 
     this.xboxOperator.getYButton().onTrue(
-          new ArmUp(armPID));
+        new ArmUp(armPID));
+
+    this.xboxOperator.getXButton().onTrue(
+        new ArmDown(armPID));
 
     Shuffleboard.getTab("Commands").add("Zero Elevator Position",
         new InstantCommand(() -> this.elevatorPID.zeroEncoder()));
 
     Shuffleboard.getTab("Commands").add("Zero Arm Position",
-        new InstantCommand(() -> this.arm.zeroEncoder()));
+        new InstantCommand(() -> this.armPID.zeroEncoder()));
   }
 
   /**
