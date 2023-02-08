@@ -14,6 +14,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.numbers.N5;
+import edu.wpi.first.math.trajectory.constraint.MaxVelocityConstraint;
+import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 /**
@@ -51,6 +53,11 @@ public final class ConstantsFXDriveTrain {
         public static final int PCM_ID = 0;
         public static final int SOLENOID_FORWARD = 0;
         public static final int SOLENOID_REVERSE = 7;
+
+        public static final double kaVoltSecondsSquaredPerMeter = 0.5;
+        public static final double kvVoltSecondsPerMeter = 0.5;
+
+        public static final TrajectoryConstraint kMaxSpeedConstraint = new ()
 
         // Gyro
         public static final boolean GYRO_REVERSED = true;
