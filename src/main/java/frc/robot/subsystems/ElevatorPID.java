@@ -7,7 +7,9 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -50,6 +52,8 @@ public class ElevatorPID extends SubsystemBase {
     private double m_lastVelocitySetpoint = 0;
     private double m_lastTime = Timer.getFPGATimestamp();
 
+    private final GenericEntry tab;
+
     public ElevatorPID() {
         m_motor.setInverted(true); // invert motor output
 
@@ -60,7 +64,7 @@ public class ElevatorPID extends SubsystemBase {
         m_velocitySetpoint = 0;
         m_controller.setTolerance(0.01, 0.05);
 
-        m_motor.getSensorCollection().setIntegratedSensorPosition(0, 30); // reset encoders
+        tab = Shuffleboard.getTab("Encoders").add("Elevator Height", 0.0).getEntry();
     }
 
     /*
@@ -108,6 +112,8 @@ public class ElevatorPID extends SubsystemBase {
     */
     @Override
     public void periodic() {
+        double height = getCurrentHeight();
+        tab.setDouble(height);
         double velocitySetpoint = m_velocityControlEnabled ? m_velocitySetpoint : m_controller.getSetpoint().velocity;
         double accelerationSetpoint = m_velocityControlEnabled ? 0.0 : (velocitySetpoint - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
 

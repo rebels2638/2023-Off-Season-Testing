@@ -28,9 +28,9 @@ public class ArmPID extends SubsystemBase {
     private static final double kRadiansPerRotation = 2 * Math.PI;
     private static final double kFeedforwardAngleOffset = 0.2666;
         
-    public static final double kP = 8; // 5.8146
+    public static final double kP = 6; // 5.8146
     public static final double kI = 0; 
-    public static final double kD = 0.02;
+    public static final double kD = 0.01;
 
     public static final double kS = 0.068689;
     public static final double kV = 4.3647;
@@ -51,18 +51,18 @@ public class ArmPID extends SubsystemBase {
     private double m_lastTime = Timer.getFPGATimestamp();
     
     private static double kUpperLimit = 55000.0;
-    private static double kLowerLimit = -65000.0;
+    private static double kLowerLimit = -55000.0;
 
     private final GenericEntry tab;
   
     public ArmPID() {
         // reset 
         m_motor.set(ControlMode.PercentOutput, 0);
-        m_controller.setTolerance(0.01, 0.1);
+        m_controller.setTolerance(0.05, 0.1);
         setGoal(0);
         setToVelocityControlMode(false);
         m_velocitySetpoint = 0;
-        tab = Shuffleboard.getTab("SmartDashboard").add("Arm Angle", 0.0).getEntry();
+        tab = Shuffleboard.getTab("Encoders").add("Arm Angle", 0.0).getEntry();
     }
 
     /*

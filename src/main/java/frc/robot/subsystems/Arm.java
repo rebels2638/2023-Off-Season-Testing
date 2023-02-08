@@ -21,7 +21,7 @@ public class Arm extends SubsystemBase {
     private static Arm instance = null;
     private static double lastPercentSpeed; 
     private static double kUpperLimit = 55000.0;
-    private static double kLowerLimit = -65000.0;
+    private static double kLowerLimit = -55000.0;
 
     public Arm() {
         this.talon = new WPI_TalonFX(5); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
@@ -43,7 +43,7 @@ public class Arm extends SubsystemBase {
         talon.configAllSettings(falconConfig);
         talon.setNeutralMode(NeutralMode.Brake);
         
-        tab = Shuffleboard.getTab("SmartDashboard").add("Arm Encoder", 0.0).getEntry();
+        tab = Shuffleboard.getTab("Encoders").add("Arm Encoder", 0.0).getEntry();
     }
 
     // Singleton class, call getInstance to access instead of the constructor.

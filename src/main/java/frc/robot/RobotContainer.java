@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.input.XboxController;
@@ -17,6 +19,7 @@ import frc.robot.commands.ClawController;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ElevatorCancel;
 import frc.robot.commands.ElevatorController;
+import frc.robot.commands.ArmPositionSet;
 import frc.robot.commands.ArmUp;
 import frc.robot.subsystems.ArmPID;
 import frc.robot.commands.ArmPIDController;
@@ -49,8 +52,8 @@ public class RobotContainer {
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
 
-  // private final Arm arm = new Arm();
-  private final FourBarArm fourBarArm = new FourBarArm();
+//   private final Arm arm = new Arm();
+//   private final FourBarArm fourBarArm = new FourBarArm();
   private final ArmPID armPID = new ArmPID();
 
   private final Claw claw = new Claw();
@@ -78,8 +81,8 @@ public class RobotContainer {
     // this.arm.setDefaultCommand(
     // new ArmController(arm, xboxOperator));
 
-    this.fourBarArm.setDefaultCommand(
-    new FourBarArmController(fourBarArm, xboxOperator));
+    // this.fourBarArm.setDefaultCommand(
+    // new FourBarArmController(fourBarArm, xboxOperator));
 
     this.elevatorPID.setDefaultCommand(
         new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
@@ -104,11 +107,54 @@ public class RobotContainer {
     // this.elevatorPID.setDefaultCommand(
     //     new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
 
-    this.xboxOperator.getYButton().onTrue(
-        new ArmUp(armPID));
+    /*
+    // Driving
+    this.xboxOperator.getBButton().onTrue(
+        new SequentialCommandGroup(
+            new ArmPositionSet(armPID, ),
+            new ElevatorDown(elevatorPID)
+        )
+    );
 
+    // Ground
+    this.xboxOperator.getAButton().onTrue(
+        new SequentialCommandGroup(
+            new ArmPositionSet(armPID),
+            new ElevatorDown(elevatorPID)
+        )
+    );
+
+    // High Position
+    this.xboxOperator.getYButton().onTrue(
+        new SequentialCommandGroup(
+            new ArmPositionSet(armPID),
+            new ElevatorUp(elevatorPID)
+        )
+    );
+
+    // Loading Station
+    this.xboxOperator.getYButton().onTrue(
+        new SequentialCommandGroup(
+            new ArmPositionSet(armPID),
+            new ElevatorUp(elevatorPID)
+        )
+    );
+    */
+
+    
+    this.xboxOperator.getYButton().onTrue(
+        new ArmUp(armPID)
+    );
     this.xboxOperator.getXButton().onTrue(
-        new ArmDown(armPID));
+        new ArmDown(armPID)
+    );
+    this.xboxOperator.getBButton().onTrue(
+        new ElevatorUp(elevatorPID)
+    );
+    this.xboxOperator.getAButton().onTrue(
+        new ElevatorDown(elevatorPID)
+    );
+    
 
     Shuffleboard.getTab("Commands").add("Zero Elevator Position",
         new InstantCommand(() -> this.elevatorPID.zeroEncoder()));
