@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.FalconDrivetrain;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -23,9 +24,9 @@ public class Drive extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Drive(Drivetrain driveSubsystem, XboxController controller) {
+  public Drive(FalconDrivetrain drive, XboxController controller) {
     xboxDriver = controller;
-    m_driveSubsystem = driveSubsystem;
+    m_driveSubsystem = drive;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_driveSubsystem);
   }
