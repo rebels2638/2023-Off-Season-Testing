@@ -57,6 +57,8 @@ public class FourBarArmPID extends SubsystemBase {
     private final GenericEntry tab;
   
     public FourBarArmPID() {
+        m_motor.setInverted(true); // i think?
+
         // reset 
         m_motor.set(ControlMode.PercentOutput, 0);
         m_controller.setTolerance(0.01, 0.1);
