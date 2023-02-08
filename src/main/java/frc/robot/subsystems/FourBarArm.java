@@ -43,7 +43,7 @@ public class FourBarArm extends SubsystemBase {
 
     public void setPercentOutput775(double percent) {
 
-        motor_775.set(ControlMode.PercentOutput, percent);
+        motor_775.set(ControlMode.PercentOutput, -percent);
     }
     
     // public void setSpeedSpark(double speed) {
