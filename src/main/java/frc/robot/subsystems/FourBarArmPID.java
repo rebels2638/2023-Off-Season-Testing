@@ -15,13 +15,14 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 public class FourBarArmPID extends SubsystemBase {
     public static final double kMaxSpeed = 2.5; // radians? per second
     public static final double kMaxAcceleration = 1; // radians? per second squared
 
-    private static final int kEncoderResolution = 4096;
+    private static final int kEncoderResolution = 4*4096;
     private static final int kGearingRatio = 100 * (64 / 20);
     private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
     private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
@@ -37,10 +38,10 @@ public class FourBarArmPID extends SubsystemBase {
     public static final double kA = 27.87;
     public static final double kG = 50.311;
 
-    private final WPI_TalonFX m_motor = new WPI_TalonFX(7);
+    private final WPI_TalonSRX m_motor = new WPI_TalonSRX(7);
 
     private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
-    private final PIDController m_velocityController = new PIDController(0.004982, 0, 0);
+    private final PIDController m_velocityController = new PIDController(kP, kI, kD);
     private final ArmFeedforward m_feedforward = new ArmFeedforward(kS, kG, kV, kA);
 
     public boolean m_velocityControlEnabled = false;
@@ -63,11 +64,16 @@ public class FourBarArmPID extends SubsystemBase {
         setToVelocityControlMode(false);
         m_velocitySetpoint = 0;
         tab = Shuffleboard.getTab("SmartDashboard").add("FourBar Angle", 0.0).getEntry();
+
+        // to edit?
+        TalonSRXConfiguration config = new TalonSRXConfiguration();
+        config.peakCurrentLimit = 40; // the peak current, in amps
+        config.peakCurrentDuration = 1500; // the time at the peak current before the limit triggers, in ms
+        config.continuousCurrentLimit = 30; // the current to maintain if the peak limit is triggered
+        m_motor.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
     }
 
-    /*
-    * Convert from TalonFX arm angle in native units to radians
-    */
+    // convert from TalonSRX arm angle in native units to radians
     public double nativeToRad(double encoderUnits) {
         return encoderUnits * kRotationsPerNativeUnit * kRadiansPerRotation;
     }
@@ -89,15 +95,15 @@ public class FourBarArmPID extends SubsystemBase {
     }
 
     public double getCurrentMotorAngle() {
-        return nativeToRad(m_motor.getSensorCollection().getIntegratedSensorPosition());
+        return nativeToRad(m_motor.getSelectedSensorPosition());
     }
 
     public double getCurrentVelocity() {
-        return nativeToRad(m_motor.getSensorCollection().getIntegratedSensorVelocity() * 10); // motor velocity is in ticks per 100ms
+        return nativeToRad(m_motor.getSelectedSensorVelocity() * 10); // motor velocity is in ticks per 100ms
     }
 
     public void zeroEncoder() {
-        m_motor.getSensorCollection().setIntegratedSensorPosition(0, 30);
+        m_motor.setSelectedSensorPosition(0, 0, 30);
     }
 
     // The god formula
@@ -121,7 +127,7 @@ public class FourBarArmPID extends SubsystemBase {
         double velocityPID = m_velocityController.calculate(getCurrentVelocity(), velocitySetpoint);
         double pid = m_velocityControlEnabled ? velocityPID : positionPID;
 
-        double currentEncoder = m_motor.getSensorCollection().getIntegratedSensorPosition();
+        double currentEncoder = m_motor.getSelectedSensorPosition();
         double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
         if (currentEncoder >= kUpperLimit && voltage > 0.0) {
             feedforward = 0.0;
