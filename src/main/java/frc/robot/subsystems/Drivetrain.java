@@ -41,10 +41,17 @@ public class Drivetrain extends SubsystemBase {
 
   private final AnalogGyro m_gyro = new AnalogGyro(0);
 
+  // make public pid and feedforward gains varibles 
+  public static final double ksVolts = 1;
+  public static final double kvVoltSecondsPerMeter = 3;
+  //TODO: get kaVoltSecondsSquaredPerMeter tuned
+  public static final double kaVoltSecondsSquaredPerMeter = 0;
+
+
   private final PIDController m_leftPIDController = new PIDController(1, 0, 0);
   private final PIDController m_rightPIDController = new PIDController(1, 0, 0);
 
-  private final DifferentialDriveKinematics m_kinematics =
+  public static final DifferentialDriveKinematics m_kinematics =
       new DifferentialDriveKinematics(kTrackWidth);
 
   private final DifferentialDriveOdometry m_odometry;
@@ -112,5 +119,27 @@ public class Drivetrain extends SubsystemBase {
         m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
   }
 
+   /** Zeroes the heading of the robot. */
+   public void zeroHeading() {
+    m_gyro.reset();
+  }
+
+  /**
+   * Returns the heading of the robot.
+   *
+   * @return the robot's heading in degrees, from -180 to 180
+   */
+  public double getHeading() {
+    return m_gyro.getRotation2d().getDegrees();
+  }
+
+  /**
+   * Returns the turn rate of the robot.
+   *
+   * @return The turn rate of the robot, in degrees per second
+   */
+  public double getTurnRate() {
+    return -m_gyro.getRate();
+  }
 
 }

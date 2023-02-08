@@ -4,8 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -24,6 +27,13 @@ public class Robot extends TimedRobot {
 
   private Timer time;
 
+   // The Ramsete Controller to follow the trajectory.
+   private final RamseteController m_ramseteController = new RamseteController();
+ 
+   // Create Field2d for robot and trajectory visualizations.
+   private Field2d m_field;
+ 
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -33,6 +43,12 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all 
     m_robotContainer = new RobotContainer();
     time = new Timer();
+
+    m_field = new Field2d();
+    SmartDashboard.putData(m_field);
+
+    //TODO: map trajectories 
+    //m_field.getObject("traj").setTragectory(put current starting trajectrory here);
   }
 
   /**
@@ -59,7 +75,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
-  @Override
+  @Overrides
   public void autonomousInit() {
     time.reset();
     time.start();
