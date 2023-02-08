@@ -33,6 +33,7 @@ import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.Arm;
 import frc.robot.commands.FourBarArmController;
 import frc.robot.subsystems.FourBarArm;
+import frc.robot.subsystems.PoseEstimator;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -46,6 +47,7 @@ import frc.robot.subsystems.FourBarArm;
 public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   private final Drivetrain drive = new Drivetrain();
+  private final PoseEstimator poseEstimator = new PoseEstimator(drive);
   // private final Elevator elevator = new Elevator();
 
   // The robot's controllers

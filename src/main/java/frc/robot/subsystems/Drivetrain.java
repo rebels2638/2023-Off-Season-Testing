@@ -31,23 +31,23 @@ public class Drivetrain extends SubsystemBase {
   private final MotorController m_rightLeader = new WPI_TalonSRX(3);
   private final MotorController m_rightFollower = new WPI_TalonSRX(4);
 
-  private final Encoder m_leftEncoder = new Encoder(5, 6);
-  private final Encoder m_rightEncoder = new Encoder(7, 8);
+  public final Encoder m_leftEncoder = new Encoder(5, 6);
+  public final Encoder m_rightEncoder = new Encoder(7, 8);
 
   private final MotorControllerGroup m_leftGroup =
       new MotorControllerGroup(m_leftLeader, m_leftFollower);
   private final MotorControllerGroup m_rightGroup =
       new MotorControllerGroup(m_rightLeader, m_rightFollower);
 
-  private final AnalogGyro m_gyro = new AnalogGyro(0);
+  public final AnalogGyro m_gyro = new AnalogGyro(0);
 
   private final PIDController m_leftPIDController = new PIDController(1, 0, 0);
   private final PIDController m_rightPIDController = new PIDController(1, 0, 0);
 
-  private final DifferentialDriveKinematics m_kinematics =
+  public final DifferentialDriveKinematics m_kinematics =
       new DifferentialDriveKinematics(kTrackWidth);
 
-  private final DifferentialDriveOdometry m_odometry;
+  public final DifferentialDriveOdometry m_odometry;
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
@@ -111,6 +111,4 @@ public class Drivetrain extends SubsystemBase {
     m_odometry.update(
         m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
   }
-
-
 }
