@@ -57,7 +57,7 @@ public final class ConstantsFXDriveTrain {
         public static final double kaVoltSecondsSquaredPerMeter = 0.5;
         public static final double kvVoltSecondsPerMeter = 0.5;
 
-        public static final TrajectoryConstraint kMaxSpeedConstraint = new ()
+        public static final double ksVolts = 0.5;
 
         // Gyro
         public static final boolean GYRO_REVERSED = true;
@@ -127,6 +127,8 @@ public final class ConstantsFXDriveTrain {
                 0.02, 0.01);
         public static final Matrix<N3, N1> POSE_GLOBAL_MEASUREMENT_STDEV = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1,
                 0.1, 0.01);
+        public static final double kMaxSpeedMetersPerSecond = .5;
+        public static final double kMaxAccelerationMetersPerSecondSquared = .1;
     }
 
     // TODO: fill in values for gearbox

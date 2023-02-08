@@ -6,18 +6,32 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.FalconDrivetrain;
+
+import java.util.List;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import frc.robot.utils.AutoConstants;
 import frc.robot.utils.ConstantsFXDriveTrain.DriveConstants;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 /** An example command that uses an example subsystem. */
 public class RamseteControllerCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final FalconDrivetrain m_robotDrive;
+private TrajectoryConstraint autoVoltageConstraint;
+  private static final DifferentialDriveKinematics kDriveKinematics =
+      new DifferentialDriveKinematics(DriveConstants.TRACK_WIDTH_METERS);
 
   /**
    * Creates a new ExampleCommand.
@@ -29,14 +43,14 @@ public class RamseteControllerCommand extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drive);
 
+    SimpleMotorFeedforward FeedForward = new SimpleMotorFeedforward(
+        DriveConstants.ksVolts,
+        DriveConstants.kvVoltSecondsPerMeter,
+        DriveConstants.kaVoltSecondsSquaredPerMeter);
+
     DifferentialDriveVoltageConstraint autoVoltageConstraint =
-        new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(
-                DriveConstants.ksVolts,
-                DriveConstants.kvVoltSecondsPerMeter,
-                DriveConstants.kaVoltSecondsSquaredPerMeter),
-            DriveConstants.kDriveKinematics,
-            10);
+        new DifferentialDriveVoltageConstraint(FeedForward,
+        kDriveKinematics, 10);
 
 
     private TrajectoryConfig config =
@@ -46,8 +60,7 @@ public class RamseteControllerCommand extends CommandBase {
             // Add kinematics to ensure max speed is actually obeyed
             .setKinematics(DriveConstants.DRIVE_KINEMATICS)
             // Apply the voltage constraint
-            .addConstraint(DriveConstants.autoVoltageConstraint)
-            .addConstraint(DriveConstants.autoVoltageConstraint);
+            .addConstraint(autoVoltageConstraint);
 
     // An example trajectory to follow.  All units in meters.
     private Trajectory exampleTrajectory =
@@ -71,14 +84,16 @@ public class RamseteControllerCommand extends CommandBase {
             new SimpleMotorFeedforward(
             DriveConstants.ksVolts,
                 DriveConstants.kvVoltSecondsPerMeter,
-                DriveConstants.kaVoltSecondsSquaredPerMeter),
-            DriveConstants.kDriveKinematics,
+                DriveConstants.kaVoltSecondsSquaredPerMeter), kDriveKinematics,
             m_robotDrive::getWheelSpeeds,
-            new PIDController(DriveConstants.kPDriveVel, 0, 0),
-            new PIDController(DriveConstants.kPDriveVel, 0, 0),
+            new PIDController(DriveConstants.ARCADE_PID_P, DriveConstants.ARCADE_PID_I, DriveConstants.ARCADE_PID_D),
+            new PIDController(DriveConstants.ARCADE_PID_P, DriveConstants.ARCADE_PID_I, DriveConstants.ARCADE_PID_D),
             // RamseteCommand passes volts to the callback
             m_robotDrive::tankDriveVolts,
             m_robotDrive);
+
+    // Reset odometry to the starting pose of the trajectory.
+    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
   }
 
   // Called when the command is initially scheduled.
@@ -102,8 +117,7 @@ public class RamseteControllerCommand extends CommandBase {
   
 
 
-    // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+    
 
     // Run path following command, then stop at the end.
     return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
