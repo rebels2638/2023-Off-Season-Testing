@@ -24,7 +24,7 @@ public class Drive extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Drive(FalconDrivetrain drive, XboxController controller) {
+  public Drive(Drivetrain drive, XboxController controller) {
     xboxDriver = controller;
     m_driveSubsystem = drive;
     // Use addRequirements() here to declare subsystem dependencies.

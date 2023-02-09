@@ -9,6 +9,8 @@ import frc.robot.subsystems.FalconDrivetrain;
 
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -29,9 +31,13 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 public class RamseteControllerCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final FalconDrivetrain m_robotDrive;
-private TrajectoryConstraint autoVoltageConstraint;
+  private TrajectoryConstraint autoVoltageConstraint;
   private static final DifferentialDriveKinematics kDriveKinematics =
       new DifferentialDriveKinematics(DriveConstants.TRACK_WIDTH_METERS);
+
+    private RamseteCommand ramseteCommand;
+    private Trajectory exampleTrajectory;
+    private TrajectoryConfig config;
 
   /**
    * Creates a new ExampleCommand.
@@ -39,7 +45,7 @@ private TrajectoryConstraint autoVoltageConstraint;
    * @param drive The subsystem used by this command.
    */
   public RamseteControllerCommand(FalconDrivetrain drive) {
-    m_robotDrive = drive;
+    this.m_robotDrive = drive;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drive);
 
@@ -53,7 +59,7 @@ private TrajectoryConstraint autoVoltageConstraint;
         kDriveKinematics, 10);
 
 
-    private TrajectoryConfig config =
+        config =
         new TrajectoryConfig(
                 DriveConstants.kMaxSpeedMetersPerSecond,
                 DriveConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -63,7 +69,7 @@ private TrajectoryConstraint autoVoltageConstraint;
             .addConstraint(autoVoltageConstraint);
 
     // An example trajectory to follow.  All units in meters.
-    private Trajectory exampleTrajectory =
+    exampleTrajectory =
         TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
             new Pose2d(0, 0, new Rotation2d(0)),
@@ -76,33 +82,34 @@ private TrajectoryConstraint autoVoltageConstraint;
 
 
 
-    private RamseteCommand ramseteCommand =
+    ramseteCommand =
         new RamseteCommand(
             exampleTrajectory,
             m_robotDrive::getPose,
-                new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
-            new SimpleMotorFeedforward(
-            DriveConstants.ksVolts,
-                DriveConstants.kvVoltSecondsPerMeter,
-                DriveConstants.kaVoltSecondsSquaredPerMeter), kDriveKinematics,
+            new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+            new SimpleMotorFeedforward(DriveConstants.ksVolts,DriveConstants.kvVoltSecondsPerMeter,DriveConstants.kaVoltSecondsSquaredPerMeter), 
+            kDriveKinematics,
             m_robotDrive::getWheelSpeeds,
             new PIDController(DriveConstants.ARCADE_PID_P, DriveConstants.ARCADE_PID_I, DriveConstants.ARCADE_PID_D),
             new PIDController(DriveConstants.ARCADE_PID_P, DriveConstants.ARCADE_PID_I, DriveConstants.ARCADE_PID_D),
-            // RamseteCommand passes volts to the callback
             m_robotDrive::tankDriveVolts,
             m_robotDrive);
 
     // Reset odometry to the starting pose of the trajectory.
     m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
-  }
+
+    }
+  
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
+  // Called evey time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -112,14 +119,6 @@ private TrajectoryConstraint autoVoltageConstraint;
   @Override
   public boolean isFinished() {
     return false;
-  }
-
-  
-
-
-    
-
-    // Run path following command, then stop at the end.
-    return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+    }
 
 }

@@ -199,4 +199,10 @@ public class FalconDrivetrain extends SubsystemBase {
     return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if the GYRO is REVERSED.
   }
 
+  public void tankDriveVolts(double leftVolts, double rightVolts) {
+    m_leftLeader.setVoltage(leftVolts);
+    m_rightLeader.setVoltage(rightVolts);
+    m_drive.feed();
+  }
+
 }
