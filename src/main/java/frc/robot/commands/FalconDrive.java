@@ -4,43 +4,44 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.FalconDrivetrain;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-/** An example command that uses an example subsystem. */
-public class ArmController extends CommandBase {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Arm m_armSubsystem;
-  private final XboxController e_controller; // e_controller is elevator's controller
-  private boolean done;
 
+
+/** An example command that uses an example subsystem. */
+public class FalconDrive extends CommandBase {
+  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  private final FalconDrivetrain m_driveSubsystem;
+  private final XboxController xboxDriver;
+  private final double MAX_FORWARD_SPEED = 5 * 0.5;
+  private final double MAX_TURN_SPEED = 5 * 0.5;
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ArmController(Arm armSubsystem, XboxController controller) {
-    e_controller = controller;
-    m_armSubsystem = armSubsystem;
-    done = false;
+  public FalconDrive(FalconDrivetrain driveSubsystem, XboxController controller) {
+    xboxDriver = controller;
+    m_driveSubsystem = driveSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_armSubsystem);
+    addRequirements(m_driveSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double inputPercent = RebelUtil.linearDeadband(e_controller.getRightY(), 0.05);
-
-    m_armSubsystem.setPercentOutput(inputPercent);
-
+    double forwardSpeed = RebelUtil.linearDeadband(xboxDriver.getLeftY(), 0.1) * MAX_FORWARD_SPEED;
+    double turnSpeed = RebelUtil.linearDeadband(-xboxDriver.getRightX(), 0.1) * MAX_TURN_SPEED;
+    
+    m_driveSubsystem.drive(forwardSpeed, turnSpeed);
   }
 
   // Called once the command ends or is interrupted.

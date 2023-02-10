@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utils.ConstantsFXDriveTrain.DriveConstants;
 import frc.robot.utils.ConstantsFXDriveTrain.GearboxConstants;
 import frc.robot.Constants;
+import frc.robot.Robot;
 
 public class FalconDrivetrain extends SubsystemBase {
   public static final double kMaxSpeed = Constants.DrivetrainConstants.kMaxSpeed; // meters per second
@@ -94,10 +95,12 @@ public class FalconDrivetrain extends SubsystemBase {
     m_rightGroup.setInverted(DriveConstants.FALCON_RIGHT_GROUP_INVERTED);
     m_leftEncoder.setDistancePerPulse(2 * Math.PI * kWheelRadius / kEncoderResolution);
     m_rightEncoder.setDistancePerPulse(2 * Math.PI * kWheelRadius / kEncoderResolution);
+    m_leftLeader.getSensorCollection().setIntegratedSensorPosition(0, 30);
+    m_rightLeader.getSensorCollection().setIntegratedSensorPosition(0, 30);
     m_leftEncoder.reset();
     m_rightEncoder.reset();
     m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
-
+    
     if (RobotBase.isSimulation()) {
       // TODO: EDIT VALUES TO BE ACCURATE
       m_differentialDrivetrainSimulator = new DifferentialDrivetrainSim(m_drivetrainSystem,
@@ -124,7 +127,7 @@ public class FalconDrivetrain extends SubsystemBase {
 
   public void updateSmartDashBoard() {
     SmartDashboard.putNumber("AverageEncoderDistance", this.getAverageEncoderDistance());
-    SmartDashboard.putNumber("CurrentDrawnAmps", m_differentialDrivetrainSimulator.getCurrentDrawAmps());
+    if(Robot.isSimulation()) SmartDashboard.putNumber("CurrentDrawnAmps", m_differentialDrivetrainSimulator.getCurrentDrawAmps());
 
     m_fieldSim.setRobotPose(getPose());
     SmartDashboard.putData("Field", m_fieldSim);

@@ -5,63 +5,43 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.ArmPID;
+import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 /** An example command that uses an example subsystem. */
-public class ClawController extends CommandBase {
+public class ArmPIDController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Claw m_clawSubsystem;
+  private final ArmPID m_armPID;
   private final XboxController e_controller; // e_controller is elevator's controller
-  private final DigitalInput linebreak;
-  private boolean lastLineBreak;
-  private boolean lastToggle;
+
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ClawController(Claw clawSubsystem, XboxController controller) {
+  public ArmPIDController(ArmPID armPIDSubsystem, XboxController controller) {
     e_controller = controller;
-    m_clawSubsystem = clawSubsystem;
-    linebreak = new DigitalInput(3);
-    lastLineBreak = false;
-    lastToggle = false;
+    m_armPID = armPIDSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_clawSubsystem);
+    addRequirements(m_armPID);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_armPID.setToVelocityControlMode(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    /*
-    if (linebreak.get() && !lastLineBreak) {
-      m_clawSubsystem.toggle();
-    }
-    */
-
-    System.out.println(lastToggle);
-
-    if (e_controller.getAButton().getAsBoolean() && !lastToggle) {
-      lastToggle = true;
-      m_clawSubsystem.toggle();
-      System.out.println("test");
-
-    } 
-
-    // if(!e_controller.getAButton().getAsBoolean()) {
-    //   lastToggle = false;
-    // }
-
-    //lastLineBreak = linebreak.get();
-      
+    double desiredVelo = e_controller.getRightY() * ArmPID.kMaxSpeed;
+    m_armPID.setVelocitySetpoint(desiredVelo);
+    m_armPID.setToVelocityControlMode(true);
   }
 
   // Called once the command ends or is interrupted.

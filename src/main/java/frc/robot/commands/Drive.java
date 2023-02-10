@@ -18,7 +18,7 @@ public class Drive extends CommandBase {
   private final Drivetrain m_driveSubsystem;
   private final XboxController xboxDriver;
   private final double MAX_FORWARD_SPEED = 5 * 0.5;
-  private final double MAX_TURN_SPEED = 5 * 0.5;
+  private final double MAX_TURN_SPEED = 20;
   /**
    * Creates a new ExampleCommand.
    *
@@ -40,6 +40,7 @@ public class Drive extends CommandBase {
   public void execute() {
     double forwardSpeed = RebelUtil.linearDeadband(xboxDriver.getLeftY(), 0.1) * MAX_FORWARD_SPEED;
     double turnSpeed = RebelUtil.linearDeadband(-xboxDriver.getRightX(), 0.1) * MAX_TURN_SPEED;
+    
     m_driveSubsystem.drive(forwardSpeed, turnSpeed);
   }
 

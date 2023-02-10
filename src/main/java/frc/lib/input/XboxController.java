@@ -5,6 +5,7 @@ import static frc.lib.input.ControllerConstants.XboxConstants.*;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.RebelUtil;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -68,14 +69,14 @@ public class XboxController implements Controller {
      *         negative)
      */
     public double getLeftY() {
-        return -joystick.getRawAxis(JOYSTICK_LEFT_Y);
+        return -RebelUtil.linearDeadband(joystick.getRawAxis(JOYSTICK_LEFT_Y), 0.05);
     }
 
     /**
      * @return the value of the right joystick x-axis
      */
     public double getRightX() {
-        return joystick.getRawAxis(JOYSTICK_RIGHT_X);
+        return RebelUtil.linearDeadband(joystick.getRawAxis(JOYSTICK_RIGHT_X), 0.05);
     }
 
     /**
