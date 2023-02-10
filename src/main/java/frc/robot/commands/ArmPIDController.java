@@ -41,6 +41,7 @@ public class ArmPIDController extends CommandBase {
   public void execute() {
     double desiredVelo = e_controller.getRightY() * ArmPID.kMaxSpeed;
     m_armPID.setVelocitySetpoint(desiredVelo);
+    m_armPID.setToVelocityControlMode(true);
   }
 
   // Called once the command ends or is interrupted.

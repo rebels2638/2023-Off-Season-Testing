@@ -26,16 +26,16 @@ public class ArmPID extends SubsystemBase {
     private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
     private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
     private static final double kRadiansPerRotation = 2 * Math.PI;
-    private static final double kFeedforwardAngleOffset = 0.2666;
+    private static final double kFeedforwardAngleOffset = -0.87997;
         
-    public static final double kP = 6; // 5.8146
-    public static final double kI = 0; 
-    public static final double kD = 0.01;
+    public static final double kP = 8.1682; // 5.8146 (it was actually 7.1682 but we increased it)
+    public static final double kI = 0.2; 
+    public static final double kD = 0;
 
-    public static final double kS = 0.068689;
-    public static final double kV = 4.3647;
-    public static final double kA = 0.12205;
-    public static final double kG = 0.051839;
+    public static final double kS = 0.21098; //0.068689;
+    public static final double kV = 3.9629; //4.3647;
+    public static final double kA = 0.29063; //0.12205;
+    public static final double kG = 0.11064; //0.051839;
 
     private final WPI_TalonFX m_motor = new WPI_TalonFX(5);
 
@@ -73,7 +73,7 @@ public class ArmPID extends SubsystemBase {
     }
 
     public void setGoal(double goalAngle) {
-        m_controller.setGoal(goalAngle); // radians
+        m_controller.setGoal(goalAngle + kFeedforwardAngleOffset); // radians
     }
 
     public boolean atGoal() {
@@ -89,7 +89,7 @@ public class ArmPID extends SubsystemBase {
     }
 
     public double getCurrentAngle() {
-        return nativeToRad(m_motor.getSensorCollection().getIntegratedSensorPosition());
+        return nativeToRad(m_motor.getSensorCollection().getIntegratedSensorPosition()) + kFeedforwardAngleOffset;
     }
 
     public double getCurrentVelocity() {
@@ -111,18 +111,19 @@ public class ArmPID extends SubsystemBase {
         double positionSetpoint = m_velocityControlEnabled ? angle + velocitySetpoint * 0.02 : m_controller.getSetpoint().position;
         double accelerationSetpoint = m_velocityControlEnabled ? 0.0 : (velocitySetpoint - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
 
-        double feedforward = m_feedforward.calculate(positionSetpoint + kFeedforwardAngleOffset, velocitySetpoint, accelerationSetpoint);
+        double feedforward = m_feedforward.calculate(positionSetpoint, velocitySetpoint, accelerationSetpoint);
         double positionPID = m_controller.calculate(angle);
         double velocityPID = m_velocityController.calculate(getCurrentVelocity(), velocitySetpoint);
         double pid = m_velocityControlEnabled ? velocityPID : positionPID;
 
         double currentEncoder = m_motor.getSensorCollection().getIntegratedSensorPosition();
+        System.out.println("FF: " + feedforward + " PID: " + pid);
         double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
         if (currentEncoder >= kUpperLimit && voltage > 0.0) {
-            feedforward = 0.0;
+            voltage = 0.0;
         } else if (currentEncoder <= kLowerLimit && voltage < 0.0) {
-            feedforward = 0.0;
-        }
+            voltage = 0.0;
+        } 
         
         m_motor.setVoltage(voltage);
 
