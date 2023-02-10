@@ -2,15 +2,13 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.RebelUtil;
-import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -18,54 +16,53 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
-public class FourBarArmPID extends SubsystemBase {
-    public static final double kMaxSpeed = 2.5; // radians? per second
-    public static final double kMaxAcceleration = 1; // radians? per second squared
+public class LinearSlidePID extends SubsystemBase {
+    public static final double kMaxSpeed = 0.2; // meters per second
+    public static final double kMaxAcceleration = 0.1; // meters per second squared
 
+    private static final double kWheelRadius = 0.051; // meters
     private static final int kEncoderResolution = 4*4096;
-    private static final int kGearingRatio = 100 * (64 / 20);
-    private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
-    private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
-    private static final double kRadiansPerRotation = 2 * Math.PI;
-    private static final double kFeedforwardAngleOffset = -1.5715;
+    private static final int kGearingRatio = 0;
         
-    public static final double kP = 7.3076; // 11.31 for velocity
+    public static final double kP = 0;
     public static final double kI = 0; 
-    public static final double kD = 404.25;
+    public static final double kD = 0;
 
-    public static final double kS = 0.81274;
-    public static final double kV = 333.88;
-    public static final double kA = 27.87;
-    public static final double kG = 50.311;
+    public static final double kS = 0;
+    public static final double kV = 0;
+    public static final double kA = 0;
+    public static final double kG = 0;
 
-    private final WPI_TalonSRX m_motor = new WPI_TalonSRX(7);
+    private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio * 1.32; // what is this constant huh
+    private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
+    private static final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
+    private static final double kRotationsPerMeter = 1 / kMetersPerRotation;
+
+    private final WPI_TalonSRX m_motor = new WPI_TalonSRX(0); // idk what this is
 
     private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
     private final PIDController m_velocityController = new PIDController(kP, kI, kD);
-    private final ArmFeedforward m_feedforward = new ArmFeedforward(kS, kG, kV, kA);
+    private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
 
-    public boolean m_velocityControlEnabled = false;
+    public boolean m_velocityControlEnabled = true;
 
     private double m_velocitySetpoint = 0;
 
     private double m_lastVelocitySetpoint = 0;
     private double m_lastTime = Timer.getFPGATimestamp();
-    
+
     private static double kUpperLimit = 0;
     private static double kLowerLimit = 0;
 
-    private final GenericEntry tab;
-  
-    public FourBarArmPID() {
-        m_motor.setInverted(true); // i think?
+    public LinearSlidePID() {
+        // m_motor.setInverted(true); // invert motor output
 
-        // reset 
+        // reset elevator
         m_motor.set(ControlMode.PercentOutput, 0);
-        m_controller.setTolerance(0.01, 0.1);
-        setGoal(0);
-        setToVelocityControlMode(false);
+        setGoal(new TrapezoidProfile.State(0, 0));
+        m_velocityControlEnabled = true;
         m_velocitySetpoint = 0;
-        tab = Shuffleboard.getTab("SmartDashboard").add("FourBar Angle", 0.0).getEntry();
+        m_controller.setTolerance(0.01, 0.05);
 
         // to edit?
         TalonSRXConfiguration config = new TalonSRXConfiguration();
@@ -77,13 +74,17 @@ public class FourBarArmPID extends SubsystemBase {
         // m_motor.setSelectedSensorPosition(0, 0, 30); // reset encoders
     }
 
-    // convert from TalonSRX arm angle in native units to radians
-    public double nativeToRad(double encoderUnits) {
-        return encoderUnits * kRotationsPerNativeUnit * kRadiansPerRotation;
+
+    public double heightToNative(double heightUnits) {
+        return heightUnits * kRotationsPerMeter * kNativeUnitsPerRotation;
     }
 
-    public void setGoal(double goalAngle) {
-        m_controller.setGoal(goalAngle); // radians
+    public double nativeToHeight(double encoderUnits) {
+        return encoderUnits * kRotationsPerNativeUnit * kMetersPerRotation;
+    }
+
+    public void setGoal(TrapezoidProfile.State goalState) {
+        m_controller.setGoal(goalState);
     }
 
     public boolean atGoal() {
@@ -98,21 +99,16 @@ public class FourBarArmPID extends SubsystemBase {
         m_velocityControlEnabled = on;
     }
 
-    public double getCurrentMotorAngle() {
-        return nativeToRad(m_motor.getSelectedSensorPosition());
+    public double getCurrentHeight() {
+        return -nativeToHeight(m_motor.getSelectedSensorPosition());
     }
 
     public double getCurrentVelocity() {
-        return nativeToRad(m_motor.getSelectedSensorVelocity() * 10); // motor velocity is in ticks per 100ms
+        return nativeToHeight(m_motor.getSelectedSensorVelocity() * 10); // motor velocity is in ticks per 100ms
     }
 
     public void zeroEncoder() {
         m_motor.setSelectedSensorPosition(0, 0, 30);
-    }
-
-    // The god formula
-    public double motorAngleToSlideAngle() {
-        return 0.0;
     }
 
     /*
@@ -120,14 +116,11 @@ public class FourBarArmPID extends SubsystemBase {
     */
     @Override
     public void periodic() {
-        double angle = getCurrentMotorAngle();
-        tab.setDouble(angle);
         double velocitySetpoint = m_velocityControlEnabled ? m_velocitySetpoint : m_controller.getSetpoint().velocity;
-        double positionSetpoint = m_velocityControlEnabled ? angle + velocitySetpoint * 0.02 : m_controller.getSetpoint().position;
         double accelerationSetpoint = m_velocityControlEnabled ? 0.0 : (velocitySetpoint - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
 
-        double feedforward = m_feedforward.calculate(positionSetpoint + kFeedforwardAngleOffset, velocitySetpoint, accelerationSetpoint);
-        double positionPID = m_controller.calculate(angle);
+        double feedforward = m_feedforward.calculate(velocitySetpoint, accelerationSetpoint);
+        double positionPID = m_controller.calculate(getCurrentHeight());
         double velocityPID = m_velocityController.calculate(getCurrentVelocity(), velocitySetpoint);
         double pid = m_velocityControlEnabled ? velocityPID : positionPID;
 
@@ -138,11 +131,15 @@ public class FourBarArmPID extends SubsystemBase {
         } else if (currentEncoder <= kLowerLimit && voltage < 0.0) {
             feedforward = 0.0;
         }
-        
+
         System.out.println(voltage);
         // m_motor.setVoltage(voltage);
 
         m_lastVelocitySetpoint = velocitySetpoint;
         m_lastTime = Timer.getFPGATimestamp();
+    }
+
+    public void breakMotor() {
+        m_motor.stopMotor();
     }
 }
