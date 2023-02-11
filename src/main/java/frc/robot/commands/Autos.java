@@ -18,10 +18,23 @@ import com.pathplanner.lib.*;
 public final class Autos 
     extends CommandBase
 {
-  private boolean isFinished = false, run = false;
-  private PathPlannerTrajectory pl;
-  private final Drivetrain drive;
-  private Consumer<Pose2d> user;
+  private FalconDrivetrain m_drivetrain;
+  private boolean finished = false;
+  private Shuffleboard tab = Shuffleboard.getTab("Auto")
+  public Autos(FalconDrivetrain drive)
+  {
+    m_drivetrain = drive;
+    addRequirements(drive);
+    SimpleMotorFeedforward FeedForward = new SimpleMotorFeedforward(
+        DriveConstants.ksVolts,
+        DriveConstants.kvVoltSecondsPerMeter,
+        DriveConstants.kaVoltSecondsSquaredPerMeter);
+        tab.add("Auto Selection: ", drive);
+        
+        
+    
+    
+  }
 
   public static final PathPlannerTrajectory[] AUTO_PATHS = 
   {
@@ -49,35 +62,16 @@ public final class Autos
     return PathPlanner.generatePath(constraints, Arrays.asList(points));
   }
 
-  // default init, supplies a default drive train to use
-  public Autos(Drivetrain drivetrain, Consumer<Pose2d> worker)
-  {
-    this.drive = drivetrain;
-    this.user = worker;
-    pl = make(new PathConstraints(0,0), make(0, 0, 0));
-    addRequirements(this.drive);
-  }
-
-  public Autos(Drivetrain drivetrain)
-  {
-    this(drivetrain, x -> {
-      drivetrain.drive(0, 0);
-    });
-  }
-
   @Override public void execute()
   {
     pl.getStates().forEach(x -> {
-      if(run)
-      {
-        user.accept(x.poseInMeters);
-      }
+        
     });
   }
 
   @Override public boolean isFinished()
   {
-    return isFinished;
+    return finished;
   }
 }
 
