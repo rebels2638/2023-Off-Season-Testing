@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.RebelUtil;
+import frc.robot.Robot;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -10,6 +13,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -48,23 +52,52 @@ public class ElevatorPID extends SubsystemBase {
     public boolean m_velocityControlEnabled = true;
 
     private double m_velocitySetpoint = 0;
+    private double m_voltageSetpoint = 0;
+    private double m_heightAccumulator = 0;
 
     private double m_lastVelocitySetpoint = 0;
+    private double m_lastVelocity = 0;
     private double m_lastTime = Timer.getFPGATimestamp();
 
-    private final GenericEntry tab;
+    private static double kUpperLimit = 0.55;
+    private static double kLowerLimit = -0.05;
+
+    private final ShuffleboardTab tab;
+
+    private final GenericEntry elevatorEncoderPosition;
+    private final GenericEntry elevatorPosition;
+    private final GenericEntry elevatorVelocity;
+    private final GenericEntry elevatorAcceleration;
+    private final GenericEntry elevatorPositionSetpoint;
+    private final GenericEntry elevatorVelocitySetpoint;
+    private final GenericEntry elevatorAccelerationSetpoint;
+    private final GenericEntry voltageSupplied;
+    private final GenericEntry voltageSetpoint;
 
     public ElevatorPID() {
         m_motor.setInverted(true); // invert motor output
 
         // reset elevator
         m_motor.set(ControlMode.PercentOutput, 0);
+        setToVelocityControlMode(true);
+        setVelocitySetpoint(0);
         setGoal(new TrapezoidProfile.State(0, 0));
-        m_velocityControlEnabled = true;
-        m_velocitySetpoint = 0;
+        resetHeightAccumulator();
         m_controller.setTolerance(0.01, 0.05);
 
-        tab = Shuffleboard.getTab("Encoders").add("Elevator Height", 0.0).getEntry();
+        tab = Shuffleboard.getTab("Elevator");
+        elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
+        elevatorPosition = tab.add("Height", 0.0).getEntry();
+        elevatorVelocity = tab.add("Velocity", 0.0).getEntry();
+        elevatorAcceleration = tab.add("Acceleration", 0.0).getEntry();
+        elevatorPositionSetpoint = tab.add("Height Setpoint", 0.0).getEntry();
+        elevatorVelocitySetpoint = tab.add("Velocity Setpoint", 0.0).getEntry();
+        elevatorAccelerationSetpoint = tab.add("Acceleration Setpoint", 0.0).getEntry();
+        voltageSupplied = tab.add("Motor Voltage", 0.0).getEntry();
+        voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
+
+        tab.add("Zero Encoder",
+                new InstantCommand(() -> zeroEncoder()));
     }
 
     /*
@@ -93,18 +126,60 @@ public class ElevatorPID extends SubsystemBase {
 
     public void setToVelocityControlMode(boolean on) {
         m_velocityControlEnabled = on;
+        resetHeightAccumulator();
+    }
+
+    public void resetHeightAccumulator() {
+        m_heightAccumulator = getCurrentHeight();
+    }
+
+    public double getCurrentEncoderPosition() {
+        return -m_motor.getSensorCollection().getIntegratedSensorPosition();
+    }
+
+    public double getCurrentEncoderRate() {
+        return -m_motor.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
     }
 
     public double getCurrentHeight() {
-        return -nativeToHeight(m_motor.getSensorCollection().getIntegratedSensorPosition());
+        return nativeToHeight(getCurrentEncoderPosition());
     }
 
     public double getCurrentVelocity() {
-        return nativeToHeight(m_motor.getSensorCollection().getIntegratedSensorVelocity() * 10); // motor velocity is in ticks per 100ms
+        return nativeToHeight(getCurrentEncoderRate());
+    }
+
+    public double getCurrentAcceleration() {
+        return (getCurrentVelocity() - m_lastVelocity) / (Timer.getFPGATimestamp() - m_lastTime);
+    }
+
+    public double getHeightSetpoint() {
+        return m_velocityControlEnabled ? m_heightAccumulator : m_controller.getSetpoint().position;
+    }
+
+    public double getVelocitySetpoint() {
+        return m_velocityControlEnabled ? m_velocitySetpoint : m_controller.getSetpoint().velocity;
+    }
+
+    public double getAccelerationSetpoint() {
+        return m_velocityControlEnabled ? 0.0
+                : (getVelocitySetpoint() - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
     }
 
     public void zeroEncoder() {
         m_motor.getSensorCollection().setIntegratedSensorPosition(0, 30);
+    }
+
+    public void updateShuffleboard() {
+        elevatorEncoderPosition.setDouble(getCurrentEncoderPosition());
+        elevatorPosition.setDouble(getCurrentHeight());
+        elevatorVelocity.setDouble(getCurrentVelocity());
+        elevatorAcceleration.setDouble(getCurrentAcceleration());
+        elevatorPositionSetpoint.setDouble(getHeightSetpoint());
+        elevatorVelocitySetpoint.setDouble(getVelocitySetpoint());
+        elevatorAccelerationSetpoint.setDouble(getAccelerationSetpoint());
+        voltageSupplied.setDouble(m_motor.getMotorOutputVoltage());
+        voltageSetpoint.setDouble(m_voltageSetpoint);
     }
 
     /*
@@ -112,20 +187,27 @@ public class ElevatorPID extends SubsystemBase {
     */
     @Override
     public void periodic() {
-        double height = getCurrentHeight();
-        tab.setDouble(height);
-        double velocitySetpoint = m_velocityControlEnabled ? m_velocitySetpoint : m_controller.getSetpoint().velocity;
-        double accelerationSetpoint = m_velocityControlEnabled ? 0.0 : (velocitySetpoint - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
-
-        double feedforward = m_feedforward.calculate(velocitySetpoint, accelerationSetpoint);
+        double feedforward = m_feedforward.calculate(getVelocitySetpoint(), getAccelerationSetpoint());
         double positionPID = m_controller.calculate(getCurrentHeight());
-        double velocityPID = m_velocityController.calculate(getCurrentVelocity(), velocitySetpoint);
+        double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
         double pid = m_velocityControlEnabled ? velocityPID : positionPID;
 
-        m_motor.setVoltage(feedforward + pid);
+        double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
+        if (getCurrentHeight() >= kUpperLimit && voltage > 0.0) {
+            voltage = 0.0;
+        } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
+            voltage = 0.0;
+        }
 
-        m_lastVelocitySetpoint = velocitySetpoint;
+        m_voltageSetpoint = voltage;
+        m_motor.setVoltage(voltage);
+
+        updateShuffleboard();
+
+        m_lastVelocitySetpoint = getVelocitySetpoint();
+        m_lastVelocity = getCurrentVelocity();
         m_lastTime = Timer.getFPGATimestamp();
+        m_heightAccumulator += getVelocitySetpoint() * Robot.kDefaultPeriod;
     }
 
     public void breakMotor() {

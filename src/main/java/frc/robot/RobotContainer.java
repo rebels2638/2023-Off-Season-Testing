@@ -175,13 +175,6 @@ public class RobotContainer {
     // this.xboxOperator.getAButton().onTrue(
     //     new ElevatorDown(elevatorPID)
     // );
-    
-
-    // Shuffleboard.getTab("Commands").add("Zero Elevator Position",
-    //     new InstantCommand(() -> this.elevatorPID.zeroEncoder()));
-
-    // Shuffleboard.getTab("Commands").add("Zero Arm Position",
-    //     new InstantCommand(() -> this.armPID.zeroEncoder()));
   }
 
   /**
