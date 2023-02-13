@@ -10,8 +10,10 @@ import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 
@@ -21,11 +23,15 @@ public class FieldOrientedDrive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final FalconDrivetrain m_driveSubsystem;
   private final XboxController xboxDriver;
-  private final double MAX_FORWARD_SPEED = 3;
-  private final double MAX_TURN_SPEED = 10;
-  private final double CONTROL_STRENGTH = 5; // THIS MUST BE AN ODD POSITIVE INTEGER
+  private final double MAX_FORWARD_SPEED = 1;
+  private final double MAX_TURN_SPEED = 20;
+  private final double MAX_TURN_ACCELERATION = 40;
+  private final double CONTROL_STRENGTH = 91; // THIS MUST BE AN ODD POSITIVE INTEGER
 
-  private final PIDController pid = new PIDController(1, 0, 0);
+  private final ProfiledPIDController pid = new ProfiledPIDController(2, 0, 1.5, new TrapezoidProfile.Constraints(MAX_TURN_SPEED, MAX_TURN_ACCELERATION));
+  
+  private Rotation2d m_headingSetpoint;
+
   /**
    * Creates a new ExampleCommand.
    *
@@ -35,6 +41,7 @@ public class FieldOrientedDrive extends CommandBase {
     xboxDriver = controller;
     m_driveSubsystem = driveSubsystem;
     pid.enableContinuousInput(-Math.PI, Math.PI);
+    m_headingSetpoint = new Rotation2d();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_driveSubsystem);
   }
@@ -50,8 +57,17 @@ public class FieldOrientedDrive extends CommandBase {
     Rotation2d gyroHeading = m_driveSubsystem.getPose().getRotation();
 
     double magnitude = new Translation2d(xboxDriver.getLeftX(), xboxDriver.getLeftY()).getNorm();
-    double forwardSpeed = Math.pow(gyroHeading.minus(headingSetpoint).getCos(), CONTROL_STRENGTH) * magnitude * MAX_FORWARD_SPEED;
-    double turnSpeed = RebelUtil.constrain(pid.calculate(gyroHeading.getRadians(), headingSetpoint.getRadians()), -MAX_TURN_SPEED, MAX_TURN_SPEED);
+    Rotation2d headingError = gyroHeading.minus(m_headingSetpoint);
+
+    // Do not update heading if xbox controller shows close to no input
+    if(magnitude > 0.05) m_headingSetpoint = headingSetpoint;
+
+    // Keep heading setpoint in the direction of minimal movement unless otherwise specified by the driver
+    if(headingError.getCos() < 0.0 && !xboxDriver.getLeftBumper().getAsBoolean()) m_headingSetpoint = m_headingSetpoint.plus(new Rotation2d(Math.PI));
+
+    // Forward speed is reduced when robot is not close to parallel with the heading setpoint (dot product)
+    double forwardSpeed = Math.pow(headingError.getCos(), CONTROL_STRENGTH) * magnitude * MAX_FORWARD_SPEED;
+    double turnSpeed = pid.calculate(gyroHeading.getRadians(), m_headingSetpoint.getRadians());
     
     m_driveSubsystem.drive(forwardSpeed, turnSpeed);
   }

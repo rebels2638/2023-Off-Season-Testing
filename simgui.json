@@ -2,7 +2,8 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/Shuffleboard/Commands/Zero Elevator Position": "Command"
+      "/Shuffleboard/Commands/Zero Elevator Position": "Command",
+      "/SmartDashboard/Field": "Field2d"
     }
   }
 }

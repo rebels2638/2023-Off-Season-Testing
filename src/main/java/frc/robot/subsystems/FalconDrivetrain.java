@@ -118,16 +118,9 @@ public class FalconDrivetrain extends SubsystemBase {
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
     var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
     var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
-        final double leftOutput =
-        m_leftPIDController.calculate(m_leftEncoder.getRate(), speeds.leftMetersPerSecond);
-    final double rightOutput =
-        m_rightPIDController.calculate(m_rightEncoder.getRate(), speeds.rightMetersPerSecond);
+    double leftOutput = m_leftPIDController.calculate(m_leftLeader.getSensorCollection().getIntegratedSensorPosition(), speeds.leftMetersPerSecond);
+    double rightOutput = m_rightPIDController.calculate(m_rightLeader.getSensorCollection().getIntegratedSensorPosition(), speeds.rightMetersPerSecond);
 
-    
-    //double leftOutput = m_leftPIDController.calculate(m_leftLeader.getSensorCollection().getIntegratedSensorPosition(), speeds.leftMetersPerSecond);
-    //double rightOutput = m_rightPIDController.calculate(m_rightLeader.getSensorCollection().getIntegratedSensorPosition(), speeds.rightMetersPerSecond);
-
-    System.out.println("VOLTAGE " + (leftFeedforward + leftOutput) + " RIGHT VOLTAGE " + (rightOutput + rightFeedforward));
     m_leftGroup.setVoltage(leftOutput + leftFeedforward);
     m_rightGroup.setVoltage(rightOutput + rightFeedforward);
   }
@@ -207,6 +200,12 @@ public class FalconDrivetrain extends SubsystemBase {
 
   public double getHeading() {
     return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if the GYRO is REVERSED.
+  }
+
+  public void tankDriveVolts(double leftVolts, double rightVolts) {
+    m_leftLeader.setVoltage(leftVolts);
+    m_rightLeader.setVoltage(rightVolts);
+    m_drive.feed();
   }
 
 }
