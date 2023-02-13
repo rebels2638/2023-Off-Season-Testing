@@ -56,13 +56,12 @@ public class FieldOrientedDrive extends CommandBase {
     Rotation2d headingSetpoint = new Rotation2d(xboxDriver.getLeftX(), xboxDriver.getLeftY());
     Rotation2d gyroHeading = m_driveSubsystem.getPose().getRotation();
 
-    double magnitude = new Translation2d(xboxDriver.getLeftX(), xboxDriver.getLeftY()).getNorm();
-    Rotation2d headingError = gyroHeading.minus(m_headingSetpoint);
-
     // Do not update heading if xbox controller shows close to no input
+    double magnitude = new Translation2d(xboxDriver.getLeftX(), xboxDriver.getLeftY()).getNorm();
     if(magnitude > 0.05) m_headingSetpoint = headingSetpoint;
 
     // Keep heading setpoint in the direction of minimal movement unless otherwise specified by the driver
+    Rotation2d headingError = gyroHeading.minus(m_headingSetpoint);
     if(headingError.getCos() < 0.0 && !xboxDriver.getLeftBumper().getAsBoolean()) m_headingSetpoint = m_headingSetpoint.plus(new Rotation2d(Math.PI));
 
     // Forward speed is reduced when robot is not close to parallel with the heading setpoint (dot product)
