@@ -12,13 +12,19 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Elevator extends SubsystemBase {
 
-    private final WPI_TalonFX talon;
+    // private final WPI_TalonFX talon;
+    private final WPI_TalonFX leftTalon;
+    private final WPI_TalonFX rightTalon;
+
     private static Elevator instance = null;
     private static double lastPercentSpeed; 
     private final DigitalInput limswitch;
 
     public Elevator() {
-        this.talon = new WPI_TalonFX(6); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
+        // this.talon = new WPI_TalonFX(6); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
+        this.leftTalon = new WPI_TalonFX(0);
+        this.rightTalon = new WPI_TalonFX(13);
+
         lastPercentSpeed = 0;
         TalonFXConfiguration falconConfig = new TalonFXConfiguration();
 
@@ -36,8 +42,15 @@ public class Elevator extends SubsystemBase {
         falconConfig.peakOutputForward = 1;
         falconConfig.peakOutputReverse = -1;
 
-        talon.configAllSettings(falconConfig);
-        talon.setNeutralMode(NeutralMode.Coast);
+        // talon.configAllSettings(falconConfig);
+        // talon.setNeutralMode(NeutralMode.Coast);
+
+        
+        leftTalon.configAllSettings(falconConfig);
+        leftTalon.setNeutralMode(NeutralMode.Coast);
+
+        rightTalon.configAllSettings(falconConfig);
+        rightTalon.setNeutralMode(NeutralMode.Coast);
         
     }
 
@@ -57,18 +70,21 @@ public class Elevator extends SubsystemBase {
       
         // if(percent == 0) {
         //     //talon.enableBrakeMode(true);    
-        // }
+        // }%
 
-        talon.set(ControlMode.PercentOutput, percent); // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed???? where speed is in range -1,1 and the xbox controller left joy stick is also -1,1???
+        // talon.set(ControlMode.PercentOutput, percent); // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed???? where speed is in range -1,1 and the xbox controller left joy stick is also -1,1???
+        
+        leftTalon.set(ControlMode.PercentOutput, percent);
+        rightTalon.set(ControlMode.PercentOutput,percent);
     }
 
-    public void resetEncoder() {
-        talon.getSensorCollection().setIntegratedSensorPosition(0, 30);
+    public void resetEncoder() {    
+        // talon.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
 
     public boolean getLimitSwitch() {return limswitch.get();}
 
-    public double getEncoderValue() {return talon.getSensorCollection().getIntegratedSensorPosition();}
+    // public double getEncoderValue() {return talon.getSensorCollection().getIntegratedSensorPosition();}
 
     // public void setPosition(double thing) {talon.set(null, thing);, thing);;}
 
