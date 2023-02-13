@@ -47,7 +47,7 @@ public class PoseEstimator extends SubsystemBase {
         this.driveTrainSubsytem = drive;
 
         poseEstimator = new DifferentialDrivePoseEstimator(drive.m_kinematics,
-                driveTrainSubsytem.m_gyro.getRotation2d(), driveTrainSubsytem.m_leftEncoder.getDistance(),
+                driveTrainSubsytem.getRotation2d(), driveTrainSubsytem.m_leftEncoder.getDistance(),
                 driveTrainSubsytem.m_rightEncoder.getDistance(), new Pose2d(),
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), // Local measurement standard deviations.
                                                                              // Left encoder, right encoder, gyro.
@@ -74,7 +74,7 @@ public class PoseEstimator extends SubsystemBase {
             }
         }
 
-        poseEstimator.update(driveTrainSubsytem.m_gyro.getRotation2d(),
+        poseEstimator.update(driveTrainSubsytem.getRotation2d(),
                 driveTrainSubsytem.m_leftEncoder.getDistance(), driveTrainSubsytem.m_rightEncoder.getDistance());
     }
 

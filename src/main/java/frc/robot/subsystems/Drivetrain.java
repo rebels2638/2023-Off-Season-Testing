@@ -4,18 +4,24 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.kauailabs.navx.frc.AHRS;
 
 /** Represents a differential drive style drivetrain. */
 public class Drivetrain extends SubsystemBase {
@@ -39,7 +45,7 @@ public class Drivetrain extends SubsystemBase {
   private final MotorControllerGroup m_rightGroup =
       new MotorControllerGroup(m_rightLeader, m_rightFollower);
 
-  public final AnalogGyro m_gyro = new AnalogGyro(0);
+  private final AHRS m_gyro = new AHRS(Port.kUSB);
 
   private final PIDController m_leftPIDController = new PIDController(1, 0, 0);
   private final PIDController m_rightPIDController = new PIDController(1, 0, 0);
@@ -76,6 +82,8 @@ public class Drivetrain extends SubsystemBase {
     m_odometry =
         new DifferentialDriveOdometry(
             m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+
+    Shuffleboard.getTab("Drive").add(new InstantCommand(() -> m_gyro.reset()));
   }
 
   /**
@@ -110,5 +118,9 @@ public class Drivetrain extends SubsystemBase {
   public void updateOdometry() {
     m_odometry.update(
         m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+  }
+
+  public Rotation2d getRotation2d() {
+    return m_gyro.getRotation2d();
   }
 }

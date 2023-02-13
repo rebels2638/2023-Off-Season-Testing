@@ -1,9 +1,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-//import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-//import com.kauailabs.navx.frc.AHRS; 
+import com.kauailabs.navx.frc.AHRS; 
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -66,7 +65,7 @@ public class FalconDrivetrain extends SubsystemBase {
   private final PIDController m_leftPIDController = new PIDController(1, 0, 0);
   private final PIDController m_rightPIDController = new PIDController(1, 0, 0);
 
-  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftGroup, m_rightGroup);
+  // private final DifferentialDrive m_drive = new DifferentialDrive(m_leftGroup, m_rightGroup);
 
   private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(kTrackWidth);
 
@@ -121,8 +120,8 @@ public class FalconDrivetrain extends SubsystemBase {
     double leftOutput = m_leftPIDController.calculate(m_leftLeader.getSensorCollection().getIntegratedSensorPosition(), speeds.leftMetersPerSecond);
     double rightOutput = m_rightPIDController.calculate(m_rightLeader.getSensorCollection().getIntegratedSensorPosition(), speeds.rightMetersPerSecond);
 
-    m_leftGroup.setVoltage(leftOutput + leftFeedforward);
-    m_rightGroup.setVoltage(rightOutput + rightFeedforward);
+    m_leftGroup.setVoltage(leftFeedforward + leftOutput);
+    m_rightGroup.setVoltage(rightFeedforward + rightOutput);
   }
 
   public void updateSmartDashBoard() {
@@ -157,10 +156,6 @@ public class FalconDrivetrain extends SubsystemBase {
 
   public double getAverageEncoderDistance() {
     return (m_leftEncoder.getDistance() + m_rightEncoder.getDistance()) / 2.0;
-  }
-
-  public void setMaxOutput(double maxOutput) {
-    m_drive.setMaxOutput(maxOutput);
   }
 
   public double getDrawnCurrentAmps() {
@@ -202,10 +197,11 @@ public class FalconDrivetrain extends SubsystemBase {
     return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if the GYRO is REVERSED.
   }
 
+  /*
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     m_leftLeader.setVoltage(leftVolts);
     m_rightLeader.setVoltage(rightVolts);
     m_drive.feed();
-  }
+  }*/
 
 }

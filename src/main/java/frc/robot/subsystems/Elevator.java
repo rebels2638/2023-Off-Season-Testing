@@ -84,7 +84,7 @@ public class Elevator extends SubsystemBase {
 
     public boolean getLimitSwitch() {return limswitch.get();}
 
-    // public double getEncoderValue() {return talon.getSensorCollection().getIntegratedSensorPosition();}
+    public double getEncoderValue() {return leftTalon.getSensorCollection().getIntegratedSensorPosition();}
 
     // public void setPosition(double thing) {talon.set(null, thing);, thing);;}
 
