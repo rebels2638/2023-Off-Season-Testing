@@ -30,6 +30,7 @@ import frc.robot.commands.ElevatorUp;
 import frc.robot.commands.FalconDrive;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.DrivetrainFalcon;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ElevatorPID;
 import frc.robot.commands.FourBarUp;
@@ -55,7 +56,8 @@ import frc.robot.utils.ConstantsArmElevator.ArmConstants;
 public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   // private final Drivetrain drive = new Drivetrain();
-  private final FalconDrivetrain drive = new FalconDrivetrain();
+//   private final FalconDrivetrain drive = new FalconDrivetrain();
+    private final DrivetrainFalcon drive = new DrivetrainFalcon();
 //   private final PoseEstimator poseEstimator = new PoseEstimator(drive);
   // private final Elevator elevator = new Elevator();
 
@@ -96,8 +98,8 @@ public class RobotContainer {
     // this.arm.setDefaultCommand(
     // new ArmCon   troller(arm, xboxOperator));
     
-    this.fourBarArm.setDefaultCommand(
-    new FourBarArmController(fourBarArm, xboxOperator));
+    // this.fourBarArm.setDefaultCommand(
+    // new FourBarArmController(fourBarArm, xboxOperator));
 
     // this.elevatorPID.setDefaultCommand(
     //     new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
@@ -109,13 +111,13 @@ public class RobotContainer {
     // new ClawController(claw, xboxOperator)
     // );
 
-    this.xboxOperator.getRightBumper().onTrue(
-        new InstantCommand(() -> this.claw.toggle()));
+    // this.xboxOperator.getRightBumper().onTrue(
+    //     new InstantCommand(() -> this.claw.toggle()));
 
 
-    this.xboxOperator.getYButton().onTrue(
-        new FourBarUp(fourBarArm)
-    );    
+    // this.xboxOperator.getYButton().onTrue(
+    //     new FourBarUp(fourBarArm)
+    // );
     // this.xboxOperator.getYButton().onTrue(
     //     new ElevatorUp(elevatorPID));
     // this.xboxOperator.getXButton().onTrue(

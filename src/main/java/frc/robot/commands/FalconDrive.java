@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.FalconDrivetrain;
+import frc.robot.subsystems.DrivetrainFalcon;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -15,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 /** An example command that uses an example subsystem. */
 public class FalconDrive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final FalconDrivetrain m_driveSubsystem;
+  private final DrivetrainFalcon m_driveSubsystem;
   private final XboxController xboxDriver;
   private final double MAX_FORWARD_SPEED = 5 * 0.5;
   private final double MAX_TURN_SPEED = 5 * 0.5;
@@ -24,7 +25,7 @@ public class FalconDrive extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public FalconDrive(FalconDrivetrain driveSubsystem, XboxController controller) {
+  public FalconDrive(DrivetrainFalcon driveSubsystem, XboxController controller) {
     xboxDriver = controller;
     m_driveSubsystem = driveSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
