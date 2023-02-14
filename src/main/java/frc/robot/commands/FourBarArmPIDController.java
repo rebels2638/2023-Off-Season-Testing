@@ -2,28 +2,30 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+
 package frc.robot.commands;
 
 import frc.robot.subsystems.FourBarArmPID;
 import frc.robot.subsystems.FourBarArm;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
+import edu.wpi.first.math.controller.PIDController;
 
 //import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class FourBarArmController extends CommandBase {
+public class FourBarArmPIDController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final FourBarArm m_armSubsystem;
-  //private final FourBarArmPID m_armSubsystem;
+  // private final FourBarArm m_armSubsystem;
+  private final FourBarArmPID m_armSubsystem;
   private final XboxController controller; // controller is arm's controller
   // private final DigitalInput toplimitSwitch;
   // private final DigitalInput bottomlimitSwitch;
 
   // Creates a new ExampleCommand.
-  public FourBarArmController(FourBarArm armSubsystem, XboxController controller) {
+  public FourBarArmPIDController(FourBarArmPID armSubsystem, XboxController controller) {
     this.controller = controller;
     m_armSubsystem = armSubsystem;
     // toplimitSwitch = new DigitalInput(2);
@@ -46,11 +48,11 @@ public class FourBarArmController extends CommandBase {
     double talonInputpercent = controller.getLeftY(); // not sure which joystick yet
     double inputPercent775 = controller.getRightY()*0.5; // not sure which joystick
     
-     // RebelUtil.linearDeadband(talonInputpercent, 0.05) * FourBarArm.kMaxSpeed;
-    //m_armSubsystem.setVelocitySetpoint(desiredVelo);
+    double desiredVelo = RebelUtil.linearDeadband(talonInputpercent, 0.05) * FourBarArmPID.kMaxSpeed;
+    m_armSubsystem.setVelocitySetpoint(desiredVelo);
 
-    m_armSubsystem.setPercentOutputTalon(talonInputpercent); 
-    m_armSubsystem.setPercentOutput775(inputPercent775); // takes percent. trust
+    // m_armSubsystem.setPercentOutputTalon(talonInputpercent); 
+    // m_armSubsystem.setPercentOutput775(inputPercent775); // takes percent. trust
     
     /*
     if (inputPercent > 0) {
@@ -67,7 +69,7 @@ public class FourBarArmController extends CommandBase {
              m_elevatorSubsystem.setPercentOutput(0);
         } else {
             // We are going down but bottom limit is not tripped so go at commanded speed
-            m_elevatorSubsystem.setPercentOutput(inputPercent);
+            m_elevatorSubsystem_m.setPercentOutput(inputPercent);
         }
     }
     */
