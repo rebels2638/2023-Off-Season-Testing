@@ -38,6 +38,8 @@ public class ElevatorController extends CommandBase {
   public void execute() {
 
     // fix this once we invert the motor pls
+
+    /*
     if (!done) {
 
       m_elevatorSubsystem.setPercentOutput(0.5); 
@@ -45,9 +47,9 @@ public class ElevatorController extends CommandBase {
 
       if (m_elevatorSubsystem.getLimitSwitch()) {done = true;}
     
-    }
+    }*/
 
-    double inputPercent = e_controller.getLeftY();
+    double inputPercent = e_controller.getLeftY() * 0.5;
 
     // if (inputPercent > 0) {
     //     if (toplimitSwitch.get()) {

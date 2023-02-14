@@ -207,16 +207,6 @@ public final class ConstantsFXDriveTrain {
         public static final double ACCELERATOR_PID_P = 0.0;
         public static final double ACCELERATOR_PID_I = 0.0;
         public static final double ACCELERATOR_PID_D = 0.0;
-
-        // Hood Encoder
-        // - PIDF controller takes in target and sensor position measurements in “raw”
-        // sensor units. This means a CTRE Mag Encoder will count 4096 units per
-        // rotation.
-        // - PIDF controller takes in target and sensor velocity measurements in “raw”
-        // sensor units per 100ms.
-        // - PIDF controller calculates the motor output such that, 1023 is interpreted as
-        // “full”. This means a closed loop error of 341 (sensor units) X kP of 3.0 will
-        // produce full motor output (1023
         public static final int ENCODER_UNITS_PER_ROTATION = 4096;
 
         // Hood

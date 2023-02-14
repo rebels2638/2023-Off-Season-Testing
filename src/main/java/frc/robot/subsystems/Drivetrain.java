@@ -33,7 +33,7 @@ public class Drivetrain extends SubsystemBase {
   private static final int kEncoderResolution = 4096;
 
   private final MotorController m_leftLeader = new WPI_TalonSRX(1);
-  private final MotorController m_leftFollower = new WPI_TalonSRX(2); 
+  private final MotorController m_leftFollower = new WPI_TalonSRX(2);
   private final MotorController m_rightLeader = new WPI_TalonSRX(3);
   private final MotorController m_rightFollower = new WPI_TalonSRX(4);
 

@@ -22,12 +22,12 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 /** Elevator subsystem with feed-forward and PID for position */
 public class ElevatorPID extends SubsystemBase {
-    public static final double kMaxSpeed = 0.2; // meters per second
+    public static final double kMaxSpeed = 0.1; // meters per second
     public static final double kMaxAcceleration = 0.1; // meters per second squared
 
     private static final double kWheelRadius = 0.03; // meters
-    private static final int kEncoderResolution = 2048;
-    private static final int kGearingRatio = 100;
+    private static final int kEncoderResolution = 2048; 
+    private static final int kGearingRatio = 6;
         
     public static final double kP = 342; // 1.2832 as of 020323
     public static final double kI = 0; 
@@ -43,7 +43,9 @@ public class ElevatorPID extends SubsystemBase {
     private static final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
     private static final double kRotationsPerMeter = 1 / kMetersPerRotation;
 
-    private final WPI_TalonFX m_motor = new WPI_TalonFX(6);
+    
+    private final WPI_TalonFX m_motor1 = new WPI_TalonFX(0);
+    private final WPI_TalonFX m_motor2 = new WPI_TalonFX(6);
 
     private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
     private final PIDController m_velocityController = new PIDController(10, 0, 0);
@@ -75,10 +77,12 @@ public class ElevatorPID extends SubsystemBase {
     private final GenericEntry voltageSetpoint;
 
     public ElevatorPID() {
-        m_motor.setInverted(true); // invert motor output
+        m_motor1.setInverted(true); // invert motor output
+        m_motor2.setInverted(true);
 
         // reset elevator
-        m_motor.set(ControlMode.PercentOutput, 0);
+        m_motor1.set(ControlMode.PercentOutput, 0);
+        m_motor2.set(ControlMode.PercentOutput, 0);
         setToVelocityControlMode(true);
         setVelocitySetpoint(0);
         setGoal(new TrapezoidProfile.State(0, 0));
@@ -134,11 +138,11 @@ public class ElevatorPID extends SubsystemBase {
     }
 
     public double getCurrentEncoderPosition() {
-        return -m_motor.getSensorCollection().getIntegratedSensorPosition();
+        return -m_motor1.getSensorCollection().getIntegratedSensorPosition();
     }
 
     public double getCurrentEncoderRate() {
-        return -m_motor.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
+        return -m_motor1.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
     }
 
     public double getCurrentHeight() {
@@ -167,7 +171,7 @@ public class ElevatorPID extends SubsystemBase {
     }
 
     public void zeroEncoder() {
-        m_motor.getSensorCollection().setIntegratedSensorPosition(0, 30);
+        m_motor1.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
 
     public void updateShuffleboard() {
@@ -178,7 +182,7 @@ public class ElevatorPID extends SubsystemBase {
         elevatorPositionSetpoint.setDouble(getHeightSetpoint());
         elevatorVelocitySetpoint.setDouble(getVelocitySetpoint());
         elevatorAccelerationSetpoint.setDouble(getAccelerationSetpoint());
-        voltageSupplied.setDouble(m_motor.getMotorOutputVoltage());
+        voltageSupplied.setDouble(m_motor1.getMotorOutputVoltage());
         voltageSetpoint.setDouble(m_voltageSetpoint);
     }
 
@@ -200,7 +204,9 @@ public class ElevatorPID extends SubsystemBase {
         }
 
         m_voltageSetpoint = voltage;
-        m_motor.setVoltage(voltage);
+        System.out.println(voltage);
+        // m_motor1.setVoltage(voltage);
+        // m_motor2.setVoltage(voltage);
 
         updateShuffleboard();
 
@@ -211,6 +217,7 @@ public class ElevatorPID extends SubsystemBase {
     }
 
     public void breakMotor() {
-        m_motor.stopMotor();
+        m_motor1.stopMotor();
+        m_motor2.stopMotor();
     }
 }

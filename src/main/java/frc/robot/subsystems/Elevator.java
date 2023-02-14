@@ -23,7 +23,7 @@ public class Elevator extends SubsystemBase {
     public Elevator() {
         // this.talon = new WPI_TalonFX(6); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
         this.leftTalon = new WPI_TalonFX(0);
-        this.rightTalon = new WPI_TalonFX(13);
+        this.rightTalon = new WPI_TalonFX(6);
 
         lastPercentSpeed = 0;
         TalonFXConfiguration falconConfig = new TalonFXConfiguration();
