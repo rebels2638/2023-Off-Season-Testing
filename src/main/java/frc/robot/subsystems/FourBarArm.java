@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 public class FourBarArm extends SubsystemBase {
     private final WPI_TalonSRX talon;
@@ -26,6 +27,7 @@ public class FourBarArm extends SubsystemBase {
         this.motor_775 = new WPI_TalonSRX(8); // change when found
         motor_775.setNeutralMode(NeutralMode.Brake);
         // spark.setInverted(true);
+        talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     }
 
     // Singleton class, call getInstance to access instead of the constructor.
@@ -42,8 +44,17 @@ public class FourBarArm extends SubsystemBase {
     }
 
     public void setPercentOutput775(double percent) {
-
+        // System.out.println(motor_775.getSelectedSensorPosition());
         motor_775.set(ControlMode.PercentOutput, -percent);
+    }
+
+    public void resetLinSlidePosition(){
+        //motor_775.getSensorCollection().setQuadraturePosition(0, 30);
+        
+    }
+    public double get775EncoderVal(){
+        System.out.println(motor_775.getSelectedSensorPosition());
+        return  motor_775.getSensorCollection().getQuadraturePosition();
     }
     
     // public void setSpeedSpark(double speed) {

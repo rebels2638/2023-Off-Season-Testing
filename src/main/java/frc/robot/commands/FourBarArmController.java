@@ -7,6 +7,9 @@ package frc.robot.commands;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.FourBarArm;
 import frc.lib.input.XboxController;
+
+import com.kauailabs.navx.IMUProtocol;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -38,11 +41,21 @@ public class FourBarArmController extends CommandBase {
 
     double talonInputpercent = controller.getLeftY(); // not sure which joystick yet
     double inputPercent775 = controller.getRightY()*0.5; // not sure which joystick
+    /* 
+    if(Math.abs(talonInputpercent) > 0.1){
+      m_armSubsystem.resetLinSlidePosition();
+      m_armSubsystem.setPercentOutput775(-0.2);
+    }
+    else {
+    m_armSubsystem.setPercentOutput775(inputPercent775);
+    }
+    */
+    System.out.println(m_armSubsystem.get775EncoderVal());
+    m_armSubsystem.setPercentOutput775(inputPercent775);
+    m_armSubsystem.setPercentOutputTalon(talonInputpercent); 
+     // takes percent. trust
     
 
-    m_armSubsystem.setPercentOutputTalon(talonInputpercent); 
-    m_armSubsystem.setPercentOutput775(inputPercent775); // takes percent. trust
-    
     /*
     if (inputPercent > 0) {
         if (toplimitSwitch.get()) {
