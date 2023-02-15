@@ -63,7 +63,6 @@ public class FourBarArmPID extends SubsystemBase {
         setToVelocityControlMode(false);
         m_velocitySetpoint = 0;
         tab = Shuffleboard.getTab("SmartDashboard").add("FourBar Angle", 0.0).getEntry();
-    
     }
 
     /*

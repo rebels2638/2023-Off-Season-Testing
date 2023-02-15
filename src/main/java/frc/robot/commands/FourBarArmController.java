@@ -4,11 +4,12 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.FourBarArmPID;
 import frc.robot.subsystems.FourBarArm;
+import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 
-import com.kauailabs.navx.IMUProtocol;
+//import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class FourBarArmController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final FourBarArm m_armSubsystem;
+  //private final FourBarArmPID m_armSubsystem;
   private final XboxController controller; // controller is arm's controller
   // private final DigitalInput toplimitSwitch;
   // private final DigitalInput bottomlimitSwitch;
@@ -33,7 +35,9 @@ public class FourBarArmController extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_armSubsystem.setToVelocityControlMode(true);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -41,21 +45,13 @@ public class FourBarArmController extends CommandBase {
 
     double talonInputpercent = controller.getLeftY(); // not sure which joystick yet
     double inputPercent775 = controller.getRightY()*0.5; // not sure which joystick
-    /* 
-    if(Math.abs(talonInputpercent) > 0.1){
-      m_armSubsystem.resetLinSlidePosition();
-      m_armSubsystem.setPercentOutput775(-0.2);
-    }
-    else {
-    m_armSubsystem.setPercentOutput775(inputPercent775);
-    }
-    */
-    System.out.println(m_armSubsystem.get775EncoderVal());
-    m_armSubsystem.setPercentOutput775(inputPercent775);
-    m_armSubsystem.setPercentOutputTalon(talonInputpercent); 
-     // takes percent. trust
     
+     // RebelUtil.linearDeadband(talonInputpercent, 0.05) * FourBarArm.kMaxSpeed;
+    //m_armSubsystem.setVelocitySetpoint(desiredVelo);
 
+    m_armSubsystem.setPercentOutputTalon(talonInputpercent); 
+    m_armSubsystem.setPercentOutput775(inputPercent775); // takes percent. trust
+    
     /*
     if (inputPercent > 0) {
         if (toplimitSwitch.get()) {
