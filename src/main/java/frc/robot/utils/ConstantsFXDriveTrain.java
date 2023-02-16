@@ -52,6 +52,12 @@ public final class ConstantsFXDriveTrain {
         public static final int SOLENOID_FORWARD = 0;
         public static final int SOLENOID_REVERSE = 7;
 
+        public static final double kaVoltSecondsSquaredPerMeter = 0.5;
+        public static final double kvVoltSecondsPerMeter = 0.5;
+
+        public static final double ksVolts = 0.5;
+        public static final double kgVolts = 0.5;
+
         // Gyro
         public static final boolean GYRO_REVERSED = true;
 
@@ -82,10 +88,10 @@ public final class ConstantsFXDriveTrain {
 
         public static final double ANGLE_TOLERANCE = 2.0;
 
-        // Spinning PID Values
-        public static final double ARCADE_PID_P = 0.0;
-        public static final double ARCADE_PID_I = 0.0;
-        public static final double ARCADE_PID_D = 0.0;
+        // PID Values
+        public static final double kP = 0.0;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
         public static final double ARCADE_STATIC_GAIN = 0.0;
         public static final double ARCADE_VELOCITY_GAIN = 0.0;
         // ?????? what even is this for

@@ -58,11 +58,10 @@ import frc.robot.utils.ConstantsArmElevator.ArmConstants;
  */
 public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
-  // private final Drivetrain drive = new Drivetrain();
+//   private final Drivetrain drive = new Drivetrain();
   private final FalconDrivetrain drive = new FalconDrivetrain();
-    // private final FalconDrivetrain drive = new FalconDrivetrain();
 //   private final PoseEstimator poseEstimator = new PoseEstimator(drive);
-  private final Elevator elevator = new Elevator();
+  // private final Elevator elevator = new Elevator();
 
   // The robot's controllers
   private final XboxController xboxDriver;
@@ -74,12 +73,15 @@ public class RobotContainer {
 //   private final ArmPID armPID = new ArmPID(); 
 
   private final Claw claw = new Claw();
-//   private final ElevatorPID elevatorPID = new ElevatorPID(); //DO NOT RUN ELEVATOR WITHOUT ZEROING ENCODERS AT GROUND POSITION YOU WILL BREAK IT IF YOU DONT DO THIS
+  // private final ElevatorPID elevatorPID = new ElevatorPID(); //DO NOT RUN ELEVATOR WITHOUT ZEROING ENCODERS AT GROUND POSITION YOU WILL BREAK IT IF YOU DONT DO THIS
 
   // Create a Sendable Chooser, which allows us to select between Commands (in
   // this case, auto commands)
   private final SendableChooser<Command> chooser = new SendableChooser<Command>();
+  private final SendableChooser<String> pathChooser = new SendableChooser<String>();
 
+
+  
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -89,15 +91,15 @@ public class RobotContainer {
     this.xboxOperator = new XboxController(2);
 
     // Controller Throttle Mappings
-    // this.drive.setDefaultCommand(
-    //     new Drive(drive, xboxDriver));
-
     this.drive.setDefaultCommand(
         new FalconDrive(drive, xboxDriver));
 
+    // this.drive.setDefaultCommand(
+        // new Drive(drive, xboxDriver));
 
-    this.elevator.setDefaultCommand(
-    new ElevatorController(elevator, xboxOperator)); // added, works
+
+    // this.elevator.setDefaultCommand(
+    // new ElevatorController(elevator, xboxOperator)); // added, works
 
     // this.arm.setDefaultCommand(
     // new ArmController(arm, xboxOperator));
@@ -118,8 +120,8 @@ public class RobotContainer {
     // new ClawController(claw, xboxOperator)
     // );
 
-    this.xboxOperator.getRightBumper().onTrue(
-        new InstantCommand(() -> this.claw.toggle()));
+    // this.xboxOperator.getRightBumper().onTrue(
+    //     new InstantCommand(() -> this.claw.toggle()));
 
 
     // this.xboxOperator.getYButton().onTrue(
@@ -195,8 +197,15 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+  
+
   public Command getAutonomousCommand() {
     Command chosen = chooser.getSelected();
+    return chosen;
+  }
+
+  public String getPathFileName() {
+    String chosen = pathChooser.getSelected();
     return chosen;
   }
 }

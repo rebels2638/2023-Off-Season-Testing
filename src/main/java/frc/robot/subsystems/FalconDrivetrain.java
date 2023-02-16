@@ -73,7 +73,7 @@ public class FalconDrivetrain extends SubsystemBase {
 
   private final DifferentialDriveOdometry m_odometry;
 
-  private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
+  public final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
   /*
    * =============================================================================
    * ================
