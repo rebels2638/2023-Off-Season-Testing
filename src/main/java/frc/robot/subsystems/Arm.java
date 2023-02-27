@@ -20,8 +20,8 @@ public class Arm extends SubsystemBase {
     private final GenericEntry tab;
     private static Arm instance = null;
     private static double lastPercentSpeed; 
-    private static double kUpperLimit = 55000.0;
-    private static double kLowerLimit = -55000.0;
+    private static double kUpperLimit = 98000.0;
+    private static double kLowerLimit = -27500.0;
 
     public Arm() {
         this.talon = new WPI_TalonFX(5); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
