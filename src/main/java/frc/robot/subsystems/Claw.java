@@ -21,7 +21,16 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
-public class ArmPID extends SubsystemBase {
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
+
+public class Claw extends SubsystemBase {
+    
+    private static Claw instance = null;
+    private final DoubleSolenoid solenoid;
+    private boolean state; // push is true, and pull is false
+    
     public static final double kMaxSpeed = 2.5; // radians? per second
     public static final double kMaxAcceleration = 1; // radians? per second squared
 
@@ -41,9 +50,8 @@ public class ArmPID extends SubsystemBase {
     public static final double kA = 0.29063; // 0.12205;
     public static final double kG = 0.11064; // 0.051839;
 
-    private final WPI_TalonFX m_pivot = new WPI_TalonFX(5);
-    // private final WPI_TalonFX m_turret = new WPI_TalonFX(5); // change
-    // private final WPI_TalonFX m_linslide = new WPI_TalonFX(5); // change
+    private final WPI_TalonFX m_wrist = new WPI_TalonFX(5);
+    
 
     private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD,
             new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
@@ -60,48 +68,79 @@ public class ArmPID extends SubsystemBase {
     private double m_lastVelocity = 0;
     private double m_lastTime = Timer.getFPGATimestamp();
 
-    private static double kUpperLimit = 55000.0;
-    private static double kLowerLimit = -55000.0;
+    private static double kUpperLimit = 55000.0; // change
+    private static double kLowerLimit = -55000.0; // change
 
     private final ShuffleboardTab tab;
 
-    private final GenericEntry armEncoderPosition;
-    private final GenericEntry armPosition;
-    private final GenericEntry armVelocity;
-    private final GenericEntry armAcceleration;
-    private final GenericEntry armPositionSetpoint;
-    private final GenericEntry armVelocitySetpoint;
-    private final GenericEntry armAccelerationSetpoint;
+    private final GenericEntry wristEncoderPosition;
+    private final GenericEntry wristPosition;
+    private final GenericEntry wristVelocity;
+    private final GenericEntry wristAcceleration;
+    private final GenericEntry wristPositionSetpoint;
+    private final GenericEntry wristVelocitySetpoint;
+    private final GenericEntry wristAccelerationSetpoint;
     private final GenericEntry voltageSupplied;
     private final GenericEntry voltageSetpoint;
 
-    public ArmPID() {
+    public Claw() {
+        // solenoid stuff
+        this.solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 4);
+        this.push();
+        state = true;
+        
         // reset
-        m_pivot.set(ControlMode.PercentOutput, 0);
+        m_wrist.set(ControlMode.PercentOutput, 0);
         m_controller.setTolerance(0.05, 0.1);
         setToVelocityControlMode(true);
         setVelocitySetpoint(0);
         setGoal(0);
         resetAngleAccumulator();
-
+        
+        // shuff
         tab = Shuffleboard.getTab("Arm");
-        armEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
-        armPosition = tab.add("Angle", 0.0).getEntry();
-        armVelocity = tab.add("Velocity", 0.0).getEntry();
-        armAcceleration = tab.add("Acceleration", 0.0).getEntry();
-        armPositionSetpoint = tab.add("Angle Setpoint", 0.0).getEntry();
-        armVelocitySetpoint = tab.add("Velocity Setpoint", 0.0).getEntry();
-        armAccelerationSetpoint = tab.add("Acceleration Setpoint", 0.0).getEntry();
+        wristEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
+        wristPosition = tab.add("Angle", 0.0).getEntry();
+        wristVelocity = tab.add("Velocity", 0.0).getEntry();
+        wristAcceleration = tab.add("Acceleration", 0.0).getEntry();
+        wristPositionSetpoint = tab.add("Angle Setpoint", 0.0).getEntry();
+        wristVelocitySetpoint = tab.add("Velocity Setpoint", 0.0).getEntry();
+        wristAccelerationSetpoint = tab.add("Acceleration Setpoint", 0.0).getEntry();
         voltageSupplied = tab.add("Motor Voltage", 0.0).getEntry();
         voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
 
         tab.add("Zero Encoder",
                 new InstantCommand(() -> zeroEncoder()));
     }
+    
+    // Singleton class, call getInstance to access instead of the constructor.
+    public static Claw getInstance() {
+        if (instance == null) {
+            instance = new Claw();
+        }
+        return instance;
+    }
 
-    /*
-     * Convert from TalonFX arm angle in native units to radians
-     */
+    public void push() {
+        solenoid.set(DoubleSolenoid.Value.kReverse);
+        state = true;
+    }
+
+    public void pull() {
+        solenoid.set(DoubleSolenoid.Value.kForward);
+        state = false;
+    }
+
+    public void toggle() {
+        if (state) {
+            pull();
+            return;
+        } else {
+            push();
+            return;
+        }
+    }
+    
     public double nativeToRad(double encoderUnits) {
         return encoderUnits * kRotationsPerNativeUnit * kRadiansPerRotation;
     }
@@ -128,11 +167,11 @@ public class ArmPID extends SubsystemBase {
     }
 
     public double getCurrentEncoderPosition() {
-        return m_pivot.getSensorCollection().getIntegratedSensorPosition();
+        return m_wrist.getSensorCollection().getIntegratedSensorPosition();
     }
 
     public double getCurrentEncoderRate() {
-        return m_pivot.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
+        return m_wrist.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
     }
 
     public double getCurrentAngle() {
@@ -162,18 +201,18 @@ public class ArmPID extends SubsystemBase {
     }
 
     public void zeroEncoder() {
-        m_pivot.getSensorCollection().setIntegratedSensorPosition(0, 30);
+        m_wrist.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
 
     public void updateShuffleboard() {
-        armEncoderPosition.setDouble(getCurrentEncoderPosition());
-        armPosition.setDouble(getCurrentAngle());
-        armVelocity.setDouble(getCurrentVelocity());
-        armAcceleration.setDouble(getCurrentAcceleration());
-        armPositionSetpoint.setDouble(getAngleSetpoint());
-        armVelocitySetpoint.setDouble(getVelocitySetpoint());
-        armAccelerationSetpoint.setDouble(getAccelerationSetpoint());
-        voltageSupplied.setDouble(m_pivot.getMotorOutputVoltage());
+        wristEncoderPosition.setDouble(getCurrentEncoderPosition());
+        wristPosition.setDouble(getCurrentAngle());
+        wristVelocity.setDouble(getCurrentVelocity());
+        wristAcceleration.setDouble(getCurrentAcceleration());
+        wristPositionSetpoint.setDouble(getAngleSetpoint());
+        wristVelocitySetpoint.setDouble(getVelocitySetpoint());
+        wristAccelerationSetpoint.setDouble(getAccelerationSetpoint());
+        voltageSupplied.setDouble(m_wrist.getMotorOutputVoltage());
         voltageSetpoint.setDouble(m_voltageSetpoint);
     }
 
@@ -196,7 +235,8 @@ public class ArmPID extends SubsystemBase {
         }
 
         m_voltageSetpoint = voltage;
-        m_pivot.setVoltage(voltage);
+        System.out.println(voltage);
+        // m_wrist.setVoltage(voltage);
 
         updateShuffleboard();
 
