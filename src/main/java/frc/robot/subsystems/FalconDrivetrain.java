@@ -122,8 +122,8 @@ public class FalconDrivetrain extends SubsystemBase {
     double leftOutput = m_leftPIDController.calculate(m_leftLeader.getSensorCollection().getIntegratedSensorPosition(), speeds.leftMetersPerSecond);
     double rightOutput = m_rightPIDController.calculate(m_rightLeader.getSensorCollection().getIntegratedSensorPosition(), speeds.rightMetersPerSecond);
 
-    m_leftGroup.setVoltage(leftFeedforward + leftOutput);
-    m_rightGroup.setVoltage(rightFeedforward + rightOutput);
+    m_leftGroup.setVoltage(leftFeedforward);
+    m_rightGroup.setVoltage(rightFeedforward);
   }
 
   public void updateSmartDashBoard() {

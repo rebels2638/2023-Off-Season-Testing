@@ -38,13 +38,13 @@ public final class ConstantsFXDriveTrain {
         };
 
         // Left gearbox
-        public static final int FALCON_LEFT_FRONT_ID = 12; // 13 1
-        public static final int FALCON_LEFT_BACK_ID = 13; // 12 2
+        public static final int FALCON_LEFT_FRONT_ID = 13; // 13 1
+        public static final int FALCON_LEFT_BACK_ID = 12; // 12 2
         public static final boolean FALCON_LEFT_GROUP_INVERTED = false;
 
         // Right gearbox
-        public static final int FALCON_RIGHT_FRONT_ID = 14; // 14 3
-        public static final int FALCON_RIGHT_BACK_ID = 15; // 15 4
+        public static final int FALCON_RIGHT_FRONT_ID = 15; // 14 3
+        public static final int FALCON_RIGHT_BACK_ID = 14; // 15 4
         public static final boolean FALCON_RIGHT_GROUP_INVERTED = true;
 
         // Solenoid
