@@ -204,7 +204,6 @@ public class ElevatorPID extends SubsystemBase {
         }
 
         m_voltageSetpoint = voltage;
-        System.out.println(voltage);
         // m_motor1.setVoltage(voltage);
         // m_motor2.setVoltage(voltage);
 

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.server.PathPlannerServer;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,6 +35,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all 
     m_robotContainer = new RobotContainer();
     time = new Timer();
+    
   }
 
   /**
@@ -64,8 +67,8 @@ public class Robot extends TimedRobot {
     time.reset();
     time.start();
     
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();

@@ -25,12 +25,12 @@ public class FieldOrientedDrive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Drivetrain m_driveSubsystem;
   private final XboxController xboxDriver;
-  private final double MAX_FORWARD_SPEED = 1;
-  private final double MAX_TURN_SPEED = 5;
-  private final double MAX_TURN_ACCELERATION = 20;
+  private final double MAX_FORWARD_SPEED = 2;
+  private final double MAX_TURN_SPEED = 6;
+  private final double MAX_TURN_ACCELERATION = 10;
   private final double CONTROL_STRENGTH = 3; // THIS MUST BE AN ODD POSITIVE INTEGER
 
-  private final ProfiledPIDController pid = new ProfiledPIDController(2, 0, 1.5, new TrapezoidProfile.Constraints(MAX_TURN_SPEED, MAX_TURN_ACCELERATION));
+  private final ProfiledPIDController pid = new ProfiledPIDController(3.5, 0, 0.3, new TrapezoidProfile.Constraints(MAX_TURN_SPEED, MAX_TURN_ACCELERATION));
   
   private Rotation2d m_headingSetpoint;
 
@@ -43,6 +43,7 @@ public class FieldOrientedDrive extends CommandBase {
     xboxDriver = controller;
     m_driveSubsystem = driveSubsystem;
     pid.enableContinuousInput(-Math.PI, Math.PI);
+    pid.setTolerance(0.01, 0.05);
     m_headingSetpoint = new Rotation2d();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_driveSubsystem);
@@ -71,8 +72,10 @@ public class FieldOrientedDrive extends CommandBase {
 
     // Forward speed is reduced when robot is not close to parallel with the heading setpoint (dot product)
     double forwardSpeed = Math.pow(headingError.getCos(), CONTROL_STRENGTH) * magnitude * MAX_FORWARD_SPEED;
-    double turnSpeed = pid.calculate(gyroHeading.getRadians(), m_headingSetpoint.getRadians());
+    pid.setGoal(m_headingSetpoint.getRadians());
+    double turnSpeed = pid.atGoal() ? 0.0 : pid.calculate(gyroHeading.getRadians());
 
+    System.out.println("fS " + forwardSpeed + " " + turnSpeed);
     m_driveSubsystem.drive(forwardSpeed, turnSpeed);
   }
 

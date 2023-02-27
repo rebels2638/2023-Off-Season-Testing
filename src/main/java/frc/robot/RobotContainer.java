@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -21,6 +22,7 @@ import frc.robot.commands.ElevatorCancel;
 import frc.robot.commands.ElevatorController;
 import frc.robot.commands.ArmPositionSet;
 import frc.robot.commands.ArmUp;
+import frc.robot.commands.Auto;
 import frc.robot.subsystems.ArmPID;
 import frc.robot.commands.ArmPIDController;
 import frc.robot.commands.ElevatorDown;
@@ -58,8 +60,8 @@ import frc.robot.utils.ConstantsArmElevator.ArmConstants;
  */
 public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
-  private final Drivetrain drive = new Drivetrain();
-  // private final FalconDrivetrain drive = new FalconDrivetrain();
+  // private final Drivetrain drive = new Drivetrain();
+  private final FalconDrivetrain drive = new FalconDrivetrain();
 //   private final PoseEstimator poseEstimator = new PoseEstimator(drive);
   // private final Elevator elevator = new Elevator();
 
@@ -69,7 +71,7 @@ public class RobotContainer {
 
 //   private final Arm arm = new Arm(); 
 //  private final FourBarArm fourBarArm = new FourBarArm();
-  private final FourBarArm fourBarArm = new FourBarArm();
+  // private final FourBarArm fourBarArm = new FourBarArm();
 //   private final ArmPID armPID = new ArmPID(); 
 
   private final Claw claw = new Claw();
@@ -79,7 +81,6 @@ public class RobotContainer {
   // this case, auto commands)
   private final SendableChooser<Command> chooser = new SendableChooser<Command>();
   private final SendableChooser<String> pathChooser = new SendableChooser<String>();
-
 
   
   /**
@@ -92,7 +93,7 @@ public class RobotContainer {
 
     // Controller Throttle Mappings
     this.drive.setDefaultCommand(
-        new Drive(drive, xboxDriver));
+        new FalconDrive(drive, xboxDriver));
 
     // this.drive.setDefaultCommand(
         // new Drive(drive, xboxDriver));
@@ -104,8 +105,8 @@ public class RobotContainer {
     // this.arm.setDefaultCommand(
     // new ArmController(arm, xboxOperator));
     
-    this.fourBarArm.setDefaultCommand(
-    new FourBarArmController(fourBarArm, xboxOperator));
+    // this.fourBarArm.setDefaultCommand(
+    // new FourBarArmController(fourBarArm, xboxOperator));
 
     // this.fourBarArmPID.setDefaultCommand(
     // new FourBarArmPIDController(fourBarArmPID, xboxOperator));
@@ -190,6 +191,12 @@ public class RobotContainer {
     // this.xboxOperator.getAButton().onTrue(
     //     new ElevatorDown(elevatorPID)
     // );
+
+    // chooser.addOption("RamseteFollower", new Auto(drive, this));
+    pathChooser.addOption("Two Cone", "TwoCone");
+
+    Shuffleboard.getTab("Auto").add("Command", chooser);
+    Shuffleboard.getTab("Auto").add("Path", pathChooser);
   }
 
   /**

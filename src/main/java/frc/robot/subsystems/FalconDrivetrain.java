@@ -69,7 +69,7 @@ public class FalconDrivetrain extends SubsystemBase {
 
   // private final DifferentialDrive m_drive = new DifferentialDrive(m_leftGroup, m_rightGroup);
 
-  private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(kTrackWidth);
+  public final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(kTrackWidth);
 
   private final DifferentialDriveOdometry m_odometry;
 
@@ -106,7 +106,7 @@ public class FalconDrivetrain extends SubsystemBase {
       // TODO: EDIT VALUES TO BE ACCURATE
       m_differentialDrivetrainSimulator = new DifferentialDrivetrainSim(m_drivetrainSystem,
           DCMotor.getCIM(4),
-          36, kTrackWidth,
+          26.667, kTrackWidth,
           kWheelRadius,
           null);
       m_gyroSim = new AnalogGyroSim(m_gyro);
@@ -206,4 +206,8 @@ public class FalconDrivetrain extends SubsystemBase {
     m_drive.feed();
   }*/
 
+  public void setVoltageFromAuto(double leftVoltage, double rightVoltage) {
+    m_leftGroup.setVoltage(leftVoltage);
+    m_rightGroup.setVoltage(rightVoltage);
+  }
 }

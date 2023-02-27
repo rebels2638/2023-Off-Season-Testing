@@ -57,11 +57,9 @@ public class Claw extends SubsystemBase {
 
     public void toggle() {
         if (state) {
-            System.out.println("got here");
             pull();
             return;
         } else {
-            System.out.println("not here");
             push();
             return;
         }
@@ -69,7 +67,6 @@ public class Claw extends SubsystemBase {
 
     @Override
     public void periodic() {
-        System.out.println(m_motor.getEncoder().getVelocity());
             m_motor.set(0.2 + pid.calculate(m_motor.getEncoder().getVelocity(), 679));
     }
 }

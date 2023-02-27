@@ -2,6 +2,8 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Auto/Command": "String Chooser",
+      "/Shuffleboard/Auto/Path": "String Chooser",
       "/Shuffleboard/Commands/Zero Elevator Position": "Command",
       "/SmartDashboard/Field": "Field2d"
     }

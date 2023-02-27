@@ -139,7 +139,6 @@ public class FourBarArmPID extends SubsystemBase {
             feedforward = 0.0;
         }
         
-        System.out.println(voltage);
 
         m_lastVelocitySetpoint = velocitySetpoint;
         m_lastTime = Timer.getFPGATimestamp();

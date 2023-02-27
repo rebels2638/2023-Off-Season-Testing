@@ -56,7 +56,8 @@ public class Drivetrain extends SubsystemBase {
   public final DifferentialDriveOdometry m_odometry;
 
   // Gains are for example purposes only - must be determined for your own robot!
-  private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
+  private final SimpleMotorFeedforward m_feedforwardLeft = new SimpleMotorFeedforward(1, 3);
+  private final SimpleMotorFeedforward m_feedforwardRight = new SimpleMotorFeedforward(1, 3);
 
   /**
    * Constructs a differential drive object. Sets the encoder distance per pulse and resets the
@@ -92,8 +93,8 @@ public class Drivetrain extends SubsystemBase {
    * @param speeds The desired wheel speeds.
    */
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
-    final double leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
-    final double rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
+    final double leftFeedforward = m_feedforwardLeft.calculate(speeds.leftMetersPerSecond);
+    final double rightFeedforward = m_feedforwardRight.calculate(speeds.rightMetersPerSecond);
 
     final double leftOutput =
         m_leftPIDController.calculate(m_leftEncoder.getRate(), speeds.leftMetersPerSecond);
@@ -101,6 +102,8 @@ public class Drivetrain extends SubsystemBase {
         m_rightPIDController.calculate(m_rightEncoder.getRate(), speeds.rightMetersPerSecond);
     m_leftGroup.setVoltage(leftOutput + leftFeedforward);
     m_rightGroup.setVoltage(rightOutput + rightFeedforward);
+ 
+    System.out.println("left: " + leftFeedforward + " right: " + rightFeedforward);
   }
 
   /**

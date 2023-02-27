@@ -62,7 +62,7 @@ public final class ConstantsFXDriveTrain {
         public static final boolean GYRO_REVERSED = true;
 
         // Differential Drive Kinematics
-        public static final double TRACK_WIDTH_METERS = 0.6731;// 0.6731; //0.7894023727640018 from characterization
+        public static final double TRACK_WIDTH_METERS = 0.5334;// 0.6731; //0.7894023727640018 from characterization
         public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(
                 TRACK_WIDTH_METERS);
 
@@ -89,7 +89,7 @@ public final class ConstantsFXDriveTrain {
         public static final double ANGLE_TOLERANCE = 2.0;
 
         // PID Values
-        public static final double kP = 0.0;
+        public static final double kP = 2.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
         public static final double ARCADE_STATIC_GAIN = 0.0;
@@ -141,7 +141,7 @@ public final class ConstantsFXDriveTrain {
         public static final double VOLTAGE_COMP_SATURATION = 12.0;
         public static final boolean VOLTAGE_COMP_ENABLED = true;
 
-        public static final double WHEEL_DIAMETER = 0.158;
+        public static final double WHEEL_DIAMETER = 0.1524;
         public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;// or .479?
 
         /**
