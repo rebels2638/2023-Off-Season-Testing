@@ -69,12 +69,12 @@ public class RobotContainer {
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
 
-//   private final Arm arm = new Arm(); 
+  private final Arm arm = new Arm(); 
 //  private final FourBarArm fourBarArm = new FourBarArm();
   // private final FourBarArm fourBarArm = new FourBarArm();
 //   private final ArmPID armPID = new ArmPID(); 
 
-  private final Claw claw = new Claw();
+  // private final Claw claw = new Claw();
   // private final ElevatorPID elevatorPID = new ElevatorPID(); //DO NOT RUN ELEVATOR WITHOUT ZEROING ENCODERS AT GROUND POSITION YOU WILL BREAK IT IF YOU DONT DO THIS
 
   // Create a Sendable Chooser, which allows us to select between Commands (in
@@ -102,8 +102,8 @@ public class RobotContainer {
     // this.elevator.setDefaultCommand(
     // new ElevatorController(elevator, xboxOperator)); // added, works
 
-    // this.arm.setDefaultCommand(
-    // new ArmController(arm, xboxOperator));
+    this.arm.setDefaultCommand(
+    new ArmController(arm, xboxOperator));
     
     // this.fourBarArm.setDefaultCommand(
     // new FourBarArmController(fourBarArm, xboxOperator));
@@ -195,6 +195,7 @@ public class RobotContainer {
     // chooser.addOption("RamseteFollower", new Auto(drive, this));
     pathChooser.addOption("Two Cone", "TwoCone");
 
+    Shuffleboard.getTab("Encoders").add("Zero Encoder", new InstantCommand(() -> arm.zeroEncoder()));
     Shuffleboard.getTab("Auto").add("Command", chooser);
     Shuffleboard.getTab("Auto").add("Path", pathChooser);
   }

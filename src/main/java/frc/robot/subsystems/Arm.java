@@ -44,6 +44,7 @@ public class Arm extends SubsystemBase {
         talon.setNeutralMode(NeutralMode.Brake);
         
         tab = Shuffleboard.getTab("Encoders").add("Arm Encoder", 0.0).getEntry();
+        
     }
 
     // Singleton class, call getInstance to access instead of the constructor.

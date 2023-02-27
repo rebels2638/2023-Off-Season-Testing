@@ -45,7 +45,7 @@ public class ElevatorPID extends SubsystemBase {
 
     
     private final WPI_TalonFX m_motor1 = new WPI_TalonFX(0);
-    private final WPI_TalonFX m_motor2 = new WPI_TalonFX(6);
+    private final WPI_TalonFX m_motor2 = new WPI_TalonFX(3);
 
     private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
     private final PIDController m_velocityController = new PIDController(10, 0, 0);
