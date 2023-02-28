@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.numbers.N5;
 import edu.wpi.first.math.numbers.N7;
@@ -43,8 +44,18 @@ public class PoseEstimator extends SubsystemBase {
     private static DifferentialDrivePoseEstimator poseEstimator;
     private double previousPipelineTimestamp = 0;
 
-    public PoseEstimator(Drivetrain drive) {
+    private ElevatorPID elevatorSubsystem;
+    private Wrist wristSubsystem;
+    private Turret turretSubsystem;
+    private LinSlidePID linSlideSubsystem;
+
+    public PoseEstimator(Drivetrain drive, ElevatorPID elevator, Wrist wrist, Turret turret, LinSlidePID linSlide) {
         this.driveTrainSubsytem = drive;
+
+        elevatorSubsystem = elevator;
+        wristSubsystem = wrist;
+        turretSubsystem = turret;
+        linSlideSubsystem = linSlide;
 
         poseEstimator = new DifferentialDrivePoseEstimator(drive.m_kinematics,
                 driveTrainSubsytem.getRotation2d(), driveTrainSubsytem.m_leftEncoder.getDistance(),
@@ -89,5 +100,23 @@ public class PoseEstimator extends SubsystemBase {
 
     public static double degreesToRadians(int degrees) {
         return (degrees / 180) * Math.PI;
+    }
+    
+    public Translation3d getClawTranslation() {
+        double elevatorHight = elevatorSubsystem.getCurrentHeight();
+        double linSlideLen = linSlideSubsystem.getCurrentLength();
+        double turretRot = turretSubsystem.getCurrentAngle();
+        double wristRot = wristSubsystem.getCurrentAngle();
+        double clawLen = 0.3556; // includes offset and in meters
+        double robotX = getCurrentPose().getX();
+        double robotY = getCurrentPose().getY();
+        double robotRot = getCurrentPose().getRotation().getRadians();
+
+        double x = (linSlideLen * Math.cos(turretRot) / Math.tan(turretRot));
+        double y = (linSlideLen * Math.cos(turretRot)) + Math.sin(wristRot) * clawLen;
+        double z = elevatorHight + Math.cos(wristRot) * clawLen;
+        
+
+        return new Translation3d(x, y, z);
     }
 }
