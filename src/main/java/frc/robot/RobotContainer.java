@@ -119,12 +119,12 @@ public class RobotContainer {
     // this.armPID.setDefaultCommand(
     // new ArmPIDController(armPID, xboxOperator));
 
-    this.claw.setDefaultCommand(
-    new ClawController(claw, xboxOperator)
-    );
+    // this.claw.setDefaultCommand(
+    // new ClawController(claw, xboxOperator)
+    // );
 
-    // this.xboxOperator.getRightBumper().onTrue(
-    //     new InstantCommand(() -> this.claw.toggle()));
+    this.xboxOperator.getRightBumper().onTrue(
+        new InstantCommand(() -> this.claw.toggle()));
 
 
     // this.xboxOperator.getYButton().onTrue(
