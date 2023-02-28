@@ -52,7 +52,7 @@ public class ElevatorController extends CommandBase {
     
     }*/
 
-    double inputPercent = e_controller.getLeftY() * 0.5;
+    double inputPercent = e_controller.getLeftY() * 4;
 
     // if (inputPercent > 0) {
     //     if (toplimitSwitch.get()) {

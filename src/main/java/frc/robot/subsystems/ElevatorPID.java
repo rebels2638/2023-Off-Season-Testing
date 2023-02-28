@@ -33,10 +33,10 @@ public class ElevatorPID extends SubsystemBase {
     public static final double kI = 0; 
     public static final double kD = 32; // 
 
-    public static final double kS = 0.048191; // 0.059082
+    public static final double kS = 0.155; // 0.059082
     public static final double kV = 58.715;
     public static final double kA = 1.5688;
-    public static final double kG = 0.029984;
+    public static final double kG = 0.815;
 
     private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio * 1.32;
     private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
