@@ -8,6 +8,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
@@ -31,7 +32,9 @@ public class ElevatorController extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    SmartDashboard.putNumber("ELEVATOR VOLTAGE", 0);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -69,7 +72,8 @@ public class ElevatorController extends CommandBase {
     //     }
     // }
 
-    m_elevatorSubsystem.setPercentOutput(-inputPercent);
+    
+    m_elevatorSubsystem.setVoltage(SmartDashboard.getNumber("ELEVATOR VOLTAGE", 0) + inputPercent);
 
   }
 

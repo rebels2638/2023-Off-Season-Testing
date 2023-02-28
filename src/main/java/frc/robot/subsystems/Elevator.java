@@ -9,12 +9,17 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Elevator extends SubsystemBase {
 
     // private final WPI_TalonFX talon;
     private final WPI_TalonFX leftTalon;
     private final WPI_TalonFX rightTalon;
+    
+    private final MotorControllerGroup m_motorGroup;
 
     private static Elevator instance = null;
     private static double lastPercentSpeed; 
@@ -24,6 +29,8 @@ public class Elevator extends SubsystemBase {
         // this.talon = new WPI_TalonFX(6); // one instance of TalonSRX, replaced IntakeConstants.TALON_ID
         this.leftTalon = new WPI_TalonFX(0);
         this.rightTalon = new WPI_TalonFX(3);
+        this.m_motorGroup = new MotorControllerGroup(leftTalon, rightTalon);
+        this.m_motorGroup.setInverted(true);
 
         lastPercentSpeed = 0;
         TalonFXConfiguration falconConfig = new TalonFXConfiguration();
@@ -62,20 +69,9 @@ public class Elevator extends SubsystemBase {
         return instance;
     }
 
-    public void setPercentOutput(double percent) {
-        
-        // if(Math.abs(percent) < 0.08) {
-        //     percent = 0;
-        // }
-      
-        // if(percent == 0) {
-        //     //talon.enableBrakeMode(true);    
-        // }%
-
-        // talon.set(ControlMode.PercentOutput, percent); // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed???? where speed is in range -1,1 and the xbox controller left joy stick is also -1,1???
-        
-        leftTalon.set(ControlMode.PercentOutput, percent);
-        rightTalon.set(ControlMode.PercentOutput,percent);
+    public void setVoltage(double voltage) {
+        SmartDashboard.putNumber("ELEVATOR SUPPLY VOLTS", voltage);
+        m_motorGroup.setVoltage(voltage);
     }
 
     public void resetEncoder() {    

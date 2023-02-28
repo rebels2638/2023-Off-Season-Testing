@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ArmPID;
+import frc.robot.subsystems.Wrist;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -13,9 +13,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 /** An example command that uses an example subsystem. */
-public class ArmPIDController extends CommandBase {
+public class WristController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ArmPID m_armPID;
+  private final Wrist m_wrist;
   private final XboxController e_controller; // e_controller is elevator's controller
 
   /**
@@ -23,25 +23,25 @@ public class ArmPIDController extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ArmPIDController(ArmPID armPIDSubsystem, XboxController controller) {
+  public WristController(Wrist wristSubsystem, XboxController controller) {
     e_controller = controller;
-    m_armPID = armPIDSubsystem;
+    m_wrist = wristSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_armPID);
+    addRequirements(m_wrist);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_armPID.setToVelocityControlMode(true);
+    m_wrist.setToVelocityControlMode(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double desiredVelo = e_controller.getRightY() * ArmPID.kMaxSpeed;
-    m_armPID.setVelocitySetpoint(desiredVelo);
-    m_armPID.setToVelocityControlMode(true);
+    double desiredVelo = e_controller.getRightY() * Wrist.kMaxSpeed;
+    m_wrist.setVelocitySetpoint(desiredVelo);
+    m_wrist.setToVelocityControlMode(true);
   }
 
   // Called once the command ends or is interrupted.
