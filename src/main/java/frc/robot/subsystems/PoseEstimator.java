@@ -103,7 +103,7 @@ public class PoseEstimator extends SubsystemBase {
     }
     
     public Translation3d getClawTranslation() {
-        double elevatorHight = elevatorSubsystem.getCurrentHeight();
+        double elevatorHeight = elevatorSubsystem.getCurrentHeight();
         double linSlideLen = linSlideSubsystem.getCurrentLength();
         double turretRot = turretSubsystem.getCurrentAngle();
         double wristRot = wristSubsystem.getCurrentAngle();
@@ -111,10 +111,15 @@ public class PoseEstimator extends SubsystemBase {
         double robotX = getCurrentPose().getX();
         double robotY = getCurrentPose().getY();
         double robotRot = getCurrentPose().getRotation().getRadians();
+        
+        double x = (linSlideLen + clawLen*(Math.cos(wristRot))) * Math.cos(turretRot);
+        double y = elevatorHeight + clawLen*Math.sin(wristRot);
+        double z = (linSlideLen + clawLen * Math.cos(wristRot)) * Math.sin(turretRot);
 
-        double x = (linSlideLen * Math.cos(turretRot) / Math.tan(turretRot));
-        double y = (linSlideLen * Math.cos(turretRot)) + Math.sin(wristRot) * clawLen;
-        double z = elevatorHight + Math.cos(wristRot) * clawLen;
+        // Edan's math
+        // double x = (linSlideLen * Math.cos(turretRot) / Math.tan(turretRot));
+        // double y = (linSlideLen * Math.cos(turretRot)) + Math.sin(wristRot) * clawLen;
+        // double z = elevatorHeight + Math.cos(wristRot) * clawLen;
         
 
         return new Translation3d(x, y, z);
