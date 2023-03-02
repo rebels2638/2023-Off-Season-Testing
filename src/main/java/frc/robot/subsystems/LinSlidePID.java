@@ -40,8 +40,14 @@ public class LinSlidePID extends SubsystemBase {
     private static final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
     private static final double kRotationsPerMeter = 1 / kMetersPerRotation;
 
+    private static final double kMetersWhenCompressed = 0.2794;
+    private static final double kMetersWhenExtended = 0.635;
+
+    private static final double kEncoderGainCompressedToExtended = 90000; //TODO: find kEncoderGainCompressedToExtended
     
     private final WPI_TalonFX m_motor = new WPI_TalonFX(0);
+
+    private static final double encoder
 
     private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
     private final PIDController m_velocityController = new PIDController(10, 0, 0);
@@ -101,12 +107,12 @@ public class LinSlidePID extends SubsystemBase {
     /*
     * Convert from TalonFX elevator position in meters to native units and vice versa
     */
-    public double heightToNative(double heightUnits) {
-        return heightUnits * kRotationsPerMeter * kNativeUnitsPerRotation;
+    public double lengthToNative(double lengthUnits) {
+        return (lengthUnits * kRotationsPerMeter * kNativeUnitsPerRotation);
     }
 
-    public double nativeToHeight(double encoderUnits) {
-        return encoderUnits * kRotationsPerNativeUnit * kMetersPerRotation;
+    public double nativeToLength(double encoderUnits) {
+        return (encoderUnits * kRotationsPerNativeUnit * kMetersPerRotation);
     }
 
     public void setGoal(TrapezoidProfile.State goalState) {
@@ -127,7 +133,7 @@ public class LinSlidePID extends SubsystemBase {
     }
 
     public void resetHeightAccumulator() {
-        m_heightAccumulator = getCurrentHeight();
+        m_heightAccumulator = getCurrentLength();
     }
 
     public double getCurrentEncoderPosition() {
@@ -138,19 +144,19 @@ public class LinSlidePID extends SubsystemBase {
         return -m_motor.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
     }
 
-    public double getCurrentHeight() {
-        return nativeToHeight(getCurrentEncoderPosition());
+    public double getCurrentLength() {
+        return nativeToLength(getCurrentEncoderPosition());
     }
 
     public double getCurrentVelocity() {
-        return nativeToHeight(getCurrentEncoderRate());
+        return nativeToLength(getCurrentEncoderRate());
     }
 
     public double getCurrentAcceleration() {
         return (getCurrentVelocity() - m_lastVelocity) / (Timer.getFPGATimestamp() - m_lastTime);
     }
 
-    public double getHeightSetpoint() {
+    public double getLengthSetpoint() {
         return m_velocityControlEnabled ? m_heightAccumulator : m_controller.getSetpoint().position;
     }
 
@@ -169,10 +175,10 @@ public class LinSlidePID extends SubsystemBase {
 
     public void updateShuffleboard() {
         elevatorEncoderPosition.setDouble(getCurrentEncoderPosition());
-        elevatorPosition.setDouble(getCurrentHeight());
+        elevatorPosition.setDouble(getCurrentLength());
         elevatorVelocity.setDouble(getCurrentVelocity());
         elevatorAcceleration.setDouble(getCurrentAcceleration());
-        elevatorPositionSetpoint.setDouble(getHeightSetpoint());
+        elevatorPositionSetpoint.setDouble(getLengthSetpoint());
         elevatorVelocitySetpoint.setDouble(getVelocitySetpoint());
         elevatorAccelerationSetpoint.setDouble(getAccelerationSetpoint());
         voltageSupplied.setDouble(m_motor.getMotorOutputVoltage());
@@ -184,15 +190,16 @@ public class LinSlidePID extends SubsystemBase {
     */
     @Override
     public void periodic() {
+        if ()
         double feedforward = m_feedforward.calculate(getVelocitySetpoint(), getAccelerationSetpoint());
-        double positionPID = m_controller.calculate(getCurrentHeight());
+        double positionPID = m_controller.calculate(getCurrentLength());
         double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
         double pid = m_velocityControlEnabled ? velocityPID : positionPID;
 
         double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
-        if (getCurrentHeight() >= kUpperLimit && voltage > 0.0) {
+        if (getCurrentLength() >= kUpperLimit && voltage > 0.0) {
             voltage = 0.0;
-        } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
+        } else if (getCurrentLength() <= kLowerLimit && voltage < 0.0) {
             voltage = 0.0;
         }
 
