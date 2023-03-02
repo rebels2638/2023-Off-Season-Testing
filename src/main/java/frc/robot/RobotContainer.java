@@ -37,8 +37,10 @@ import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.FalconDrivetrain;
 import frc.robot.subsystems.Arm;
 import frc.robot.commands.LinearSlideController;
+import frc.robot.commands.TurretController;
 import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.PoseEstimator;
+import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Wrist;
 import frc.robot.commands.WristController;
 import frc.robot.commands.FieldOrientedDrive;
@@ -68,8 +70,9 @@ public class RobotContainer {
   private final XboxController xboxOperator;
 
   private final Arm arm = new Arm();
-  // private final Wrist wrist = new Wrist();
+  private final Wrist wrist = new Wrist();
   private final LinearSlide linslide = new LinearSlide(); 
+  // private final Turret turret = new Turret();
 //  private final FourBarArm fourBarArm = new FourBarArm();
   // private final FourBarArm fourBarArm = new FourBarArm();
 //   private final ArmPID armPID = new ArmPID(); 
@@ -98,15 +101,20 @@ public class RobotContainer {
     // this.drive.setDefaultCommand(
         // new Drive(drive, xboxDriver));
 
+    // this.wrist.setDefaultCommand(new WristController(wrist, xboxDriver));
 
     // this.elevator.setDefaultCommand(
     // new ElevatorController(elevator, xboxOperator)); // added, works
 
-    // this.arm.setDefaultCommand(
-    //   new ArmController(arm, xboxOperator));
+    this.arm.setDefaultCommand(
+      new ArmController(arm, xboxOperator));
 
     this.linslide.setDefaultCommand(
       new LinearSlideController(linslide, xboxOperator));
+    
+    // this.turret.setDefaultCommand( 
+    //   new TurretController(turret, xboxOperator)
+    // );
     
     // this.fourBarArm.setDefaultCommand(
     // new FourBarArmController(fourBarArm, xboxOperator));

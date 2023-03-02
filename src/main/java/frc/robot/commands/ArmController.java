@@ -37,7 +37,7 @@ public class ArmController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double inputPercent = RebelUtil.linearDeadband(e_controller.getRightY(), 0.05);
+    double inputPercent = RebelUtil.linearDeadband(e_controller.getRightY(), 0.15);
 
     m_armSubsystem.setPercentOutput(inputPercent);
 

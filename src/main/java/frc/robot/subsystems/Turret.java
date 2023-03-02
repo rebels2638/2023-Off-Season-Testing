@@ -39,7 +39,7 @@ public class Turret extends SubsystemBase {
     public static final double kV = 3.9629;
     public static final double kA = 0.29063;
 
-    private final WPI_TalonFX m_motor = new WPI_TalonFX(9);
+    private final WPI_TalonFX m_motor = new WPI_TalonFX(6);
 
     private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD,
             new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
@@ -118,6 +118,9 @@ public class Turret extends SubsystemBase {
         m_velocityControlEnabled = on;
         resetAngleAccumulator();
     }
+    public void setPercentOutput(double percent){
+        m_motor.setVoltage(percent);
+    }
 
     public void resetAngleAccumulator() {
         m_angleAccumulator = getCurrentAngle();
@@ -176,6 +179,8 @@ public class Turret extends SubsystemBase {
     /*
      * Compute voltages using feedforward and pid
      */
+
+     /* 
     @Override
     public void periodic() {
         double feedforward = m_feedforward.calculate(getAngleSetpoint(), getVelocitySetpoint(),
@@ -201,4 +206,5 @@ public class Turret extends SubsystemBase {
         m_lastTime = Timer.getFPGATimestamp();
         m_angleAccumulator += getVelocitySetpoint() * Robot.kDefaultPeriod;
     }
+    */
 }

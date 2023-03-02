@@ -185,6 +185,7 @@ public class LinSlidePID extends SubsystemBase {
     @Override
     public void periodic() {
         double feedforward = m_feedforward.calculate(getVelocitySetpoint(), getAccelerationSetpoint());
+        // if(getCurrentHeight() <= kSwitchToNoForcePoint && getCurrentVelocity() <= kSwitchToNoForceVelocity)
         double positionPID = m_controller.calculate(getCurrentHeight());
         double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
         double pid = m_velocityControlEnabled ? velocityPID : positionPID;
