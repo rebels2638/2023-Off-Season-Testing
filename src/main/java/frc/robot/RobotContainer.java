@@ -35,8 +35,10 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.FalconDrivetrain;
+import frc.robot.subsystems.LinSlidePID;
 import frc.robot.subsystems.Arm;
 import frc.robot.commands.LinearSlideController;
+import frc.robot.commands.PositionPresets;
 import frc.robot.commands.TurretController;
 import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.PoseEstimator;
@@ -71,8 +73,8 @@ public class RobotContainer {
 
   private final Arm arm = new Arm();
   private final Wrist wrist = new Wrist();
-  private final LinearSlide linslide = new LinearSlide(); 
-  // private final Turret turret = new Turret();
+  private final LinSlidePID linslide = new LinSlidePID(); 
+  private final Turret turret = new Turret();
 //  private final FourBarArm fourBarArm = new FourBarArm();
   // private final FourBarArm fourBarArm = new FourBarArm();
 //   private final ArmPID armPID = new ArmPID(); 
@@ -93,7 +95,7 @@ public class RobotContainer {
     // Instantiate our controllers with proper ports.
     this.xboxDriver = new XboxController(3);
     this.xboxOperator = new XboxController(2);
-
+    System.gc();
     // Controller Throttle Mappings
     this.drive.setDefaultCommand(
         new FalconDrive(drive, xboxDriver));
@@ -109,8 +111,8 @@ public class RobotContainer {
     this.arm.setDefaultCommand(
       new ArmController(arm, xboxOperator));
 
-    this.linslide.setDefaultCommand(
-      new LinearSlideController(linslide, xboxOperator));
+    // this.linslide.setDefaultCommand(
+      // new LinearSlideController(linslidePID, xboxOperator));
     
     // this.turret.setDefaultCommand( 
     //   new TurretController(turret, xboxOperator)
@@ -148,8 +150,7 @@ public class RobotContainer {
     //   new ElevatorCancel(elevatorPID));
     // this.elevatorPID.setDefaultCommand(
     //     new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
-
-    
+    this.xboxOperator.getBButton().onTrue(new PositionPresets(elevatorPID, wrist, linslide, turret, "loadingStation"));
     // Driving
     /*
     this.xboxOperator.getBButton().onTrue(
