@@ -113,14 +113,14 @@ public class PoseEstimator extends SubsystemBase {
         double robotRot = getCurrentPose().getRotation().getRadians();
         
         //anants code (sorry for miss spel)
-        // double x = (linSlideLen + clawLen*(Math.cos(wristRot))) * Math.cos(turretRot);
-        // double z = elevatorHeight + clawLen*Math.sin(wristRot);
-        // double y = (linSlideLen + clawLen * Math.cos(wristRot)) * Math.sin(turretRot);
+        double x = (linSlideLen + clawLen * Math.cos(wristRot)) * Math.cos(turretRot);
+        double y = (linSlideLen + clawLen * Math.cos(wristRot)) * Math.sin(turretRot);
+        double z = elevatorHeight + clawLen * Math.sin(wristRot);
 
         // Edan's math
-        double x = linSlideLen * Math.sin(turretRot);
-        double y = (linSlideLen * Math.cos(turretRot)) + Math.sin(wristRot) * clawLen; 
-        double z = elevatorHeight + Math.cos(wristRot) * clawLen; 
+        // double x = linSlideLen * Math.sin(turretRot);
+        // double y = (linSlideLen * Math.cos(turretRot)) + Math.sin(wristRot) * clawLen; 
+        // double z = elevatorHeight + Math.cos(wristRot) * clawLen; 
         
 
         return new Translation3d(x, y, z);
