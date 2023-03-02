@@ -35,6 +35,8 @@ public class LinSlidePID extends SubsystemBase {
     public static final double kA = 0.0;
     public static final double kG = 0.0;
 
+    public static boolean bInterpolating = false;
+
     private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio * 1.32; // what is this constant
     private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
     private static final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
@@ -47,7 +49,6 @@ public class LinSlidePID extends SubsystemBase {
     
     private final WPI_TalonFX m_motor = new WPI_TalonFX(0);
 
-    private static final double encoder
 
     private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
     private final PIDController m_velocityController = new PIDController(10, 0, 0);

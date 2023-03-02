@@ -13,7 +13,7 @@
 //     private final PIDController​(double kp,
 //     double ki,
 //     double kd);
-    
+
 //     private static LinearSlide instance = null;
 
 //     public LinearSlide() {
