@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.RebelUtil;
 import frc.robot.Robot;
+import frc.robot.utils.ConstantsArmElevator.ElevatorConstants;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -22,21 +23,12 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 /** Elevator subsystem with feed-forward and PID for position */
 public class ElevatorPID extends SubsystemBase {
-    public static final double kMaxSpeed = 0.1; // meters per second
+    public static final double kMaxSpeed = 0.5; // meters per second
     public static final double kMaxAcceleration = 0.1; // meters per second squared
 
     private static final double kWheelRadius = 0.03; // meters
     private static final int kEncoderResolution = 2048; 
     private static final int kGearingRatio = 6;
-        
-    public static final double kP = 342; // 1.2832 as of 020323
-    public static final double kI = 0; 
-    public static final double kD = 32; // 
-
-    public static final double kS = 0.155; // 0.059082
-    public static final double kV = 58.715;
-    public static final double kA = 1.5688;
-    public static final double kG = 0.815;
 
     private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio * 1.32;
     private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
@@ -47,9 +39,9 @@ public class ElevatorPID extends SubsystemBase {
     private final WPI_TalonFX m_motor1 = new WPI_TalonFX(0);
     private final WPI_TalonFX m_motor2 = new WPI_TalonFX(3);
 
-    private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
-    private final PIDController m_velocityController = new PIDController(10, 0, 0);
-    private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
+    private final ProfiledPIDController m_controller = new ProfiledPIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
+    private final PIDController m_velocityController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
+    private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
 
     public boolean m_velocityControlEnabled = true;
 
@@ -61,8 +53,8 @@ public class ElevatorPID extends SubsystemBase {
     private double m_lastVelocity = 0;
     private double m_lastTime = Timer.getFPGATimestamp();
 
-    private static double kUpperLimit = 0.55;
-    private static double kLowerLimit = -0.05;
+    private static double kUpperLimit = 1;
+    private static double kLowerLimit = -1;
 
     private final ShuffleboardTab tab;
 
@@ -88,7 +80,7 @@ public class ElevatorPID extends SubsystemBase {
         setGoal(new TrapezoidProfile.State(0, 0));
         resetHeightAccumulator();
         m_controller.setTolerance(0.01, 0.05);
-
+        
         tab = Shuffleboard.getTab("Elevator");
         elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
         elevatorPosition = tab.add("Height", 0.0).getEntry();
@@ -204,8 +196,9 @@ public class ElevatorPID extends SubsystemBase {
         }
 
         m_voltageSetpoint = voltage;
-        // m_motor1.setVoltage(voltage);
-        // m_motor2.setVoltage(voltage);
+        System.out.println(voltage);
+        m_motor1.setVoltage(voltage);
+        m_motor2.setVoltage(voltage);
 
         updateShuffleboard();
 

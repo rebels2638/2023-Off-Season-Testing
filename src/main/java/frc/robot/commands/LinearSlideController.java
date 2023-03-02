@@ -39,7 +39,7 @@ public class LinearSlideController extends CommandBase {
   @Override
   public void execute() {
 
-    double inputPercent = controller.getLeftY(); // not sure which joystick yet
+    double inputPercent = controller.getRightX(); // not sure which joystick yet
     m_linearSlide.setPercentOutput(inputPercent);
     
   }

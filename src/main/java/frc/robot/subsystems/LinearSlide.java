@@ -14,7 +14,7 @@ public class LinearSlide extends SubsystemBase {
     private static LinearSlide instance = null;
 
     public LinearSlide() {
-        this.m_linslide = new WPI_TalonFX(6); // change when found
+        this.m_linslide = new WPI_TalonFX(7); // change when found
         m_linslide.setNeutralMode(NeutralMode.Brake);
     }
 

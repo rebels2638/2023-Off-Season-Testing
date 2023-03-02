@@ -19,6 +19,7 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 //import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -29,7 +30,9 @@ import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -61,6 +64,9 @@ public class FalconDrivetrain extends SubsystemBase {
 
   private final MotorControllerGroup m_leftGroup = new MotorControllerGroup(m_leftLeader, m_leftFollower);
   private final MotorControllerGroup m_rightGroup = new MotorControllerGroup(m_rightLeader, m_rightFollower);
+
+  private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 14);
+  private final Solenoid m_rightSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 15);
 
   private final AnalogGyro m_gyro = new AnalogGyro(Constants.GyroConstants.kGyroPort);
 
@@ -141,6 +147,8 @@ public class FalconDrivetrain extends SubsystemBase {
     setSpeeds(m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0.0, rot)));
   }
 
+  
+
   public void updateOdometry() {
     m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
   }
@@ -209,5 +217,15 @@ public class FalconDrivetrain extends SubsystemBase {
   public void setVoltageFromAuto(double leftVoltage, double rightVoltage) {
     m_leftGroup.setVoltage(leftVoltage);
     m_rightGroup.setVoltage(rightVoltage);
+  }
+
+  public void switchToHighGear() {
+    m_leftSolenoid.set(true);
+    m_rightSolenoid.set(true);
+  }
+
+  public void switchToLowGear() {
+    m_leftSolenoid.set(false);
+    m_rightSolenoid.set(false);
   }
 }
