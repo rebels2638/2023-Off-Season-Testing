@@ -62,20 +62,20 @@ public class LinSlidePID extends SubsystemBase {
 
     private final ShuffleboardTab tab;
 
-    private final GenericEntry elevatorEncoderPosition;
-    private final GenericEntry elevatorPosition;
-    private final GenericEntry elevatorVelocity;
-    private final GenericEntry elevatorAcceleration;
-    private final GenericEntry elevatorPositionSetpoint;
-    private final GenericEntry elevatorVelocitySetpoint;
-    private final GenericEntry elevatorAccelerationSetpoint;
+    private final GenericEntry linSlideEncoderPosition;
+    private final GenericEntry linSlidePosition;
+    private final GenericEntry linSlideVelocity;
+    private final GenericEntry linSlideAcceleration;
+    private final GenericEntry linSlidePositionSetpoint;
+    private final GenericEntry linSlideVelocitySetpoint;
+    private final GenericEntry linSlideAccelerationSetpoint;
     private final GenericEntry voltageSupplied;
     private final GenericEntry voltageSetpoint;
 
     public LinSlidePID() {
         // m_motor.setInverted(true); // invert motor output
 
-        // reset elevator
+        // reset linSlide
         m_motor.set(ControlMode.PercentOutput, 0);
         setToVelocityControlMode(true);
         setVelocitySetpoint(0);
@@ -84,22 +84,22 @@ public class LinSlidePID extends SubsystemBase {
         m_controller.setTolerance(0.01, 0.05);
 
         tab = Shuffleboard.getTab("Elevator");
-        elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
-        elevatorPosition = tab.add("Height", 0.0).getEntry();
-        elevatorVelocity = tab.add("Velocity", 0.0).getEntry();
-        elevatorAcceleration = tab.add("Acceleration", 0.0).getEntry();
-        elevatorPositionSetpoint = tab.add("Height Setpoint", 0.0).getEntry();
-        elevatorVelocitySetpoint = tab.add("Velocity Setpoint", 0.0).getEntry();
-        elevatorAccelerationSetpoint = tab.add("Acceleration Setpoint", 0.0).getEntry();
-        voltageSupplied = tab.add("Motor Voltage", 0.0).getEntry();
-        voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
+        linSlideEncoderPosition = tab.add("Lin_Encoder_Position", 0.0).getEntry();
+        linSlidePosition = tab.add("Lin_Height", 0.0).getEntry();
+        linSlideVelocity = tab.add("Lin_Velocity", 0.0).getEntry();
+        linSlideAcceleration = tab.add("Lin_Acceleration", 0.0).getEntry();
+        linSlidePositionSetpoint = tab.add("Lin_Height Setpoint", 0.0).getEntry();
+        linSlideVelocitySetpoint = tab.add("Lin_Velocity Setpoint", 0.0).getEntry();
+        linSlideAccelerationSetpoint = tab.add("Lin_Acceleration Setpoint", 0.0).getEntry();
+        voltageSupplied = tab.add("Lin_Motor Voltage", 0.0).getEntry();
+        voltageSetpoint = tab.add("Lin_Voltage Setpoint", 0.0).getEntry();
 
-        tab.add("Zero Encoder",
+        tab.add("Lin_Zero Encoder",
                 new InstantCommand(() -> zeroEncoder()));
     }
 
     /*
-    * Convert from TalonFX elevator position in meters to native units and vice versa
+    * Convert from TalonFX linSlide position in meters to native units and vice versa
     */
     public double heightToNative(double heightUnits) {
         return heightUnits * kRotationsPerMeter * kNativeUnitsPerRotation;
@@ -168,13 +168,13 @@ public class LinSlidePID extends SubsystemBase {
     }
 
     public void updateShuffleboard() {
-        elevatorEncoderPosition.setDouble(getCurrentEncoderPosition());
-        elevatorPosition.setDouble(getCurrentHeight());
-        elevatorVelocity.setDouble(getCurrentVelocity());
-        elevatorAcceleration.setDouble(getCurrentAcceleration());
-        elevatorPositionSetpoint.setDouble(getHeightSetpoint());
-        elevatorVelocitySetpoint.setDouble(getVelocitySetpoint());
-        elevatorAccelerationSetpoint.setDouble(getAccelerationSetpoint());
+        linSlideEncoderPosition.setDouble(getCurrentEncoderPosition());
+        linSlidePosition.setDouble(getCurrentHeight());
+        linSlideVelocity.setDouble(getCurrentVelocity());
+        linSlideAcceleration.setDouble(getCurrentAcceleration());
+        linSlidePositionSetpoint.setDouble(getHeightSetpoint());
+        linSlideVelocitySetpoint.setDouble(getVelocitySetpoint());
+        linSlideAccelerationSetpoint.setDouble(getAccelerationSetpoint());
         voltageSupplied.setDouble(m_motor.getMotorOutputVoltage());
         voltageSetpoint.setDouble(m_voltageSetpoint);
     }

@@ -30,7 +30,7 @@ public class ElevatorPID extends SubsystemBase {
     private static final int kEncoderResolution = 2048; 
     private static final int kGearingRatio = 6;
 
-    private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio * 1.32;
+    private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
     private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
     private static final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
     private static final double kRotationsPerMeter = 1 / kMetersPerRotation;
@@ -56,17 +56,17 @@ public class ElevatorPID extends SubsystemBase {
     private static double kUpperLimit = 1;
     private static double kLowerLimit = -1;
 
-    // private final ShuffleboardTab tab;
+    private final ShuffleboardTab tab;
 
-    // private final GenericEntry elevatorEncoderPosition;
-    // private final GenericEntry elevatorPosition;
-    // private final GenericEntry elevatorVelocity;
-    // private final GenericEntry elevatorAcceleration;
-    // private final GenericEntry elevatorPositionSetpoint;
-    // private final GenericEntry elevatorVelocitySetpoint;
-    // private final GenericEntry elevatorAccelerationSetpoint;
-    // private final GenericEntry voltageSupplied;
-    // private final GenericEntry voltageSetpoint;
+    private final GenericEntry elevatorEncoderPosition;
+    private final GenericEntry elevatorPosition;
+    private final GenericEntry elevatorVelocity;
+    private final GenericEntry elevatorAcceleration;
+    private final GenericEntry elevatorPositionSetpoint;
+    private final GenericEntry elevatorVelocitySetpoint;
+    private final GenericEntry elevatorAccelerationSetpoint;
+    private final GenericEntry voltageSupplied;
+    private final GenericEntry voltageSetpoint;
 
     public ElevatorPID() {
         m_motor1.setInverted(true); // invert motor output
@@ -81,19 +81,19 @@ public class ElevatorPID extends SubsystemBase {
         resetHeightAccumulator();
         m_controller.setTolerance(0.01, 0.05);
         
-        // tab = Shuffleboard.getTab("Elevator");
-        // elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
-        // elevatorPosition = tab.add("Height", 0.0).getEntry();
-        // elevatorVelocity = tab.add("Velocity", 0.0).getEntry();
-        // elevatorAcceleration = tab.add("Acceleration", 0.0).getEntry();
-        // elevatorPositionSetpoint = tab.add("Height Setpoint", 0.0).getEntry();
-        // elevatorVelocitySetpoint = tab.add("Velocity Setpoint", 0.0).getEntry();
-        // elevatorAccelerationSetpoint = tab.add("Acceleration Setpoint", 0.0).getEntry();
-        // voltageSupplied = tab.add("Motor Voltage", 0.0).getEntry();
-        // voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
+        tab = Shuffleboard.getTab("Elevator");
+        elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
+        elevatorPosition = tab.add("Height", 0.0).getEntry();
+        elevatorVelocity = tab.add("Velocity", 0.0).getEntry();
+        elevatorAcceleration = tab.add("Acceleration", 0.0).getEntry();
+        elevatorPositionSetpoint = tab.add("Height Setpoint", 0.0).getEntry();
+        elevatorVelocitySetpoint = tab.add("Velocity Setpoint", 0.0).getEntry();
+        elevatorAccelerationSetpoint = tab.add("Acceleration Setpoint", 0.0).getEntry();
+        voltageSupplied = tab.add("Motor Voltage", 0.0).getEntry();
+        voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
 
-        // tab.add("Zero Encoder",
-        //         new InstantCommand(() -> zeroEncoder()));
+        tab.add("Zero Encoder",
+                new InstantCommand(() -> zeroEncoder()));
     }
 
     /*
@@ -166,17 +166,17 @@ public class ElevatorPID extends SubsystemBase {
         m_motor1.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
 
-    // public void updateShuffleboard() {
-    //     elevatorEncoderPosition.setDouble(getCurrentEncoderPosition());
-    //     elevatorPosition.setDouble(getCurrentHeight());
-    //     elevatorVelocity.setDouble(getCurrentVelocity());
-    //     elevatorAcceleration.setDouble(getCurrentAcceleration());
-    //     elevatorPositionSetpoint.setDouble(getHeightSetpoint());
-    //     elevatorVelocitySetpoint.setDouble(getVelocitySetpoint());
-    //     elevatorAccelerationSetpoint.setDouble(getAccelerationSetpoint());
-    //     voltageSupplied.setDouble(m_motor1.getMotorOutputVoltage());
-    //     voltageSetpoint.setDouble(m_voltageSetpoint);
-    // }
+    public void updateShuffleboard() {
+        elevatorEncoderPosition.setDouble(getCurrentEncoderPosition());
+        elevatorPosition.setDouble(getCurrentHeight());
+        elevatorVelocity.setDouble(getCurrentVelocity());
+        elevatorAcceleration.setDouble(getCurrentAcceleration());
+        elevatorPositionSetpoint.setDouble(getHeightSetpoint());
+        elevatorVelocitySetpoint.setDouble(getVelocitySetpoint());
+        elevatorAccelerationSetpoint.setDouble(getAccelerationSetpoint());
+        voltageSupplied.setDouble(m_motor1.getMotorOutputVoltage());
+        voltageSetpoint.setDouble(m_voltageSetpoint);
+    }
 
     /*
     * Compute voltages using feedforward and pid

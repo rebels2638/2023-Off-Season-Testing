@@ -46,6 +46,9 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Wrist;
 import frc.robot.commands.WristController;
 import frc.robot.commands.FieldOrientedDrive;
+import frc.robot.commands.LinSlidePIDController;
+import frc.robot.subsystems.LinSlidePID;
+
 
 
 import frc.robot.utils.ConstantsArmElevator.ElevatorConstants;
@@ -73,7 +76,8 @@ public class RobotContainer {
 
   private final Arm arm = new Arm();
   private final Wrist wrist = new Wrist();
-  private final LinSlidePID linslide = new LinSlidePID(); 
+  // private final LinearSlide linslide = new LinearSlide(); 
+  private final LinSlidePID linslidePID = new LinSlidePID();
   private final Turret turret = new Turret();
 //  private final FourBarArm fourBarArm = new FourBarArm();
   // private final FourBarArm fourBarArm = new FourBarArm();
@@ -112,7 +116,11 @@ public class RobotContainer {
       new ArmController(arm, xboxOperator));
 
     // this.linslide.setDefaultCommand(
-      // new LinearSlideController(linslidePID, xboxOperator));
+    //   new LinearSlideController(linslide, xboxOperator));
+
+    this.linslidePID.setDefaultCommand(
+      new LinSlidePIDController(linslidePID, xboxOperator)
+    );
     
     // this.turret.setDefaultCommand( 
     //   new TurretController(turret, xboxOperator)
@@ -150,45 +158,22 @@ public class RobotContainer {
     //   new ElevatorCancel(elevatorPID));
     // this.elevatorPID.setDefaultCommand(
     //     new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
-    this.xboxOperator.getBButton().onTrue(new PositionPresets(elevatorPID, wrist, linslide, turret, "loadingStation"));
+    // this.xboxOperator.getAButton().onTrue(new PositionPresets(elevatorPID, wrist, linslide, turret, "loadingStation"));
+    // this.xboxOperator.getBButton().onTrue(new PositionPresets(elevatorPID, wrist, linslide, turret, "idle"));
+    // this.xboxOperator.getYButton().onTrue(new PositionPresets(elevatorPID, wrist, linslide, turret, "highScore"));
+    // this.xboxOperator.getXButton().onTrue(new PositionPresets(elevatorPID, wrist, linslide, turret, "midScore"));
     // Driving
-    /*
-    this.xboxOperator.getBButton().onTrue(
-        new SequentialCommandGroup(
-            new ArmPositionSet(armPID, ArmConstants.midScore),
-            new ElevatorDown(elevatorPID)
-        )
-    );
-    */
+    
+    // this.xboxOperator.getBButton().onTrue(
+    //     new SequentialCommandGroup(
+    //         new ArmPositionSet(armPID, ArmConstants.midScore),
+    //         new ElevatorDown(elevatorPID)
+    //     )
+    // );
+  
     // this.xboxOperator.getBButton().onTrue(
     //   new FourBarArmDown(fourBarArmPID)
     // );  
-
-    
-    // //Ground
-    // this.xboxOperator.getAButton().onTrue(
-    //     new ParallelCommandGroup(
-    //         // new ArmPositionSet(armPID, -Math.PI / 4),
-    //         new ElevatorPositionSet(elevatorPID, -0.05)
-    //     )
-    // );
-
-    // // High Position
-    // this.xboxOperator.getBButton().onTrue(
-    //     new ParallelCommandGroup(
-    //         // new ArmPositionSet(armPID, 0),
-    //         new ElevatorPositionSet(elevatorPID, 0.51)
-    //     )
-    // );
-
-    // // Loading Station
-    // this.xboxOperator.getYButton().onTrue(
-    //     new ParallelCommandGroup(
-    //         // new ArmPositionSet(armPID, Math.PI / 4),
-    //         new ElevatorPositionSet(elevatorPID, 0.51)
-    //     )
-    // );
-    
 
     // this.xboxOperator.getYButton().onTrue(
     //     new ArmUp(armPID)
@@ -200,6 +185,7 @@ public class RobotContainer {
     // this.xboxOperator.getBButton().onTrue(
     //     new ElevatorUp(elevatorPID)
     // );
+
     this.xboxDriver.getRightBumper().onTrue(
         new InstantCommand(() -> this.drive.switchToHighGear())
     );
