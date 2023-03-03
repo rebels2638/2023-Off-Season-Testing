@@ -15,8 +15,9 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 public class LinearSlide extends SubsystemBase {
     private final WPI_TalonFX m_linslide;
-    
     private static LinearSlide instance = null;
+    private static final double kMaxEncoderLimit = 100;
+    private static final double kMinEncoderLimit = 10;
 
     // private final ShuffleboardTab tab;
 
@@ -112,7 +113,12 @@ public class LinearSlide extends SubsystemBase {
     // }
 
     public void setPercentOutput(double percent) {
-        m_linslide.set(ControlMode.PercentOutput, percent); // set talon speed based on input from XboxController.getleftY(), ie the input range on left y should map to the speed???? where speed is in range -1,1 and the xbox controller left joy stick is also -1,1???
+
+        if ((percent > 0.0 && kMaxEncoderLimit >= m_linslide.getSelectedSensorPosition()) || (percent < 0.0 && kMinEncoderLimit <= m_linslide.getSelectedSensorPosition())) {
+            percent = 0; 
+        }
+        m_linslide.set(ControlMode.PercentOutput, percent);
+
     }
 
     @Override
