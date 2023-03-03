@@ -1,52 +1,48 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
+import frc.robot.subsystems.ElevatorPID;
+import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LinearSlide;
-import frc.lib.RebelUtil;
-import frc.lib.input.XboxController;
-
-//import org.apache.commons.io.filefilter.TrueFileFilter;
-
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
+/** An example command that uses an example subsystem. */
 public class LinearSlideController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final LinearSlide m_linearSlide;
-  //private final FourBarArmPID m_armSubsystem;
-  private final XboxController controller; // controller is arm's controller
-  // private final DigitalInput toplimitSwitch;
-  // private final DigitalInput bottomlimitSwitch;
+  private final LinearSlide m_LinearSlide;
+  public boolean extend = true;
+  
 
-  // Creates a new ExampleCommand.
-  public LinearSlideController(LinearSlide linslide, XboxController controller) {
-    this.controller = controller;
-    m_linearSlide = linslide;
+  public LinearSlideController(LinearSlide subsystem) {
+    m_LinearSlide = subsystem;
     
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_linearSlide);
+    addRequirements(subsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    // follow position control to goal state
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    double inputPercent = controller.getRightX(); // not sure which joystick yet
-    m_linearSlide.setPercentOutput(inputPercent);
-    
+    if (extend) {
+      m_LinearSlide.setPercentOutput(.1);
+    }
+    else {
+      m_LinearSlide.setPercentOutput(-.1);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    
+  }
+
 
   // Returns true when the command should end.
   @Override
