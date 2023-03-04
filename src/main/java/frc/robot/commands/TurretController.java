@@ -5,7 +5,6 @@ import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Turret;
 
-
 /** An example command that uses an example subsystem. */
 public class TurretController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
@@ -32,7 +31,11 @@ public class TurretController extends CommandBase {
   @Override
   public void execute() {
     double input = m_controller.getLeftX();
-    m_turret.setPercentOutput(input);
+    // m_turret.setPercentOutput(input);
+    // System.out.println("input" + input);
+
+    m_turret.setGoal(0.5);
+
   }
 
   // Called once the command ends or is interrupted.
@@ -42,7 +45,7 @@ public class TurretController extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_turret.atGoal();
   }
 }
 

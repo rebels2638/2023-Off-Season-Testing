@@ -19,7 +19,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 /** Elevator subsystem with feed-forward and PID for position */
 public class LinSlidePID extends SubsystemBase {
-    public static final double kMaxSpeed = 0.1; // meters per second
+    public static final double kMaxSpeed = 0.5; // meters per second
     public static final double kMaxAcceleration = 0.1; // meters per second squared
 
     private static final double kWheelRadius = 0.0; // meters
@@ -41,7 +41,7 @@ public class LinSlidePID extends SubsystemBase {
     private static final double kRotationsPerMeter = 1 / kMetersPerRotation;
 
     
-    private final WPI_TalonFX m_motor = new WPI_TalonFX(0);
+    private final WPI_TalonFX m_motor = new WPI_TalonFX(7);
 
     private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
     private final PIDController m_velocityController = new PIDController(10, 0, 0);
@@ -198,7 +198,7 @@ public class LinSlidePID extends SubsystemBase {
         }
 
         m_voltageSetpoint = voltage;
-        System.out.println(voltage);
+        //System.out.println(voltage);
         // m_motor1.setVoltage(voltage);
         // m_motor2.setVoltage(voltage);
 

@@ -120,6 +120,7 @@ public class Turret extends SubsystemBase {
     }
     public void setPercentOutput(double percent){
         m_motor.setVoltage(percent);
+        //System.out.println(percent);
     }
 
     public void resetAngleAccumulator() {

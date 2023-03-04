@@ -57,7 +57,7 @@ public class PositionPresets extends CommandBase {
         kExtensionOutLinSlide = 0.0; // dunno
         kTurretAngle = 0.0; // radians
         kGoalStateElevator = new TrapezoidProfile.State(kHeightPositionElevator, 0.0);
-        kGoalStateLinSlide = new TrapezoidProfile.State(kHeightPositionElevator, 0.0);
+        kGoalStateLinSlide = new TrapezoidProfile.State(kExtensionOutLinSlide, 0.0);
 
     }
 

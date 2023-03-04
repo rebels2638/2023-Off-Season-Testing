@@ -77,7 +77,8 @@ public class RobotContainer {
   private final Arm arm = new Arm();
   private final Wrist wrist = new Wrist();
   // private final LinearSlide linslide = new LinearSlide(); 
-  private final LinSlidePID linslidePID = new LinSlidePID();
+  // private final LinSlidePID linslidePID = new LinSlidePID();
+  // private final LinearSlide = new LinearSlide();
   private final Turret turret = new Turret();
 //  private final FourBarArm fourBarArm = new FourBarArm();
   // private final FourBarArm fourBarArm = new FourBarArm();
@@ -107,7 +108,7 @@ public class RobotContainer {
     // this.drive.setDefaultCommand(
         // new Drive(drive, xboxDriver));
 
-    // this.wrist.setDefaultCommand(new WristController(wrist, xboxDriver));
+    this.wrist.setDefaultCommand(new WristController(wrist, xboxDriver));
 
     // this.elevator.setDefaultCommand(
     // new ElevatorController(elevator, xboxOperator)); // added, works
@@ -118,13 +119,13 @@ public class RobotContainer {
     // this.linslide.setDefaultCommand(
     //   new LinearSlideController(linslide, xboxOperator));
 
-    this.linslidePID.setDefaultCommand(
-      new LinSlidePIDController(linslidePID, xboxOperator)
-    );
-    
-    // this.turret.setDefaultCommand( 
-    //   new TurretController(turret, xboxOperator)
+    // this.linslidePID.setDefaultCommand(
+    //   new LinSlidePIDController(linslidePID, xboxOperator)
     // );
+    
+    this.turret.setDefaultCommand( 
+      new TurretController(turret, xboxOperator)
+    );
     
     // this.fourBarArm.setDefaultCommand(
     // new FourBarArmController(fourBarArm, xboxOperator));

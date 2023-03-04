@@ -23,7 +23,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 /** Elevator subsystem with feed-forward and PID for position */
 public class ElevatorPID extends SubsystemBase {
-    public static final double kMaxSpeed = 0.5; // meters per second
+    public static final double kMaxSpeed = 1; // meters per second
     public static final double kMaxAcceleration = 0.1; // meters per second squared
 
     private static final double kWheelRadius = 0.03; // meters
@@ -196,7 +196,7 @@ public class ElevatorPID extends SubsystemBase {
         }
 
         m_voltageSetpoint = voltage;
-        System.out.println(voltage);
+        //System.out.println(voltage);
         m_motor1.setVoltage(voltage);
         m_motor2.setVoltage(voltage);
 

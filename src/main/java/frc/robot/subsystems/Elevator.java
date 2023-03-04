@@ -54,10 +54,10 @@ public class Elevator extends SubsystemBase {
 
         
         leftTalon.configAllSettings(falconConfig);
-        leftTalon.setNeutralMode(NeutralMode.Coast);
+        leftTalon.setNeutralMode(NeutralMode.Brake);
 
         rightTalon.configAllSettings(falconConfig);
-        rightTalon.setNeutralMode(NeutralMode.Coast);
+        rightTalon.setNeutralMode(NeutralMode.Brake);
         
     }
 

@@ -45,6 +45,7 @@ public class ElevatorPIDController extends CommandBase {
   public void execute() {
     double desiredVelo = RebelUtil.linearDeadband(e_controller.getLeftY(), 0.05) * ElevatorPID.kMaxSpeed;
     m_elevatorPID.setVelocitySetpoint(desiredVelo);
+    //System.out.println("Controller: "+e_controller.getLeftY());
   }
 
   // Called once the command ends or is interrupted.
