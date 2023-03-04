@@ -78,7 +78,7 @@ public class RobotContainer {
   private final Wrist wrist = new Wrist();
   // private final LinearSlide linslide = new LinearSlide(); 
   // private final LinSlidePID linslidePID = new LinSlidePID();
-  // private final LinearSlide = new LinearSlide();
+  // private final LinearSlide  = new LinearSlide();
   private final Turret turret = new Turret();
 //  private final FourBarArm fourBarArm = new FourBarArm();
   // private final FourBarArm fourBarArm = new FourBarArm();

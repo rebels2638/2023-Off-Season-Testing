@@ -13,10 +13,10 @@ public final class ConstantsArmElevator {
         public static final double drive = 0;
         public static final double midScore = midY - ArmConstants.armLength * Math.sin(ArmConstants.midScore) - groundToElevatorNeutral;
 
-        public static final double kS = -0.012176;
+        public static final double kS = 0.08;
         public static final double kV = 3.5776;
         public static final double kA = 0.23487;
-        public static final double kG = 0.3907;
+        public static final double kG = 0.82;
 
         public static final double kP = 0.80918;
         public static final double kI = 0.0;

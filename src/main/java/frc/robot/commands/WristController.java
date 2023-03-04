@@ -17,7 +17,8 @@ public class WristController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Wrist m_wrist;
   private final XboxController e_controller; // e_controller is elevator's controller
-
+  private final double kUpperLimitEncoder = 0; //Starting from the Top
+  private final double kLowerLimitEncoder = -33169; // starting from the Top 
   /**
    * Creates a new ExampleCommand.
    *
@@ -39,9 +40,11 @@ public class WristController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // if(m_wrist.getCurrentEncoderPosition() <= kUpperLimit && m_wrist.getCurrentEncoderPosition() >= kLowerLimit){
     double desiredVelo = e_controller.getRightY() * Wrist.kMaxSpeed;
     m_wrist.setVelocitySetpoint(desiredVelo);
     m_wrist.setToVelocityControlMode(true);
+    //}
   }
 
   // Called once the command ends or is interrupted.

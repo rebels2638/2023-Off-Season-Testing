@@ -20,13 +20,14 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 /** Elevator subsystem with feed-forward and PID for position */
 public class ElevatorPID extends SubsystemBase {
     public static final double kMaxSpeed = 1; // meters per second
     public static final double kMaxAcceleration = 0.1; // meters per second squared
 
-    private static final double kWheelRadius = 0.03; // meters
+    private static final double kWheelRadius = 0.018191; // meters
     private static final int kEncoderResolution = 2048; 
     private static final int kGearingRatio = 6;
 
@@ -53,8 +54,8 @@ public class ElevatorPID extends SubsystemBase {
     private double m_lastVelocity = 0;
     private double m_lastTime = Timer.getFPGATimestamp();
 
-    private static double kUpperLimit = 1;
-    private static double kLowerLimit = -1;
+    private static double kUpperLimit = 0.843;
+    private static double kLowerLimit = 0;
 
     private final ShuffleboardTab tab;
 
@@ -73,6 +74,10 @@ public class ElevatorPID extends SubsystemBase {
         m_motor2.setInverted(true);
 
         // reset elevator
+        m_motor1.setNeutralMode(NeutralMode.Brake);
+
+        m_motor2.setNeutralMode(NeutralMode.Brake);
+
         m_motor1.set(ControlMode.PercentOutput, 0);
         m_motor2.set(ControlMode.PercentOutput, 0);
         setToVelocityControlMode(true);
@@ -196,11 +201,11 @@ public class ElevatorPID extends SubsystemBase {
         }
 
         m_voltageSetpoint = voltage;
-        //System.out.println(voltage);
+        System.out.println("Elevator : " + voltage);
         m_motor1.setVoltage(voltage);
         m_motor2.setVoltage(voltage);
 
-        // updateShuffleboard();
+        updateShuffleboard();
 
         m_lastVelocitySetpoint = getVelocitySetpoint();
         m_lastVelocity = getCurrentVelocity();
