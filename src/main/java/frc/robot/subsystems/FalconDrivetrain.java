@@ -2,9 +2,10 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.kauailabs.navx.frc.AHRS; 
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -50,6 +51,12 @@ public class FalconDrivetrain extends SubsystemBase {
   private static final double kTrackWidth = DriveConstants.TRACK_WIDTH_METERS; // meters
   private static final double kWheelRadius = GearboxConstants.WHEEL_DIAMETER / 2; // meters
   private static final int kEncoderResolution = 2048;
+  private static final double kGearingRatio = 8.333;
+
+  private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
+  private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
+  private static final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
+  private static final double kRotationsPerMeter = 1 / kMetersPerRotation;
   /*
    * =============================================================================
    * ==============
@@ -70,16 +77,20 @@ public class FalconDrivetrain extends SubsystemBase {
 
   private final AnalogGyro m_gyro = new AnalogGyro(Constants.GyroConstants.kGyroPort);
 
-  private final PIDController m_leftPIDController = new PIDController(1, 0, 0);
-  private final PIDController m_rightPIDController = new PIDController(1, 0, 0);
+  private final PIDController m_leftPIDController = new PIDController(0.026947, 0, 0);
+  private final PIDController m_rightPIDController = new PIDController(0.026947, 0, 0);
 
-  // private final DifferentialDrive m_drive = new DifferentialDrive(m_leftGroup, m_rightGroup);
+  private double m_leftSetpoint = 0.0;
+  private double m_rightSetpoint = 0.0;
+
+  // private final DifferentialDrive m_drive = new DifferentialDrive(m_leftGroup,
+  // m_rightGroup);
 
   public final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(kTrackWidth);
 
   private final DifferentialDriveOdometry m_odometry;
 
-  public final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
+  public final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(0.1728, 1.7575, 0.42374);
   /*
    * =============================================================================
    * ================
@@ -98,6 +109,11 @@ public class FalconDrivetrain extends SubsystemBase {
   private EncoderSim m_rightEncoderSim;
 
   public FalconDrivetrain() {
+    m_leftLeader.setNeutralMode(NeutralMode.Brake);
+    m_leftFollower.setNeutralMode(NeutralMode.Brake);
+    m_rightLeader.setNeutralMode(NeutralMode.Brake);
+    m_rightFollower.setNeutralMode(NeutralMode.Brake);
+
     m_leftGroup.setInverted(DriveConstants.FALCON_LEFT_GROUP_INVERTED);
     m_rightGroup.setInverted(DriveConstants.FALCON_RIGHT_GROUP_INVERTED);
     m_leftEncoder.setDistancePerPulse(2 * Math.PI * kWheelRadius / kEncoderResolution);
@@ -106,8 +122,9 @@ public class FalconDrivetrain extends SubsystemBase {
     m_rightLeader.getSensorCollection().setIntegratedSensorPosition(0, 30);
     m_leftEncoder.reset();
     m_rightEncoder.reset();
-    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
-    
+    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), m_leftEncoder.getDistance(),
+        m_rightEncoder.getDistance());
+
     if (RobotBase.isSimulation()) {
       // TODO: EDIT VALUES TO BE ACCURATE
       m_differentialDrivetrainSimulator = new DifferentialDrivetrainSim(m_drivetrainSystem,
@@ -122,32 +139,53 @@ public class FalconDrivetrain extends SubsystemBase {
     }
   }
 
+  public double metersToNative(double meters) {
+    return meters * kRotationsPerMeter * kNativeUnitsPerRotation;
+  }
+
+  public double nativeToMeters(double encoderUnits) {
+    return encoderUnits * kRotationsPerNativeUnit * kMetersPerRotation;
+  }
+
+  public double getCurrentEncoderPosition(WPI_TalonFX motor) {
+    return -motor.getSensorCollection().getIntegratedSensorPosition();
+  }
+
+  public double getCurrentEncoderRate(WPI_TalonFX motor) {
+    return -motor.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
+  }
+
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
+    m_leftSetpoint = speeds.leftMetersPerSecond;
+    m_rightSetpoint = speeds.rightMetersPerSecond;
     var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
     var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
-    double leftOutput = m_leftPIDController.calculate(m_leftLeader.getSensorCollection().getIntegratedSensorPosition(), speeds.leftMetersPerSecond);
-    double rightOutput = m_rightPIDController.calculate(m_rightLeader.getSensorCollection().getIntegratedSensorPosition(), speeds.rightMetersPerSecond);
+    double leftOutput = m_leftPIDController.calculate(nativeToMeters(getCurrentEncoderRate(m_leftLeader)),
+        speeds.leftMetersPerSecond);
+    double rightOutput = m_rightPIDController
+        .calculate(nativeToMeters(-getCurrentEncoderRate(m_rightLeader)), speeds.rightMetersPerSecond);
 
-    m_leftGroup.setVoltage(leftFeedforward);
-    m_rightGroup.setVoltage(rightFeedforward);
+    System.out.println("LEFT RIGHT " + nativeToMeters(getCurrentEncoderRate(m_leftLeader)) + " " + nativeToMeters(-getCurrentEncoderRate(m_rightLeader)));
+
+    m_leftGroup.setVoltage(leftFeedforward + leftOutput);
+    m_rightGroup.setVoltage(rightFeedforward + rightOutput);
   }
 
   public void updateSmartDashBoard() {
     SmartDashboard.putNumber("AverageEncoderDistance", this.getAverageEncoderDistance());
-    if(Robot.isSimulation()) SmartDashboard.putNumber("CurrentDrawnAmps", m_differentialDrivetrainSimulator.getCurrentDrawAmps());
+    if (Robot.isSimulation())
+      SmartDashboard.putNumber("CurrentDrawnAmps", m_differentialDrivetrainSimulator.getCurrentDrawAmps());
 
     m_fieldSim.setRobotPose(getPose());
     SmartDashboard.putData("Field", m_fieldSim);
-    SmartDashboard.putNumber("leftGroup Speed", m_leftGroup.get());
-    SmartDashboard.putNumber("rightGroup speed", m_rightGroup.get());
+    SmartDashboard.putNumber("leftGroup Diff", m_leftSetpoint - nativeToMeters(getCurrentEncoderRate(m_leftLeader)));
+    SmartDashboard.putNumber("rightGroup Diff", m_rightSetpoint - nativeToMeters(-getCurrentEncoderRate(m_rightLeader)));
 
   }
 
   public void drive(double xSpeed, double rot) {
     setSpeeds(m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0.0, rot)));
   }
-
-  
 
   public void updateOdometry() {
     m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
@@ -208,11 +246,12 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   /*
-  public void tankDriveVolts(double leftVolts, double rightVolts) {
-    m_leftLeader.setVoltage(leftVolts);
-    m_rightLeader.setVoltage(rightVolts);
-    m_drive.feed();
-  }*/
+   * public void tankDriveVolts(double leftVolts, double rightVolts) {
+   * m_leftLeader.setVoltage(leftVolts);
+   * m_rightLeader.setVoltage(rightVolts);
+   * m_drive.feed();
+   * }
+   */
 
   public void setVoltageFromAuto(double leftVoltage, double rightVoltage) {
     m_leftGroup.setVoltage(leftVoltage);

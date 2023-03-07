@@ -75,7 +75,7 @@ public class FieldOrientedDrive extends CommandBase {
     pid.setGoal(m_headingSetpoint.getRadians());
     double turnSpeed = pid.atGoal() ? 0.0 : pid.calculate(gyroHeading.getRadians());
 
-    System.out.println("fS " + forwardSpeed + " " + turnSpeed);
+    // System.out.println("fS " + forwardSpeed + " " + turnSpeed);
     m_driveSubsystem.drive(forwardSpeed, turnSpeed);
   }
 

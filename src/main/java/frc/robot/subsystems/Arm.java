@@ -41,7 +41,7 @@ public class Arm extends SubsystemBase {
         falconConfig.peakOutputReverse = -1;
 
         talon.configAllSettings(falconConfig);
-        talon.setNeutralMode(NeutralMode.Coast);
+        talon.setNeutralMode(NeutralMode.Brake);
         
         tab = Shuffleboard.getTab("Encoders").add("Arm Encoder", 0.0).getEntry();
         

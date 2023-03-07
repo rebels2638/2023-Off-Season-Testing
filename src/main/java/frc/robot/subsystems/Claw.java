@@ -47,7 +47,7 @@ public class Claw extends SubsystemBase {
     }
 
     public void toggle() {
-        System.out.println("ITS ON: " + state);
+        // System.out.println("ITS ON: " + state);
         if (state) {
             pull();
         } else {

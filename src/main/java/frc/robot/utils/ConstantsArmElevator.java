@@ -18,7 +18,7 @@ public final class ConstantsArmElevator {
         public static final double kA = 0.23487;
         public static final double kG = 0.82;
 
-        public static final double kP = 0.80918;
+        public static final double kP = 1.20918;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 

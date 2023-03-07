@@ -39,7 +39,7 @@ public class Turret extends SubsystemBase {
     public static final double kV = 3.9629;
     public static final double kA = 0.29063;
 
-    private final WPI_TalonFX m_motor = new WPI_TalonFX(6);
+    private final WPI_TalonFX m_motor = new WPI_TalonFX(7);
 
     private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD,
             new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));

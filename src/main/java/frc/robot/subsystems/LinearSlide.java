@@ -5,19 +5,37 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 public class LinearSlide extends SubsystemBase {
     private final WPI_TalonFX m_linslide;
     private static LinearSlide instance = null;
-    private static final double kMaxEncoderLimit = 100;
-    private static final double kMinEncoderLimit = 10;
+    private static final double kMaxEncoderLimit = 10000000;
+    private static final double kMinEncoderLimit = -10000000;
+
+    private ShuffleboardTab tab;
+    
+    private final GenericEntry linSlideEncoderPosition;
+
+    private double m_setpoint = 0.0;
 
     public LinearSlide() {
-        this.m_linslide = new WPI_TalonFX(6); // change when found
+        this.m_linslide = new WPI_TalonFX(6);
         m_linslide.setNeutralMode(NeutralMode.Brake);
+
+        tab = Shuffleboard.getTab("Linear Slide");
+        linSlideEncoderPosition = tab.add("Lin_Encoder_Position", 0.0).getEntry();
+        tab.add("Zero Encoder", new InstantCommand(() -> zeroEncoder()));
+        m_setpoint = 0.0;
     }
+
+    
 
     // Singleton class, call getInstance to access instead of the constructor.
     public static LinearSlide getInstance() {
@@ -27,12 +45,22 @@ public class LinearSlide extends SubsystemBase {
         return instance;
     }
 
-    public void setPercentOutput(double percent) {
+    @Override
+    public void periodic() {
+        linSlideEncoderPosition.setDouble(m_linslide.getSensorCollection().getIntegratedSensorPosition());
 
-        if ((percent > 0.0 && kMaxEncoderLimit >= m_linslide.getSelectedSensorPosition()) || (percent < 0.0 && kMinEncoderLimit <= m_linslide.getSelectedSensorPosition())) {
-            percent = 0; 
+        if ((m_setpoint > 0.0 && m_linslide.getSelectedSensorPosition() >= kMaxEncoderLimit) || 
+        (m_setpoint < 0.0 && m_linslide.getSelectedSensorPosition() <= kMinEncoderLimit)) {
+            m_setpoint = 0; 
         }
-        m_linslide.set(ControlMode.PercentOutput, percent);
+        m_linslide.set(ControlMode.PercentOutput, m_setpoint);
+    }
 
+    public void setPercentOutput(double percent) {
+        m_setpoint = percent;
+    }
+
+    public void zeroEncoder() {
+        m_linslide.setSelectedSensorPosition(0);
     }
 }

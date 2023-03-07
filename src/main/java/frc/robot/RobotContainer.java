@@ -23,6 +23,7 @@ import frc.robot.commands.ElevatorController;
 // import frc.robot.commands.ArmPositionSet;
 // import frc.robot.commands.ArmUp;
 import frc.robot.commands.Auto;
+import frc.robot.commands.AutoBalance;
 // import frc.robot.subsystems.ArmPID;
 // import frc.robot.commands.ArmPIDController;
 import frc.robot.commands.ElevatorDown;
@@ -37,7 +38,6 @@ import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.FalconDrivetrain;
 import frc.robot.subsystems.LinSlidePID;
 import frc.robot.subsystems.Arm;
-import frc.robot.commands.LinearSlideController;
 import frc.robot.commands.PositionPresets;
 import frc.robot.commands.TurretController;
 import frc.robot.subsystems.LinearSlide;
@@ -47,6 +47,7 @@ import frc.robot.subsystems.Wrist;
 import frc.robot.commands.WristController;
 import frc.robot.commands.FieldOrientedDrive;
 import frc.robot.commands.LinSlidePIDController;
+import frc.robot.commands.LinearSlideController;
 import frc.robot.subsystems.LinSlidePID;
 
 
@@ -67,7 +68,7 @@ public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   // private final Drivetrain drive = new Drivetrain();
   private final FalconDrivetrain drive = new FalconDrivetrain();
-//   private final PoseEstimator poseEstimator = new PoseEstimator(drive);
+   //private final PoseEstimator poseEstimator = new PoseEstimator(drive);
   // private final Elevator elevator = new Elevator();
 
   // The robot's controllers
@@ -75,10 +76,9 @@ public class RobotContainer {
   private final XboxController xboxOperator;
 
   private final Arm arm = new Arm();
-  private final Wrist wrist = new Wrist();
-  // private final LinearSlide linslide = new LinearSlide(); 
+  // private final Wrist wrist = new Wrist();
+  private final LinearSlide linslide = new LinearSlide(); 
   // private final LinSlidePID linslidePID = new LinSlidePID();
-  // private final LinearSlide  = new LinearSlide();
   private final Turret turret = new Turret();
 //  private final FourBarArm fourBarArm = new FourBarArm();
   // private final FourBarArm fourBarArm = new FourBarArm();
@@ -100,7 +100,7 @@ public class RobotContainer {
     // Instantiate our controllers with proper ports.
     this.xboxDriver = new XboxController(3);
     this.xboxOperator = new XboxController(2);
-    System.gc();
+    // System.gc();
     // Controller Throttle Mappings
     this.drive.setDefaultCommand(
         new FalconDrive(drive, xboxDriver));
@@ -108,7 +108,7 @@ public class RobotContainer {
     // this.drive.setDefaultCommand(
         // new Drive(drive, xboxDriver));
 
-    this.wrist.setDefaultCommand(new WristController(wrist, xboxDriver));
+    // this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
 
     // this.elevator.setDefaultCommand(
     // new ElevatorController(elevator, xboxOperator)); // added, works
@@ -143,8 +143,14 @@ public class RobotContainer {
     // new ClawController(claw, xboxOperator)
     // );
 
-    this.xboxOperator.getRightBumper().onTrue(
+    this.xboxOperator.getAButton().onTrue(
         new InstantCommand(() -> this.claw.toggle()));
+
+    this.linslide.setDefaultCommand(new LinearSlideController(linslide, xboxOperator));
+
+    // this.xboxDriver.getBButton().whileTrue(
+    //   new InstantCommand( () -> new AutoBalance(this.drive, ))
+    // );
 
 
     // this.xboxOperator.getYButton().onTrue(
@@ -155,7 +161,7 @@ public class RobotContainer {
     // this.xboxOperator.getXButton().onTrue(
     //   new ElevatorDown(elevatorPID));
     // // testc.b().onTrue(new InstantCommand(() -> this.claw.toggle()));
-    // this.xboxOperator.getRightBumper().onTrue(
+    // this.xboxOperator.getAButton().onTrue(
     //   new ElevatorCancel(elevatorPID));
     // this.elevatorPID.setDefaultCommand(
     //     new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
@@ -183,9 +189,9 @@ public class RobotContainer {
     //     new ArmDown(armPID)
     // );
     
-    // this.xboxOperator.getBButton().onTrue(
-    //     new ElevatorUp(elevatorPID)
-    // );
+    this.xboxOperator.getBButton().onTrue(
+        new ElevatorUp(elevatorPID)
+    );
 
     this.xboxDriver.getRightBumper().onTrue(
         new InstantCommand(() -> this.drive.switchToHighGear())

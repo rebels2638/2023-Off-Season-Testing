@@ -103,7 +103,7 @@ public class Drivetrain extends SubsystemBase {
     m_leftGroup.setVoltage(leftOutput + leftFeedforward);
     m_rightGroup.setVoltage(rightOutput + rightFeedforward);
  
-    System.out.println("left: " + leftFeedforward + " right: " + rightFeedforward);
+    // System.out.println("left: " + leftFeedforward + " right: " + rightFeedforward);
   }
 
   /**

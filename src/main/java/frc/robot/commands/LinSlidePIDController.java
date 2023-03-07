@@ -41,7 +41,7 @@ public class LinSlidePIDController extends CommandBase {
   @Override
   public void execute() {
     double desiredVelo = RebelUtil.linearDeadband(e_controller.getRightX(), 0.05) * LinSlidePID.kMaxSpeed;
-    System.out.println(desiredVelo);
+    // System.out.println(desiredVelo);
     m_linSlidePID.setVelocitySetpoint(desiredVelo);
   }
 

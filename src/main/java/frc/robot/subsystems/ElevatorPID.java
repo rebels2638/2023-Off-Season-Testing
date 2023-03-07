@@ -24,7 +24,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 /** Elevator subsystem with feed-forward and PID for position */
 public class ElevatorPID extends SubsystemBase {
-    public static final double kMaxSpeed = 1; // meters per second
+    public static final double kMaxSpeed = 0.5; // meters per second
     public static final double kMaxAcceleration = 0.1; // meters per second squared
 
     private static final double kWheelRadius = 0.018191; // meters
@@ -40,7 +40,7 @@ public class ElevatorPID extends SubsystemBase {
     private final WPI_TalonFX m_motor1 = new WPI_TalonFX(0);
     private final WPI_TalonFX m_motor2 = new WPI_TalonFX(3);
 
-    private final ProfiledPIDController m_controller = new ProfiledPIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
+    private final ProfiledPIDController m_controller = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
     private final PIDController m_velocityController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
 
@@ -201,7 +201,7 @@ public class ElevatorPID extends SubsystemBase {
         }
 
         m_voltageSetpoint = voltage;
-        System.out.println("Elevator : " + voltage);
+        // System.out.println("Elevator : " + voltage);
         m_motor1.setVoltage(voltage);
         m_motor2.setVoltage(voltage);
 

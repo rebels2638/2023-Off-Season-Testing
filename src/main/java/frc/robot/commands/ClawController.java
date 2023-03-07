@@ -50,7 +50,7 @@ public class ClawController extends CommandBase {
     if (e_controller.getAButton().getAsBoolean() && !lastToggle) {
       lastToggle = true;
       m_clawSubsystem.toggle();
-      System.out.println(true);
+      // System.out.println(true);
     } 
 
     // if(!e_controller.getAButton().getAsBoolean()) {

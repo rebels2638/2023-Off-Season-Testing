@@ -2,9 +2,13 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Arm/Zero Encoder": "Command",
       "/Shuffleboard/Auto/Command": "String Chooser",
       "/Shuffleboard/Auto/Path": "String Chooser",
       "/Shuffleboard/Commands/Zero Elevator Position": "Command",
+      "/Shuffleboard/Elevator/Zero Encoder": "Command",
+      "/Shuffleboard/Encoders/Zero Encoder": "Command",
+      "/Shuffleboard/Turret/Zero Encoder": "Command",
       "/SmartDashboard/Field": "Field2d"
     }
   }

@@ -10,7 +10,7 @@ public class ElevatorUp extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorPID m_elevatorSubsystem;
 
-  private final double kHeightUpPosition = 0.381; // meters
+  private final double kHeightUpPosition = 0.6; // meters
   private final TrapezoidProfile.State kGoalState = new TrapezoidProfile.State(kHeightUpPosition, 0.0);
 
   public ElevatorUp(ElevatorPID subsystem) {
