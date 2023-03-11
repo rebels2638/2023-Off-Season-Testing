@@ -215,10 +215,10 @@ public class FalconDrivetrain extends SubsystemBase {
     m_rightSetpoint = speeds.rightMetersPerSecond;
     var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
     var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
-    double leftPID = m_leftPIDController.calculate(getLeftSideMeters(),
+    double leftPID = m_leftPIDController.calculate(getLeftSideVelocity(),
         speeds.leftMetersPerSecond);
     double rightPID = m_rightPIDController
-        .calculate(getRightSideMeters(), speeds.rightMetersPerSecond);
+        .calculate(getRightSideVelocity(), speeds.rightMetersPerSecond);
 
     m_leftVoltageSetpoint = leftFeedforward + leftPID;
     m_rightVoltageSetpoint = rightFeedforward + rightPID;
