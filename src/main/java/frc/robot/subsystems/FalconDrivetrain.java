@@ -10,6 +10,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -18,11 +19,14 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 //import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 //import edu.wpi.first.wpilibj.motorcontrol.Encoder;
 //import edu.wpi.first.wpilibj.motorcontrol.Talon;
@@ -34,6 +38,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -75,7 +80,7 @@ public class FalconDrivetrain extends SubsystemBase {
   private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 14);
   private final Solenoid m_rightSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 15);
 
-  private final AnalogGyro m_gyro = new AnalogGyro(Constants.GyroConstants.kGyroPort);
+  private final AHRS m_gyro = new AHRS(Port.kUSB);
 
   private final PIDController m_leftPIDController = new PIDController(0.026947, 0, 0);
   private final PIDController m_rightPIDController = new PIDController(0.026947, 0, 0);
@@ -85,6 +90,25 @@ public class FalconDrivetrain extends SubsystemBase {
 
   // private final DifferentialDrive m_drive = new DifferentialDrive(m_leftGroup,
   // m_rightGroup);
+
+  private final ShuffleboardTab tab;
+
+  private final GenericEntry leftMotorEncoderPosition;
+  private final GenericEntry leftMotorPosition;
+  private final GenericEntry leftMotorVelocity;
+  private final GenericEntry leftMotorVelocitySetpoint;
+  private final GenericEntry leftMotorVoltageSupplied;
+  private final GenericEntry leftMotorVoltageSetpoint;
+
+  private final GenericEntry rightMotorEncoderPosition;
+  private final GenericEntry rightMotorPosition;
+  private final GenericEntry rightMotorVelocity;
+  private final GenericEntry rightMotorVelocitySetpoint;
+  private final GenericEntry rightMotorVoltageSupplied;
+  private final GenericEntry rightMotorVoltageSetpoint;
+  
+  private double m_leftVoltageSetpoint;
+  private double m_rightVoltageSetpoint;
 
   public final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(kTrackWidth);
 
@@ -125,6 +149,21 @@ public class FalconDrivetrain extends SubsystemBase {
     m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), m_leftEncoder.getDistance(),
         m_rightEncoder.getDistance());
 
+    tab = Shuffleboard.getTab("Drive");
+    leftMotorEncoderPosition = tab.add("Left Encoder Position", 0.0).getEntry();
+    leftMotorPosition = tab.add("Left Meters", 0.0).getEntry();
+    leftMotorVelocity = tab.add("Left Velocity", 0.0).getEntry();
+    leftMotorVelocitySetpoint = tab.add("Left Velocity Setpoint", 0.0).getEntry();
+    leftMotorVoltageSupplied = tab.add("Left Motor Voltage", 0.0).getEntry();
+    leftMotorVoltageSetpoint = tab.add("Left Voltage Setpoint", 0.0).getEntry();
+
+    rightMotorEncoderPosition = tab.add("Right Encoder Position", 0.0).getEntry();
+    rightMotorPosition = tab.add("Right Meters", 0.0).getEntry();
+    rightMotorVelocity = tab.add("Right Velocity", 0.0).getEntry();
+    rightMotorVelocitySetpoint = tab.add("Right Velocity Setpoint", 0.0).getEntry();
+    rightMotorVoltageSupplied = tab.add("Right Motor Voltage", 0.0).getEntry();
+    rightMotorVoltageSetpoint = tab.add("Right Voltage Setpoint", 0.0).getEntry();
+
     if (RobotBase.isSimulation()) {
       // TODO: EDIT VALUES TO BE ACCURATE
       m_differentialDrivetrainSimulator = new DifferentialDrivetrainSim(m_drivetrainSystem,
@@ -132,7 +171,7 @@ public class FalconDrivetrain extends SubsystemBase {
           26.667, kTrackWidth,
           kWheelRadius,
           null);
-      m_gyroSim = new AnalogGyroSim(m_gyro);
+      // m_gyroSim = new AnalogGyroSim(m_gyro);
       m_leftEncoderSim = new EncoderSim(m_leftEncoder);
       m_rightEncoderSim = new EncoderSim(m_rightEncoder);
       // m_gyroSim = new AHRS(SPI.Port.KXMP);
@@ -155,20 +194,36 @@ public class FalconDrivetrain extends SubsystemBase {
     return -motor.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
   }
 
+  public double getLeftSideMeters() {
+    return nativeToMeters(getCurrentEncoderPosition(m_leftLeader));
+  }
+
+  public double getRightSideMeters() {
+    return nativeToMeters(-getCurrentEncoderPosition(m_rightLeader));
+  }
+
+  public double getLeftSideVelocity() {
+    return nativeToMeters(getCurrentEncoderRate(m_leftLeader));
+  }
+
+  public double getRightSideVelocity() {
+    return nativeToMeters(-getCurrentEncoderRate(m_rightLeader));
+  }
+
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
     m_leftSetpoint = speeds.leftMetersPerSecond;
     m_rightSetpoint = speeds.rightMetersPerSecond;
     var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
     var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
-    double leftOutput = m_leftPIDController.calculate(nativeToMeters(getCurrentEncoderRate(m_leftLeader)),
+    double leftPID = m_leftPIDController.calculate(getLeftSideMeters(),
         speeds.leftMetersPerSecond);
-    double rightOutput = m_rightPIDController
-        .calculate(nativeToMeters(-getCurrentEncoderRate(m_rightLeader)), speeds.rightMetersPerSecond);
+    double rightPID = m_rightPIDController
+        .calculate(getRightSideMeters(), speeds.rightMetersPerSecond);
 
-    // System.out.println("LEFT RIGHT " + nativeToMeters(getCurrentEncoderRate(m_leftLeader)) + " " + nativeToMeters(-getCurrentEncoderRate(m_rightLeader)));
-
-    m_leftGroup.setVoltage(leftFeedforward + leftOutput);
-    m_rightGroup.setVoltage(rightFeedforward + rightOutput);
+    m_leftVoltageSetpoint = leftFeedforward + leftPID;
+    m_rightVoltageSetpoint = rightFeedforward + rightPID;
+    m_leftGroup.setVoltage(m_leftVoltageSetpoint);
+    m_rightGroup.setVoltage(m_rightVoltageSetpoint);
   }
 
   public void updateSmartDashBoard() {
@@ -178,9 +233,24 @@ public class FalconDrivetrain extends SubsystemBase {
 
     m_fieldSim.setRobotPose(getPose());
     SmartDashboard.putData("Field", m_fieldSim);
-    SmartDashboard.putNumber("leftGroup Diff", m_leftSetpoint - nativeToMeters(getCurrentEncoderRate(m_leftLeader)));
-    SmartDashboard.putNumber("rightGroup Diff", m_rightSetpoint - nativeToMeters(-getCurrentEncoderRate(m_rightLeader)));
+    SmartDashboard.putNumber("leftGroup Diff", nativeToMeters(getCurrentEncoderRate(m_leftLeader)));
+    SmartDashboard.putNumber("rightGroup Diff", nativeToMeters(-getCurrentEncoderRate(m_rightLeader)));
+  }
 
+  public void updateShuffleboard() {
+    leftMotorEncoderPosition.setDouble(getCurrentEncoderPosition(m_leftLeader));
+    leftMotorPosition.setDouble(getLeftSideMeters());
+    leftMotorVelocity.setDouble(getLeftSideVelocity());
+    leftMotorVelocitySetpoint.setDouble(m_leftSetpoint);
+    leftMotorVoltageSetpoint.setDouble(m_leftLeader.getMotorOutputVoltage());
+    leftMotorVoltageSupplied.setDouble(m_leftVoltageSetpoint);
+
+    rightMotorEncoderPosition.setDouble(-getCurrentEncoderPosition(m_rightLeader));
+    rightMotorPosition.setDouble(getRightSideMeters());
+    rightMotorVelocity.setDouble(getRightSideVelocity());
+    rightMotorVelocitySetpoint.setDouble(m_rightSetpoint);
+    rightMotorVoltageSetpoint.setDouble(m_rightLeader.getMotorOutputVoltage());
+    rightMotorVoltageSupplied.setDouble(m_rightVoltageSetpoint);
   }
 
   public void drive(double xSpeed, double rot) {
@@ -243,6 +313,10 @@ public class FalconDrivetrain extends SubsystemBase {
 
   public double getHeading() {
     return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if the GYRO is REVERSED.
+  }
+
+  public Rotation2d getRotation2d() {
+    return m_gyro.getRotation2d();
   }
 
   /*

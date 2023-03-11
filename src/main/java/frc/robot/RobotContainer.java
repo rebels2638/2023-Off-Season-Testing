@@ -146,7 +146,7 @@ public class RobotContainer {
     this.xboxOperator.getAButton().onTrue(
         new InstantCommand(() -> this.claw.toggle()));
 
-    this.linslide.setDefaultCommand(new LinearSlideController(linslide, xboxOperator));
+    // this.linslide.setDefaultCommand(new LinearSlideController(linslide, xboxOperator));
 
 
     this.xboxOperator.getLeftBumper().onTrue(new InstantCommand(() -> this.LinPiston.pull()));

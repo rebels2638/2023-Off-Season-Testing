@@ -70,8 +70,8 @@ public class ElevatorPID extends SubsystemBase {
     private final GenericEntry voltageSetpoint;
 
     public ElevatorPID() {
-        m_motor1.setInverted(true); // invert motor output
-        m_motor2.setInverted(true);
+        m_motor1.setInverted(false); // they changed the motor
+        m_motor2.setInverted(false);
 
         // reset elevator
         m_motor1.setNeutralMode(NeutralMode.Brake);
