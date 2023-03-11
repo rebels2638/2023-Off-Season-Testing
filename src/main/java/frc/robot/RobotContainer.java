@@ -37,6 +37,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.FalconDrivetrain;
 import frc.robot.subsystems.LinSlidePID;
+import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.Arm;
 import frc.robot.commands.PositionPresets;
 import frc.robot.commands.TurretController;
@@ -70,6 +71,7 @@ public class RobotContainer {
   private final FalconDrivetrain drive = new FalconDrivetrain();
    //private final PoseEstimator poseEstimator = new PoseEstimator(drive);
   // private final Elevator elevator = new Elevator();
+  private final LinSlidePiston LinPiston = new LinSlidePiston();
 
   // The robot's controllers
   private final XboxController xboxDriver;
@@ -80,8 +82,6 @@ public class RobotContainer {
   private final LinearSlide linslide = new LinearSlide(); 
   // private final LinSlidePID linslidePID = new LinSlidePID();
   private final Turret turret = new Turret();
-//  private final FourBarArm fourBarArm = new FourBarArm();
-  // private final FourBarArm fourBarArm = new FourBarArm();
 //   private final ArmPID armPID = new ArmPID(); 
 
   private final Claw claw = new Claw();
@@ -148,6 +148,11 @@ public class RobotContainer {
 
     this.linslide.setDefaultCommand(new LinearSlideController(linslide, xboxOperator));
 
+
+    this.xboxOperator.getLeftBumper().onTrue(new InstantCommand(() -> this.LinPiston.pull()));
+    this.xboxOperator.getRightBumper().onTrue(new InstantCommand(() -> this.LinPiston.push()));
+
+
     // this.xboxDriver.getBButton().whileTrue(
     //   new InstantCommand( () -> new AutoBalance(this.drive, ))
     // );
@@ -165,22 +170,13 @@ public class RobotContainer {
     //   new ElevatorCancel(elevatorPID));
     // this.elevatorPID.setDefaultCommand(
     //     new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
+
+
     // this.xboxOperator.getAButton().onTrue(new PositionPresets(elevatorPID, wrist, linslide, turret, "loadingStation"));
     // this.xboxOperator.getBButton().onTrue(new PositionPresets(elevatorPID, wrist, linslide, turret, "idle"));
     // this.xboxOperator.getYButton().onTrue(new PositionPresets(elevatorPID, wrist, linslide, turret, "highScore"));
     // this.xboxOperator.getXButton().onTrue(new PositionPresets(elevatorPID, wrist, linslide, turret, "midScore"));
     // Driving
-    
-    // this.xboxOperator.getBButton().onTrue(
-    //     new SequentialCommandGroup(
-    //         new ArmPositionSet(armPID, ArmConstants.midScore),
-    //         new ElevatorDown(elevatorPID)
-    //     )
-    // );
-  
-    // this.xboxOperator.getBButton().onTrue(
-    //   new FourBarArmDown(fourBarArmPID)
-    // );  
 
     // this.xboxOperator.getYButton().onTrue(
     //     new ArmUp(armPID)

@@ -165,7 +165,7 @@ public class FalconDrivetrain extends SubsystemBase {
     double rightOutput = m_rightPIDController
         .calculate(nativeToMeters(-getCurrentEncoderRate(m_rightLeader)), speeds.rightMetersPerSecond);
 
-    System.out.println("LEFT RIGHT " + nativeToMeters(getCurrentEncoderRate(m_leftLeader)) + " " + nativeToMeters(-getCurrentEncoderRate(m_rightLeader)));
+    // System.out.println("LEFT RIGHT " + nativeToMeters(getCurrentEncoderRate(m_leftLeader)) + " " + nativeToMeters(-getCurrentEncoderRate(m_rightLeader)));
 
     m_leftGroup.setVoltage(leftFeedforward + leftOutput);
     m_rightGroup.setVoltage(rightFeedforward + rightOutput);

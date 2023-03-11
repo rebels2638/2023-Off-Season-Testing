@@ -31,12 +31,17 @@ public class LinearSlideController extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+      // double inputPercent = m_operator.getRightX();
+      // m_LinearSlide.setPercentOutput(inputPercent);
         if (m_operator.getRightBumper().getAsBoolean()) {
-            m_LinearSlide.setPercentOutput(-1);
+            System.out.println("IN!");
+            m_LinearSlide.setPercentOutput(-0.5);
         } else if(m_operator.getLeftBumper().getAsBoolean()) {
-            m_LinearSlide.setPercentOutput(1);
+            m_LinearSlide.setPercentOutput(0.5);
+            System.out.println("OUT!");
         } else {
             m_LinearSlide.setPercentOutput(0);
+            System.out.println("stoped!!");
         }
   }
 

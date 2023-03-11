@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.RebelUtil;
+
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 public class LinearSlide extends SubsystemBase {
@@ -20,7 +22,7 @@ public class LinearSlide extends SubsystemBase {
     private static final double kMinEncoderLimit = -10000000;
 
     private ShuffleboardTab tab;
-    
+    private double kG = 0;
     private final GenericEntry linSlideEncoderPosition;
 
     private double m_setpoint = 0.0;
@@ -45,15 +47,19 @@ public class LinearSlide extends SubsystemBase {
         return instance;
     }
 
+    public double getCurrentEncoderPosition() {
+        return -m_linslide.getSensorCollection().getIntegratedSensorPosition();
+    }
+
+    public double getCurrentEncoderRate() {
+        return -m_linslide.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
+    }
+
     @Override
     public void periodic() {
         linSlideEncoderPosition.setDouble(m_linslide.getSensorCollection().getIntegratedSensorPosition());
-
-        if ((m_setpoint > 0.0 && m_linslide.getSelectedSensorPosition() >= kMaxEncoderLimit) || 
-        (m_setpoint < 0.0 && m_linslide.getSelectedSensorPosition() <= kMinEncoderLimit)) {
-            m_setpoint = 0; 
-        }
         m_linslide.set(ControlMode.PercentOutput, m_setpoint);
+
     }
 
     public void setPercentOutput(double percent) {

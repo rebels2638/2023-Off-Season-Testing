@@ -130,3 +130,4 @@ public class AutoBalance extends CommandBase {
     headingSetPoint.setDouble(m_headingSetpoint);
   }
 }
+

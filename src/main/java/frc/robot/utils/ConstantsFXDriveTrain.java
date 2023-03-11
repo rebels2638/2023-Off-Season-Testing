@@ -147,10 +147,10 @@ public final class ConstantsFXDriveTrain {
         /**
          * Motor CPR / gear reduction = effective CPR
          **/
-        public static final double HIGH_GEAR_REDUCTION = 20.83;// 15.0;
+        public static final double HIGH_GEAR_REDUCTION = 8.33;// 15.0;
         public static final double HIGH_GEAR_EFFECTIVE_CPR = FALCON_CPR * HIGH_GEAR_REDUCTION;
 
-        public static final double LOW_GEAR_REDUCTION = 9.17;
+        public static final double LOW_GEAR_REDUCTION = 3.67;
         public static final double LOW_GEAR_EFFECTIVE_CPR = FALCON_CPR * LOW_GEAR_REDUCTION;
 
         // Feed forward/back gains
