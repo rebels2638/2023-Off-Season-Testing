@@ -2,7 +2,8 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.LinSlidePID;
+//import frc.robot.subsystems.LinSlidePID;
+import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Wrist;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -13,7 +14,7 @@ public class PositionPresets extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorPID m_elevatorSubsystem;
   private final Wrist m_wristSubsystem;
-  private final LinSlidePID m_linslideSubsystem;
+  private final LinearSlide m_linslideSubsystem;
   private final Turret m_turretSubsystem;
 
   //hi kush :)
@@ -24,7 +25,7 @@ public class PositionPresets extends CommandBase {
   private TrapezoidProfile.State kGoalStateElevator;
   private TrapezoidProfile.State kGoalStateLinSlide;
 
-  public PositionPresets(ElevatorPID sub1, Wrist sub2, LinSlidePID sub3, Turret sub4, String preset) {
+  public PositionPresets(ElevatorPID sub1, Wrist sub2, LinearSlide sub3, Turret sub4, String preset) {
 
     // new TrapezoidProfile.State(kHeightPositionElevator, 0.0);
 
@@ -57,7 +58,7 @@ public class PositionPresets extends CommandBase {
         kExtensionOutLinSlide = 0.0; // dunno
         kTurretAngle = 0.0; // radians
         kGoalStateElevator = new TrapezoidProfile.State(kHeightPositionElevator, 0.0);
-        kGoalStateLinSlide = new TrapezoidProfile.State(kExtensionOutLinSlide, 0.0);
+        kGoalStateLinSlide = new TrapezoidProfile.State(kHeightPositionElevator, 0.0);
 
     }
 
@@ -77,10 +78,7 @@ public class PositionPresets extends CommandBase {
     m_linslideSubsystem = sub3;
     m_turretSubsystem = sub4;
     
-    addRequirements(sub1);
-    addRequirements(sub2);
-    addRequirements(sub3);
-    addRequirements(sub4);
+    addRequirements(sub1,sub2,sub3,sub4);
   }
 
   // Called when the command is initially scheduled.
@@ -93,8 +91,8 @@ public class PositionPresets extends CommandBase {
     m_wristSubsystem.setToVelocityControlMode(false);
     m_wristSubsystem.setGoal(kWristAngle);
 
-    m_linslideSubsystem.setToVelocityControlMode(false);
-    m_linslideSubsystem.setGoal(kGoalStateLinSlide);
+    // m_linslideSubsystem.setToVelocityControlMode(false);
+    // m_linslideSubsystem.setGoal(kGoalStateLinSlide);
 
     m_turretSubsystem.setToVelocityControlMode(false);
     m_turretSubsystem.setGoal(kTurretAngle);
@@ -109,7 +107,7 @@ public class PositionPresets extends CommandBase {
   public void end(boolean interrupted) {
     m_elevatorSubsystem.setToVelocityControlMode(true);
     m_wristSubsystem.setToVelocityControlMode(true);
-    m_linslideSubsystem.setToVelocityControlMode(true);
+    //m_linslideSubsystem.setToVelocityControlMode(true);
     m_turretSubsystem.setToVelocityControlMode(true);
   }
 
