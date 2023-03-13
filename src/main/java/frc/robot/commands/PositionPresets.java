@@ -23,6 +23,7 @@ public class PositionPresets extends CommandBase {
   private double kExtensionOutLinSlide; // dunno
   private double kTurretAngle; // radians
   private TrapezoidProfile.State kGoalStateElevator;
+  private TrapezoidProfile.State kGoalStateElevator;
   private TrapezoidProfile.State kGoalStateLinSlide;
 
   public PositionPresets(ElevatorPID sub1, Wrist sub2, LinearSlide sub3, Turret sub4, String preset) {
@@ -86,7 +87,7 @@ public class PositionPresets extends CommandBase {
   public void initialize() {
     // follow position control to goal state
     m_elevatorSubsystem.setToVelocityControlMode(false);
-    m_elevatorSubsystem.setGoal(kGoalStateElevator);
+    m_elevatorSubsystem.setGoal(kHeightPositionElevator);
 
     m_wristSubsystem.setToVelocityControlMode(false);
     m_wristSubsystem.setGoal(kWristAngle);
