@@ -19,7 +19,7 @@ public final class ConstantsArmElevator {
 //         public static final double kG = 0.82;
         
         public static final double kS = 0.08;
-        public static final double kV = 0.0
+        public static final double kV = 0.0;
         public static final double kA = 0.0;
         public static final double kG = 0.82;
         
