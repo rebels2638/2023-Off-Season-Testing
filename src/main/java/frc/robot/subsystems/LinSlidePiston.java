@@ -12,7 +12,7 @@ public class LinSlidePiston extends SubsystemBase {
     private boolean state; // push is true, and pull is false
 
     public LinSlidePiston() {
-        this.solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 4);
+        this.solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 6, 7);
         this.push();
         state = true;
     }
@@ -26,6 +26,7 @@ public class LinSlidePiston extends SubsystemBase {
     }
 
     public void push() {
+        System.out.println("here");
         solenoid.set(DoubleSolenoid.Value.kReverse);
         state = true;
     }

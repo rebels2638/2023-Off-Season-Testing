@@ -33,16 +33,19 @@ public class LinearSlideController extends CommandBase {
     public void execute() {
       // double inputPercent = m_operator.getRightX();
       // m_LinearSlide.setPercentOutput(inputPercent);
-        if (m_operator.getRightBumper().getAsBoolean()) {
-            System.out.println("IN!");
-            m_LinearSlide.setPercentOutput(-0.5);
-        } else if(m_operator.getLeftBumper().getAsBoolean()) {
-            m_LinearSlide.setPercentOutput(0.5);
-            System.out.println("OUT!");
-        } else {
-            m_LinearSlide.setPercentOutput(0);
-            System.out.println("stoped!!");
-        }
+
+      m_LinearSlide.setPercentOutput(m_operator.getRightX());
+
+      // if (m_operator.getRightBumper().getAsBoolean()) {
+      //     // System.out.println("IN!");
+      //     m_LinearSlide.setPercentOutput(-0.2);
+      // } else if(m_operator.getLeftBumper().getAsBoolean()) {
+      //     m_LinearSlide.setPercentOutput(0.2);
+      //     // System.out.println("OUT!");
+      // } else {
+      //     m_LinearSlide.setPercentOutput(0);
+      //     // System.out.println("stoped!!");
+      // }
   }
 
     // Called once the command ends or is interrupted.

@@ -8,6 +8,7 @@
       "/Shuffleboard/Commands/Zero Elevator Position": "Command",
       "/Shuffleboard/Elevator/Zero Encoder": "Command",
       "/Shuffleboard/Encoders/Zero Encoder": "Command",
+      "/Shuffleboard/Linear Slide/Zero Encoder": "Command",
       "/Shuffleboard/Turret/Zero Encoder": "Command",
       "/SmartDashboard/Field": "Field2d"
     }

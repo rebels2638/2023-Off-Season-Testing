@@ -29,7 +29,7 @@ public class LinearSlide extends SubsystemBase {
 
     public LinearSlide() {
         this.m_linslide = new WPI_TalonFX(6);
-        m_linslide.setNeutralMode(NeutralMode.Brake);
+        m_linslide.setNeutralMode(NeutralMode.Coast); // changed from brake
 
         tab = Shuffleboard.getTab("Linear Slide");
         linSlideEncoderPosition = tab.add("Lin_Encoder_Position", 0.0).getEntry();

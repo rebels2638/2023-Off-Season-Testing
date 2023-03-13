@@ -28,6 +28,7 @@ public class LinSlideFullyIn extends CommandBase {
     @Override
     public void initialize() {
         // follow position control to goal state
+        m_piston.pull();
         m_linslide.setPercentOutput(-0.5);
     }
 

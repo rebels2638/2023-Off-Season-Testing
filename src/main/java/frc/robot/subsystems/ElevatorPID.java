@@ -75,7 +75,6 @@ public class ElevatorPID extends SubsystemBase {
 
         // reset elevator
         m_motor1.setNeutralMode(NeutralMode.Brake);
-
         m_motor2.setNeutralMode(NeutralMode.Brake);
 
         m_motor1.set(ControlMode.PercentOutput, 0);
@@ -84,7 +83,7 @@ public class ElevatorPID extends SubsystemBase {
         setVelocitySetpoint(0);
         setGoal(new TrapezoidProfile.State(0, 0));
         resetHeightAccumulator();
-        m_controller.setTolerance(0.01, 0.05);
+        m_controller.setTolerance(0.03, 0.03);
         
         tab = Shuffleboard.getTab("Elevator");
         elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
@@ -202,8 +201,8 @@ public class ElevatorPID extends SubsystemBase {
 
         m_voltageSetpoint = voltage;
         // System.out.println("Elevator : " + voltage);
-        m_motor1.setVoltage(voltage);
-        m_motor2.setVoltage(voltage);
+        m_motor1.setVoltage(feedforward);
+        m_motor2.setVoltage(feedforward);
 
         updateShuffleboard();
 

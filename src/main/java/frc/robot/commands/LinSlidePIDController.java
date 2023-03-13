@@ -22,7 +22,7 @@ public class LinSlidePIDController extends CommandBase {
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
-   */
+   */       
   public LinSlidePIDController(LinSlidePID linSlidePIDSubsystem, XboxController controller) {
     e_controller = controller;
     m_linSlidePID = linSlidePIDSubsystem;

@@ -40,8 +40,10 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 import frc.robot.utils.ConstantsFXDriveTrain.DriveConstants;
 import frc.robot.utils.ConstantsFXDriveTrain.GearboxConstants;
@@ -80,7 +82,7 @@ public class FalconDrivetrain extends SubsystemBase {
   private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 14);
   private final Solenoid m_rightSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 15);
 
-  private final AHRS m_gyro = new AHRS(Port.kUSB);
+  private final Gyro m_gyro = new AHRS(Port.kUSB);
 
   private final PIDController m_leftPIDController = new PIDController(0.026947, 0, 0);
   private final PIDController m_rightPIDController = new PIDController(0.026947, 0, 0);
@@ -127,8 +129,8 @@ public class FalconDrivetrain extends SubsystemBase {
   private final LinearSystem<N2, N2, N2> m_drivetrainSystem = LinearSystemId.identifyDrivetrainSystem(KVlinear,
       KAlinear, KVAngular, KAAngular);
   private DifferentialDrivetrainSim m_differentialDrivetrainSimulator;
-  private AnalogGyroSim m_gyroSim;
-  // private final static AHRS gyro = new AHRS(SPI.Port.kMXP);
+  private Gyro m_gyroSim;
+  private final static AHRS gyro = new AHRS(Port.kUSB);
   private EncoderSim m_leftEncoderSim;
   private EncoderSim m_rightEncoderSim;
 
@@ -171,10 +173,9 @@ public class FalconDrivetrain extends SubsystemBase {
           26.667, kTrackWidth,
           kWheelRadius,
           null);
-      // m_gyroSim = new AnalogGyroSim(m_gyro);
+      m_gyroSim = m_gyro;
       m_leftEncoderSim = new EncoderSim(m_leftEncoder);
       m_rightEncoderSim = new EncoderSim(m_rightEncoder);
-      // m_gyroSim = new AHRS(SPI.Port.KXMP);
     }
   }
 
@@ -215,13 +216,23 @@ public class FalconDrivetrain extends SubsystemBase {
     m_rightSetpoint = speeds.rightMetersPerSecond;
     var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
     var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
-    double leftPID = m_leftPIDController.calculate(getLeftSideVelocity(),
-        speeds.leftMetersPerSecond);
+    double leftPID = m_leftPIDController
+        .calculate(getLeftSideVelocity(),speeds.leftMetersPerSecond);
     double rightPID = m_rightPIDController
         .calculate(getRightSideVelocity(), speeds.rightMetersPerSecond);
-
     m_leftVoltageSetpoint = leftFeedforward + leftPID;
     m_rightVoltageSetpoint = rightFeedforward + rightPID;
+    /* 
+    if(Math.abs(m_leftLeader.getSupplyCurrent()) > 0 && Math.abs(speeds.leftMetersPerSecond) < 0.01){
+      m_leftVoltageSetpoint  = 0;
+    }  
+    if(Math.abs(m_rightLeader.getSupplyCurrent()) > 0 && Math.abs(speeds.rightMetersPerSecond) < 0.01){
+      m_rightVoltageSetpoint = 0;
+    }
+    */
+
+    
+    
     m_leftGroup.setVoltage(m_leftVoltageSetpoint);
     m_rightGroup.setVoltage(m_rightVoltageSetpoint);
   }
@@ -304,7 +315,7 @@ public class FalconDrivetrain extends SubsystemBase {
     m_leftEncoderSim.setRate(m_differentialDrivetrainSimulator.getLeftVelocityMetersPerSecond());
     m_rightEncoderSim.setDistance(m_differentialDrivetrainSimulator.getRightPositionMeters());
     m_rightEncoderSim.setRate(m_differentialDrivetrainSimulator.getRightVelocityMetersPerSecond());
-    m_gyroSim.setAngle(-m_differentialDrivetrainSimulator.getHeading().getDegrees());
+    // m_gyroSim.setAngle(-m_differentialDrivetrainSimulator.getHeading().getDegrees());
   }
 
   public void zeroHeading() {

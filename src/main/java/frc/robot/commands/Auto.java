@@ -64,7 +64,8 @@ public final class Auto
   @Override
   public void initialize() {
     finished = false;
-    m_path = PathPlanner.loadPath(m_robot.getPathFileName(), new PathConstraints(9, 3));
+    // m_path = PathPlanner.loadPath(m_robot.getPathFileName(), new PathConstraints(9, 3));
+    m_path = PathPlanner.loadPath("TESTITESTI.wpilib.json", new PathConstraints(2, 0.25));
     m_autoCommand = m_autoBuilder.fullAuto(m_path);
     m_autoCommand.schedule();
   }

@@ -40,6 +40,7 @@ public class ElevatorUp extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    System.out.println("done");
     return m_elevatorSubsystem.atGoal() || m_elevatorSubsystem.m_velocityControlEnabled;
   }
 }

@@ -41,12 +41,12 @@ public class AutoBalance extends CommandBase {
   private final double yawErrorMargin = 5;
   private final double pitchErrorMargin = 3;
   
-  private final double rkp = 1;
+  private final double rkp = 1; // r = rotation
   private final double rki = 0;
   private final double rkd = 1;
 
   private double dkp = SmartDashboard.getNumber("", 1);
-  private double dki = 0;
+  private double dki = 0; // d = degrees relitive to ground 
   private double dkd = 1;
   private double m_headingSetpoint;
   private boolean bBalanced = false;
