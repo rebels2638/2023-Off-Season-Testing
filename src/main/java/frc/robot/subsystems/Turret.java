@@ -119,7 +119,7 @@ public class Turret extends SubsystemBase {
         resetAngleAccumulator();
     }
     public void setPercentOutput(double percent){
-        m_motor.setVoltage(percent);
+        m_motor.set(ControlMode.PercentOutput, percent);
         //System.out.println(percent);
     }
 
@@ -181,31 +181,31 @@ public class Turret extends SubsystemBase {
      * Compute voltages using feedforward and pid
      */
 
-     /* 
+     
     @Override
     public void periodic() {
-        double feedforward = m_feedforward.calculate(getAngleSetpoint(), getVelocitySetpoint(),
-                getAccelerationSetpoint());
-        double positionPID = m_controller.calculate(getCurrentAngle());
-        double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
-        double pid = m_velocityControlEnabled ? velocityPID : positionPID;
+        // double feedforward = m_feedforward.calculate(getAngleSetpoint(), getVelocitySetpoint(),
+        //         getAccelerationSetpoint());
+        // double positionPID = m_controller.calculate(getCurrentAngle());
+        // double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
+        // double pid = m_velocityControlEnabled ? velocityPID : positionPID;
 
-        double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
-        if (getCurrentEncoderPosition() >= kUpperLimit && voltage > 0.0) {
-            voltage = 0.0;
-        } else if (getCurrentEncoderPosition() <= kLowerLimit && voltage < 0.0) {
-            voltage = 0.0;
-        }
+        // double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
+        // if (getCurrentEncoderPosition() >= kUpperLimit && voltage > 0.0) {
+        //     voltage = 0.0;
+        // } else if (getCurrentEncoderPosition() <= kLowerLimit && voltage < 0.0) {
+        //     voltage = 0.0;
+        // }
 
-        m_voltageSetpoint = voltage;
-        m_motor.setVoltage(voltage);
+        // m_voltageSetpoint = voltage;
+        // // m_motor.setVoltage(voltage);
 
         updateShuffleboard();
 
-        m_lastVelocitySetpoint = getVelocitySetpoint();
-        m_lastVelocity = getCurrentVelocity();
-        m_lastTime = Timer.getFPGATimestamp();
-        m_angleAccumulator += getVelocitySetpoint() * Robot.kDefaultPeriod;
+        // m_lastVelocitySetpoint = getVelocitySetpoint();
+        // m_lastVelocity = getCurrentVelocity();
+        // m_lastTime = Timer.getFPGATimestamp();
+        // m_angleAccumulator += getVelocitySetpoint() * Robot.kDefaultPeriod;
     }
-    */
+    
 }

@@ -31,10 +31,7 @@ public class TurretController extends CommandBase {
   @Override
   public void execute() {
     double input = m_controller.getLeftX();
-    // m_turret.setPercentOutput(input);
-    // System.out.println("input" + input);
-
-    m_turret.setGoal(0.5);
+    m_turret.setPercentOutput(input);
 
   }
 
@@ -45,7 +42,7 @@ public class TurretController extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_turret.atGoal();
+    return false;
   }
 }
 

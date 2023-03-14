@@ -38,7 +38,7 @@ import frc.robot.subsystems.FalconDrivetrain;
 import frc.robot.subsystems.LinSlidePID;
 import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.Arm;
-import frc.robot.commands.PositionPresets;
+// import frc.robot.commands.PositionPresets;
 import frc.robot.commands.TurretController;
 import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.PoseEstimator;
@@ -82,7 +82,7 @@ public class RobotContainer {
   // private final Wrist wrist = new Wrist();
   private final LinearSlide linslide = new LinearSlide(); 
   // private final LinSlidePID linslidePID = new LinSlidePID();
-  // private final Turret turret = new Turret();
+  private final Turret turret = new Turret();
 //   private final ArmPID armPID = new ArmPID(); 
 
 
@@ -102,7 +102,7 @@ public class RobotContainer {
     this.xboxDriver = new XboxController(3);
     this.xboxOperator = new XboxController(2);
     // MAKE SURE TO REBOOT RIO
-    System.gc();
+    // System.gc();
     // Runtime.getRuntime().freeMemory();
     // Controller Throttle Mappings
     this.drive.setDefaultCommand(
@@ -119,25 +119,25 @@ public class RobotContainer {
     this.arm.setDefaultCommand(
       new ArmController(arm, xboxOperator));
 
-    this.linslide.setDefaultCommand(
-      new LinearSlideController(linslide, xboxOperator)); // rightX
+    // this.linslide.setDefaultCommand(
+    //   new LinearSlideController(linslide, xboxOperator)); // rightX
 
     // this.linslidePID.setDefaultCommand(
     //   new LinSlidePIDController(linslidePID, xboxOperator)
     // );
     
-    // this.turret.setDefaultCommand( 
-    //   new TurretController(turret, xboxOperator)
-    // );
+    this.turret.setDefaultCommand( 
+      new TurretController(turret, xboxOperator)
+    );
     
     // this.fourBarArm.setDefaultCommand(
     // new FourBarArmController(fourBarArm, xboxOperator));
 
-    // this.fourBarArmPID.setDefaultCommand(
+    // this.fourBarArmPID.(
     // new FourBarArmPIDController(fourBarArmPID, xboxOperator));
 
-    this.elevatorPID.setDefaultCommand(
-        new ElevatorPIDController(elevatorPID, xboxOperator));
+    // this.elevatorPID.setDefaultCommand(
+    //     new ElevatorPIDController(elevatorPID, xboxOperator));
 
     // this.armPID.setDefaultCommand(
     // new ArmPIDController(armPID, xboxOperator));
@@ -148,9 +148,11 @@ public class RobotContainer {
       
     // this.linslide.setDefaultCommand(new LinearSlideController(linslide, xboxOperator));
 
+    // this.xboxOperator.getRightBumper().onTrue(new InstantCommand(() -> this.LinPiston.pull()));
+    // this.xboxOperator.getLeftBumper().onTrue(new InstantCommand(() -> this.LinPiston.push()));
 
-    this.xboxOperator.getRightBumper().onTrue(new LinSlideFullyIn(linslide, LinPiston));
-    this.xboxOperator.getLeftBumper().onTrue(new LinSlideFullyOut(linslide, LinPiston));
+    this.xboxOperator.getRightBumper().onTrue(new LinSlideFullyOut(linslide, LinPiston));
+    this.xboxOperator.getLeftBumper().onTrue(new LinSlideFullyIn(linslide, LinPiston));
 
     // this.xboxOperator.getUpDpad().onTrue(new InstantCommand(() -> this.turret.setGoal(0)));
     // this.xboxOperator.getLeftDpad().onTrue(new InstantCommand(() -> this.turret.setGoal(-0.0526))); // around 3 deg, 3/57 rad

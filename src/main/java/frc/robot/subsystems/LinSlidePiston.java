@@ -13,7 +13,7 @@ public class LinSlidePiston extends SubsystemBase {
 
     public LinSlidePiston() {
         this.solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 6, 7);
-        this.push();
+        this.pull();
         state = true;
     }
 

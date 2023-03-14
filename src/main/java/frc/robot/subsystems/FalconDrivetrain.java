@@ -82,7 +82,7 @@ public class FalconDrivetrain extends SubsystemBase {
   private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 14);
   private final Solenoid m_rightSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 15);
 
-  private final Gyro m_gyro = new AHRS(Port.kUSB);
+  // private final Gyro m_gyro = new AHRS(Port.kUSB);
 
   private final PIDController m_leftPIDController = new PIDController(0.026947, 0, 0);
   private final PIDController m_rightPIDController = new PIDController(0.026947, 0, 0);
@@ -114,7 +114,7 @@ public class FalconDrivetrain extends SubsystemBase {
 
   public final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(kTrackWidth);
 
-  private final DifferentialDriveOdometry m_odometry;
+  // private final DifferentialDriveOdometry m_odometry;
 
   public final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(0.1728, 1.7575, 0.42374);
   /*
@@ -130,7 +130,7 @@ public class FalconDrivetrain extends SubsystemBase {
       KAlinear, KVAngular, KAAngular);
   private DifferentialDrivetrainSim m_differentialDrivetrainSimulator;
   private Gyro m_gyroSim;
-  private final static AHRS gyro = new AHRS(Port.kUSB);
+  // private final static AHRS gyro = new AHRS(Port.kUSB);
   private EncoderSim m_leftEncoderSim;
   private EncoderSim m_rightEncoderSim;
 
@@ -148,8 +148,8 @@ public class FalconDrivetrain extends SubsystemBase {
     m_rightLeader.getSensorCollection().setIntegratedSensorPosition(0, 30);
     m_leftEncoder.reset();
     m_rightEncoder.reset();
-    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), m_leftEncoder.getDistance(),
-        m_rightEncoder.getDistance());
+    // m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), m_leftEncoder.getDistance(),
+        // m_rightEncoder.getDistance());
 
     tab = Shuffleboard.getTab("Drive");
     leftMotorEncoderPosition = tab.add("Left Encoder Position", 0.0).getEntry();
@@ -173,7 +173,7 @@ public class FalconDrivetrain extends SubsystemBase {
           26.667, kTrackWidth,
           kWheelRadius,
           null);
-      m_gyroSim = m_gyro;
+      // m_gyroSim = m_gyro;
       m_leftEncoderSim = new EncoderSim(m_leftEncoder);
       m_rightEncoderSim = new EncoderSim(m_rightEncoder);
     }
@@ -269,13 +269,13 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   public void updateOdometry() {
-    m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+    // m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
   }
 
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
     m_differentialDrivetrainSimulator.setPose(pose);
-    m_odometry.resetPosition(pose.getRotation(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), pose);
+    // m_odometry.resetPosition(pose.getRotation(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), pose);
   }
 
   public void resetEncoders() {
@@ -292,7 +292,8 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
+    // return m_odometry.getPoseMeters();
+    return new Pose2d();
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
@@ -319,15 +320,17 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   public void zeroHeading() {
-    m_gyro.reset();
+    // m_gyro.reset();
   }
 
   public double getHeading() {
-    return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if the GYRO is REVERSED.
+    // return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if the GYRO is REVERSED.
+    return 0.0;
   }
 
   public Rotation2d getRotation2d() {
-    return m_gyro.getRotation2d();
+    // return m_gyro.getRotation2d();
+    return new Rotation2d();
   }
 
   /*

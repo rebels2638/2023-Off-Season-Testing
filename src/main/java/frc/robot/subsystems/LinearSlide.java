@@ -17,6 +17,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 public class LinearSlide extends SubsystemBase {
     private final WPI_TalonFX m_linslide;
+    private boolean inverted = false;
     private static LinearSlide instance = null;
     private static final double kMaxEncoderLimit = 10000000;
     private static final double kMinEncoderLimit = -10000000;
@@ -48,17 +49,17 @@ public class LinearSlide extends SubsystemBase {
     }
 
     public double getCurrentEncoderPosition() {
-        return -m_linslide.getSensorCollection().getIntegratedSensorPosition();
+        return m_linslide.getSensorCollection().getIntegratedSensorPosition();
     }
 
     public double getCurrentEncoderRate() {
-        return -m_linslide.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
+        return m_linslide.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
     }
 
     @Override
     public void periodic() {
         linSlideEncoderPosition.setDouble(m_linslide.getSensorCollection().getIntegratedSensorPosition());
-        m_linslide.set(ControlMode.PercentOutput, m_setpoint);
+        m_linslide.set(ControlMode.PercentOutput, m_setpoint * (inverted ? -1 : 1));
 
     }
 
