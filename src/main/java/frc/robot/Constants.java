@@ -50,4 +50,8 @@ public final class Constants {
     public static final double kD = 0.00002;
   }
 
+  public static final String[] PATHS = new String[]{ 
+    "hPath"
+  };
+
 }

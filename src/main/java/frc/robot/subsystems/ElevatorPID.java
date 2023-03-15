@@ -24,6 +24,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 /** Elevator subsystem with feed-forward and PID for position */
 public class ElevatorPID extends SubsystemBase {
+    private static ElevatorPID instance = null;
+
     public static final double kMaxSpeed = 0.5; // meters per second
     public static final double kMaxAcceleration = 0.1; // meters per second squared
 
@@ -33,7 +35,7 @@ public class ElevatorPID extends SubsystemBase {
 
     private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
     private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
-    private static final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
+    private static  final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
     private static final double kRotationsPerMeter = 1 / kMetersPerRotation;
 
     
@@ -100,6 +102,13 @@ public class ElevatorPID extends SubsystemBase {
                 new InstantCommand(() -> zeroEncoder()));
     }
 
+    public static ElevatorPID getInstance() {
+        if (instance == null) {
+            instance = new ElevatorPID();
+        }
+        return instance;
+    }
+
     /*
     * Convert from TalonFX elevator position in meters to native units and vice versa
     */
@@ -134,11 +143,11 @@ public class ElevatorPID extends SubsystemBase {
     }
 
     public double getCurrentEncoderPosition() {
-        return -m_motor1.getSensorCollection().getIntegratedSensorPosition();
+        return m_motor1.getSensorCollection().getIntegratedSensorPosition();
     }
 
     public double getCurrentEncoderRate() {
-        return -m_motor1.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
+        return m_motor1.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
     }
 
     public double getCurrentHeight() {
@@ -203,6 +212,7 @@ public class ElevatorPID extends SubsystemBase {
         // System.out.println("Elevator : " + voltage);
         m_motor1.setVoltage(feedforward);
         m_motor2.setVoltage(feedforward);
+        System.out.println(feedforward);
 
         updateShuffleboard();
 

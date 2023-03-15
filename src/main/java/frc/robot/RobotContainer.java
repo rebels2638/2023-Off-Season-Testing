@@ -69,25 +69,25 @@ import frc.robot.utils.ConstantsArmElevator.ArmConstants;
 public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
   // private final Drivetrain drive = new Drivetrain();
-  private final FalconDrivetrain drive = new FalconDrivetrain();
+  private final FalconDrivetrain drive = FalconDrivetrain.getInstance();
    //private final PoseEstimator poseEstimator = new PoseEstimator(drive);
-  // private final Elevator elevator = new Elevator();
-  private final LinSlidePiston LinPiston = new LinSlidePiston();
+  private final LinSlidePiston LinPiston = LinSlidePiston.getInstance();
 
   // The robot's controllers
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
 
-  private final Arm arm = new Arm();
+  private final Arm arm = Arm.getInstance();
   // private final Wrist wrist = new Wrist();
-  private final LinearSlide linslide = new LinearSlide(); 
+  private final LinearSlide linslide = LinearSlide.getInstance();
   // private final LinSlidePID linslidePID = new LinSlidePID();
-  private final Turret turret = new Turret();
+  private final Turret turret = Turret.getInstance();
 //   private final ArmPID armPID = new ArmPID(); 
 
 
-  private final Claw claw = new Claw();
-  private final ElevatorPID elevatorPID = new ElevatorPID(); //DO NOT RUN ELEVATOR WITHOUT ZEROING ENCODERS AT GROUND POSITION YOU WILL BREAK IT IF YOU DONT DO THIS
+  private final Claw claw = Claw.getInstance();
+  private final ElevatorPID elevatorPID = ElevatorPID.getInstance(); //DO NOT RUN ELEVATOR WITHOUT ZEROING ENCODERS AT GROUND POSITION YOU WILL BREAK IT IF YOU DONT DO THIS
+  // private final Elevator elevator = new Elevator();
 
   // Create a Sendable Chooser, which allows us to select between Commands (in
   // this case, auto commands)
@@ -112,12 +112,10 @@ public class RobotContainer {
         // new Drive(drive, xboxDriver));
 
     // this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
-
+    this.arm.setDefaultCommand(
+        new ArmController(arm, xboxOperator));
     // this.elevator.setDefaultCommand(
     // new ElevatorController(elevator, xboxOperator)); // added, works
-
-    this.arm.setDefaultCommand(
-      new ArmController(arm, xboxOperator));
 
     // this.linslide.setDefaultCommand(
     //   new LinearSlideController(linslide, xboxOperator)); // rightX
@@ -173,8 +171,8 @@ public class RobotContainer {
     // // testc.b().onTrue(new InstantCommand(() -> this.claw.toggle()));
     // this.xboxOperator.getAButton().onTrue(
     //   new ElevatorCancel(elevatorPID));
-    // this.elevatorPID.setDefaultCommand(
-    //     new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
+    this.elevatorPID.setDefaultCommand(
+      new ElevatorPIDController(elevatorPID, xboxOperator)); // added, untested
 
 
     // this.xboxOperator.getAButton().onTrue(new PositionPresets(elevatorPID, arm, linslide, turret, "loadingStation"));
@@ -200,8 +198,9 @@ public class RobotContainer {
         new InstantCommand(() -> this.drive.switchToLowGear())
     );
 
-    // chooser.addOption("RamseteFollower", new Auto(drive, this));
-    pathChooser.addOption("Two Cone", "TwoCone");
+    chooser.addOption("RamseteFollower", new Auto(drive, this));
+    pathChooser.addOption("hPath", "hPath.wpilib.json");
+    
 
     Shuffleboard.getTab("Encoders").add("Zero Encoder", new InstantCommand(() -> arm.zeroEncoder()));
     Shuffleboard.getTab("Auto").add("Command", chooser);

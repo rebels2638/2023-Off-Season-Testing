@@ -1,0 +1,51 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 8.293127456440363,
+        "y": 2.9617836125829164
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 9.293127456440361,
+        "y": 2.9617836125829164
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "linPistonOpen"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
+        "waitTime": 24.0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 9.825478823568204,
+        "y": 2.916041780728354
+      },
+      "prevControl": {
+        "x": 8.825478823568204,
+        "y": 2.916041780728354
+      },
+      "nextControl": null,
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": []
+}

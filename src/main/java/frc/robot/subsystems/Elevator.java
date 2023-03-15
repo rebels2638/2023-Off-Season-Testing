@@ -30,7 +30,7 @@ public class Elevator extends SubsystemBase {
         this.leftTalon = new WPI_TalonFX(0);
         this.rightTalon = new WPI_TalonFX(3);
         this.m_motorGroup = new MotorControllerGroup(leftTalon, rightTalon);
-        this.m_motorGroup.setInverted(true);
+        this.m_motorGroup.setInverted(false);
 
         lastPercentSpeed = 0;
         TalonFXConfiguration falconConfig = new TalonFXConfiguration();
@@ -75,7 +75,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public void resetEncoder() {    
-        // talon.getSensorCollection().setIntegratedSensorPosition(0, 30);
+        //talon.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
 
     public boolean getLimitSwitch() {return limswitch.get();}

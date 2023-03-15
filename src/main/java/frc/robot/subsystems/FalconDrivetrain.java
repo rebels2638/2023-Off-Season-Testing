@@ -55,6 +55,7 @@ public class FalconDrivetrain extends SubsystemBase {
   public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second in radians
   // public static final double kMaxAngularSpeedDegrees = 360;
 
+  private static FalconDrivetrain instance = null;
   private static final double kTrackWidth = DriveConstants.TRACK_WIDTH_METERS; // meters
   private static final double kWheelRadius = GearboxConstants.WHEEL_DIAMETER / 2; // meters
   private static final int kEncoderResolution = 2048;
@@ -135,10 +136,10 @@ public class FalconDrivetrain extends SubsystemBase {
   private EncoderSim m_rightEncoderSim;
 
   public FalconDrivetrain() {
-    m_leftLeader.setNeutralMode(NeutralMode.Brake);
-    m_leftFollower.setNeutralMode(NeutralMode.Brake);
-    m_rightLeader.setNeutralMode(NeutralMode.Brake);
-    m_rightFollower.setNeutralMode(NeutralMode.Brake);
+    m_leftLeader.setNeutralMode(NeutralMode.Coast);
+    m_leftFollower.setNeutralMode(NeutralMode.Coast);
+    m_rightLeader.setNeutralMode(NeutralMode.Coast);
+    m_rightFollower.setNeutralMode(NeutralMode.Coast);
 
     m_leftGroup.setInverted(DriveConstants.FALCON_LEFT_GROUP_INVERTED);
     m_rightGroup.setInverted(DriveConstants.FALCON_RIGHT_GROUP_INVERTED);
@@ -186,6 +187,13 @@ public class FalconDrivetrain extends SubsystemBase {
   public double nativeToMeters(double encoderUnits) {
     return encoderUnits * kRotationsPerNativeUnit * kMetersPerRotation;
   }
+
+  public static FalconDrivetrain getInstance() {
+    if (instance == null) {
+        instance = new FalconDrivetrain();
+    }
+    return instance;
+}
 
   public double getCurrentEncoderPosition(WPI_TalonFX motor) {
     return -motor.getSensorCollection().getIntegratedSensorPosition();

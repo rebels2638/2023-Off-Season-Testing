@@ -43,6 +43,11 @@ public class ElevatorPIDController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    // double error = 0.0;
+    // if (e_controller.getLeftY() < 0.0) {error = -1.7;}
+    // else {error = 1.7;}
+
     double desiredVelo = RebelUtil.linearDeadband(e_controller.getLeftY(), 0.05) * ElevatorPID.kMaxSpeed;
     m_elevatorPID.setVelocitySetpoint(desiredVelo);
     //System.out.println("Controller: "+e_controller.getLeftY());

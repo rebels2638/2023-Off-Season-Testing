@@ -1,4 +1,23 @@
 {
+  "HALProvider": {
+    "Other Devices": {
+      "Talon FX[13]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX[13]/Fwd Limit": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX[13]/Integrated Sensor": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
@@ -11,6 +30,22 @@
       "/Shuffleboard/Linear Slide/Zero Encoder": "Command",
       "/Shuffleboard/Turret/Zero Encoder": "Command",
       "/SmartDashboard/Field": "Field2d"
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "Shuffleboard": {
+        "Auto": {
+          "Command": {
+            "open": true
+          },
+          "Path": {
+            "open": true
+          },
+          "open": true
+        },
+        "open": true
+      }
     }
   }
 }

@@ -22,6 +22,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 public class Turret extends SubsystemBase {
+    private static Turret instance = null;
+
     public static final double kMaxSpeed = 2.5; // radians per second
     public static final double kMaxAcceleration = 1; // radians per second squared
 
@@ -59,122 +61,130 @@ public class Turret extends SubsystemBase {
     private static double kUpperLimit = 55000.0;
     private static double kLowerLimit = -55000.0;
 
-    private final ShuffleboardTab tab;
+    // private final ShuffleboardTab tab;
 
-    private final GenericEntry encoderPosition;
-    private final GenericEntry angle;
-    private final GenericEntry velocity;
-    private final GenericEntry acceleration;
-    private final GenericEntry angleSetpoint;
-    private final GenericEntry velocitySetpoint;
-    private final GenericEntry accelerationSetpoint;
-    private final GenericEntry voltageSupplied;
-    private final GenericEntry voltageSetpoint;
+    // private final GenericEntry encoderPosition;
+    // private final GenericEntry angle;
+    // private final GenericEntry velocity;
+    // private final GenericEntry acceleration;
+    // private final GenericEntry angleSetpoint;
+    // private final GenericEntry velocitySetpoint;
+    // private final GenericEntry accelerationSetpoint;
+    // private final GenericEntry voltageSupplied;
+    // private final GenericEntry voltageSetpoint;
 
     public Turret() {
         // reset
-        m_motor.set(ControlMode.PercentOutput, 0);
-        m_controller.setTolerance(0.05, 0.1);
-        setToVelocityControlMode(true);
-        setVelocitySetpoint(0);
-        setGoal(0);
-        resetAngleAccumulator();
+        // m_motor.set(ControlMode.PercentOutput, 0);
+        // m_controller.setTolerance(0.05, 0.1);
+        // setToVelocityControlMode(true);
+        // setVelocitySetpoint(0);
+        // setGoal(0);
+        // resetAngleAccumulator();
 
-        tab = Shuffleboard.getTab("Turret");
-        encoderPosition = tab.add("Encoder Position", 0.0).getEntry();
-        angle = tab.add("Angle", 0.0).getEntry();
-        velocity = tab.add("Velocity", 0.0).getEntry();
-        acceleration = tab.add("Acceleration", 0.0).getEntry();
-        angleSetpoint = tab.add("Angle Setpoint", 0.0).getEntry();
-        velocitySetpoint = tab.add("Velocity Setpoint", 0.0).getEntry();
-        accelerationSetpoint = tab.add("Acceleration Setpoint", 0.0).getEntry();
-        voltageSupplied = tab.add("Motor Voltage", 0.0).getEntry();
-        voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
+        // tab = Shuffleboard.getTab("Turret");
+        // encoderPosition = tab.add("Encoder Position", 0.0).getEntry();
+        // angle = tab.add("Angle", 0.0).getEntry();
+        // velocity = tab.add("Velocity", 0.0).getEntry();
+        // acceleration = tab.add("Acceleration", 0.0).getEntry();
+        // angleSetpoint = tab.add("Angle Setpoint", 0.0).getEntry();
+        // velocitySetpoint = tab.add("Velocity Setpoint", 0.0).getEntry();
+        // accelerationSetpoint = tab.add("Acceleration Setpoint", 0.0).getEntry();
+        // voltageSupplied = tab.add("Motor Voltage", 0.0).getEntry();
+        // voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
 
-        tab.add("Zero Encoder",
-                new InstantCommand(() -> zeroEncoder()));
+        // tab.add("Zero Encoder",
+        //         new InstantCommand(() -> zeroEncoder()));
+    }
+
+    // Singleton class, call getInstance to access instead of the constructor.
+    public static Turret getInstance() {
+        if (instance == null) {
+            instance = new Turret();
+        }
+        return instance;
     }
 
     /*
      * Convert from TalonFX arm angle in native units to radians
      */
-    public double nativeToRad(double encoderUnits) {
-        return encoderUnits * kRotationsPerNativeUnit * kRadiansPerRotation;
-    }
+    // public double nativeToRad(double encoderUnits) {
+    //     return encoderUnits * kRotationsPerNativeUnit * kRadiansPerRotation;
+    // }
 
-    public void setGoal(double goalAngle) {
-        m_controller.setGoal(goalAngle); // radians
-    }
+    // public void setGoal(double goalAngle) {
+    //     m_controller.setGoal(goalAngle); // radians
+    // }
 
-    public boolean atGoal() {
-        return m_controller.atGoal();
-    }
+    // public boolean atGoal() {
+    //     return m_controller.atGoal();
+    // }
 
-    public void setVelocitySetpoint(double velocitySetpoint) {
-        m_velocitySetpoint = velocitySetpoint;
-    }
+    // public void setVelocitySetpoint(double velocitySetpoint) {
+    //     m_velocitySetpoint = velocitySetpoint;
+    // }
 
-    public void setToVelocityControlMode(boolean on) {
-        m_velocityControlEnabled = on;
-        resetAngleAccumulator();
-    }
+    // public void setToVelocityControlMode(boolean on) {
+    //     m_velocityControlEnabled = on;
+    //     resetAngleAccumulator();
+    // }
     public void setPercentOutput(double percent){
         m_motor.set(ControlMode.PercentOutput, percent);
         //System.out.println(percent);
     }
 
-    public void resetAngleAccumulator() {
-        m_angleAccumulator = getCurrentAngle();
-    }
+    // public void resetAngleAccumulator() {
+    //     m_angleAccumulator = getCurrentAngle();
+    // }
 
-    public double getCurrentEncoderPosition() {
-        return m_motor.getSensorCollection().getIntegratedSensorPosition();
-    }
+    // public double getCurrentEncoderPosition() {
+    //     return m_motor.getSensorCollection().getIntegratedSensorPosition();
+    // }
 
-    public double getCurrentEncoderRate() {
-        return m_motor.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
-    }
+    // public double getCurrentEncoderRate() {
+    //     return m_motor.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
+    // }
 
-    public double getCurrentAngle() {
-        return nativeToRad(getCurrentEncoderPosition());
-    }
+    // public double getCurrentAngle() {
+    //     return nativeToRad(getCurrentEncoderPosition());
+    // }
 
-    public double getCurrentVelocity() {
-        return nativeToRad(getCurrentEncoderRate());
-    }
+    // public double getCurrentVelocity() {
+    //     return nativeToRad(getCurrentEncoderRate());
+    // }
 
-    public double getCurrentAcceleration() {
-        return (getCurrentVelocity() - m_lastVelocity) / (Timer.getFPGATimestamp() - m_lastTime);
-    }
+    // public double getCurrentAcceleration() {
+    //     return (getCurrentVelocity() - m_lastVelocity) / (Timer.getFPGATimestamp() - m_lastTime);
+    // }
 
-    public double getAngleSetpoint() {
-        return m_velocityControlEnabled ? m_angleAccumulator
-                : m_controller.getSetpoint().position;
-    }
+    // public double getAngleSetpoint() {
+    //     return m_velocityControlEnabled ? m_angleAccumulator
+    //             : m_controller.getSetpoint().position;
+    // }
 
-    public double getVelocitySetpoint() {
-        return m_velocityControlEnabled ? m_velocitySetpoint : m_controller.getSetpoint().velocity;
-    }
+    // public double getVelocitySetpoint() {
+    //     return m_velocityControlEnabled ? m_velocitySetpoint : m_controller.getSetpoint().velocity;
+    // }
 
-    public double getAccelerationSetpoint() {
-        return m_velocityControlEnabled ? 0.0
-                : (getVelocitySetpoint() - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
-    }
+    // public double getAccelerationSetpoint() {
+    //     return m_velocityControlEnabled ? 0.0
+    //             : (getVelocitySetpoint() - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
+    // }
 
     public void zeroEncoder() {
         m_motor.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
 
     public void updateShuffleboard() {
-        encoderPosition.setDouble(getCurrentEncoderPosition());
-        angle.setDouble(getCurrentAngle());
-        velocity.setDouble(getCurrentVelocity());
-        acceleration.setDouble(getCurrentAcceleration());
-        angleSetpoint.setDouble(getAngleSetpoint());
-        velocitySetpoint.setDouble(getVelocitySetpoint());
-        accelerationSetpoint.setDouble(getAccelerationSetpoint());
-        voltageSupplied.setDouble(m_motor.getMotorOutputVoltage());
-        voltageSetpoint.setDouble(m_voltageSetpoint);
+        // encoderPosition.setDouble(getCurrentEncoderPosition());
+        // angle.setDouble(getCurrentAngle());
+        // velocity.setDouble(getCurrentVelocity());
+        // acceleration.setDouble(getCurrentAcceleration());
+        // angleSetpoint.setDouble(getAngleSetpoint());
+        // velocitySetpoint.setDouble(getVelocitySetpoint());
+        // accelerationSetpoint.setDouble(getAccelerationSetpoint());
+        // voltageSupplied.setDouble(m_motor.getMotorOutputVoltage());
+        // voltageSetpoint.setDouble(m_voltageSetpoint);
     }
 
     /*
