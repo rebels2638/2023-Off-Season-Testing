@@ -40,7 +40,7 @@
 //     private final WPI_TalonFX m_motor1 = new WPI_TalonFX(0);
 //     private final WPI_TalonFX m_motor2 = new WPI_TalonFX(3);
 
-//     private final PIDController m_controller = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
+//     private final PIDController m_controller = new PIDController(0.1, 0, 0);
 //     private final PIDController m_velocityController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
 //     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
 
@@ -82,7 +82,7 @@
 //         m_motor2.set(ControlMode.PercentOutput, 0);
 //         setToVelocityControlMode(true);
 //         setVelocitySetpoint(0);
-//         setGoal(new TrapezoidProfile.State(0, 0));
+//         setGoal(0);
 //         resetHeightAccumulator();
 //         m_controller.setTolerance(0.01, 0.05);
         
@@ -114,11 +114,11 @@
 //     }
 
 //     public void setGoal(double hight) {
-//         m_controller.setGoal(hight);
+//         m_controller.setSetpoint(hight);
 //     }
 
 //     public boolean atGoal() {
-//         return m_controller.atGoal();
+//         return m_controller.atSetpoint();
 //     }
 
 //     public void setVelocitySetpoint(double velocitySetpoint) {
@@ -155,11 +155,11 @@
 //     }
 
 //     public double getHeightSetpoint() {
-//         return m_velocityControlEnabled ? m_heightAccumulator : m_controller.getSetpoint().position;
+//         return m_velocityControlEnabled ? m_heightAccumulator : m_controller.getSetpoint();
 //     }
 
 //     public double getVelocitySetpoint() {
-//         return m_velocityControlEnabled ? m_velocitySetpoint : m_controller.getSetpoint().velocity;
+//         return m_velocityControlEnabled ? m_velocitySetpoint : m_controller.getSetpoint();
 //     }
 
 //     public double getAccelerationSetpoint() {
@@ -189,9 +189,8 @@
 //     @Override
 //     public void periodic() {
 //         double feedforward = m_feedforward.calculate(0, 0);
-//         double positionPID = m_controller.calculate(-m_motor1.getSensorCollection().getDistance());
-//         double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
-//         double pid = m_velocityControlEnabled ? velocityPID : positionPID;
+//         double positionPID = m_controller.calculate(-m_motor1.getSensorCollection().));
+//         double pid =positionPID;
 
 //         double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
 //         if (getCurrentHeight() >= kUpperLimit && voltage > 0.0) {
