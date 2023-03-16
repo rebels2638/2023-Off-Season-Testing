@@ -74,6 +74,23 @@ public class Wrist extends SubsystemBase {
     private final GenericEntry voltageSetpoint;
 
     public Wrist() {
+        TalonFXConfiguration falconConfig = new TalonFXConfiguration();
+
+        falconConfig.slot0.kP = 0;
+        falconConfig.slot0.kI = 0;
+        falconConfig.slot0.kD = 0;
+
+        falconConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+        falconConfig.voltageCompSaturation = 12;
+
+        falconConfig.nominalOutputForward = 0;
+        falconConfig.nominalOutputReverse = 0;
+        falconConfig.peakOutputForward = 1;
+        falconConfig.peakOutputReverse = -1;
+
+        m_wrist.configAllSettings(falconConfig);
+        m_wrist.setNeutralMode(NeutralMode.Brake);
+        
         // reset
         m_wrist.set(ControlMode.PercentOutput, 0);
         m_controller.setTolerance(0.05, 0.1);
