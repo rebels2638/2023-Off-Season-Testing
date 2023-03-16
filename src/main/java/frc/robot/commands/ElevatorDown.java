@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.ElevatorPID;
+import frc.robot.subsystems.ElevatorPIDNonProfiled;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -8,12 +9,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 /** An example command that uses an example subsystem. */
 public class ElevatorDown extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ElevatorPID m_elevatorSubsystem;
+  private final ElevatorPIDNonProfiled m_elevatorSubsystem;
 
-  private final double kHeightDownPosition = 0; // meters
-  private final TrapezoidProfile.State kGoalState = new TrapezoidProfile.State(kHeightDownPosition, 0.0);
+  private final double kHeightDownPosition = 0.0; // meters
 
-  public ElevatorDown(ElevatorPID subsystem) {
+  public ElevatorDown(ElevatorPIDNonProfiled subsystem) {
     m_elevatorSubsystem = subsystem;
     
     addRequirements(subsystem);
@@ -24,7 +24,7 @@ public class ElevatorDown extends CommandBase {
   public void initialize() {
     // follow position control to goal state
     m_elevatorSubsystem.setToVelocityControlMode(false);
-    m_elevatorSubsystem.setGoal(kGoalState);
+    m_elevatorSubsystem.setGoal(kHeightDownPosition);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

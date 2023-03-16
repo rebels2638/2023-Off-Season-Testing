@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorPID;
+import frc.robot.subsystems.ElevatorPIDNonProfiled;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -15,7 +16,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 /** An example command that uses an example subsystem. */
 public class ElevatorPIDController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ElevatorPID m_elevatorPID;
+  private final ElevatorPIDNonProfiled m_elevatorPID;
   private final XboxController e_controller; // e_controller is elevator's controller
   
   DigitalInput toplimitSwitch = new DigitalInput(2);
@@ -26,7 +27,7 @@ public class ElevatorPIDController extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ElevatorPIDController(ElevatorPID elevatorPIDSubsystem, XboxController controller) {
+  public ElevatorPIDController(ElevatorPIDNonProfiled elevatorPIDSubsystem, XboxController controller) {
     e_controller = controller;
     m_elevatorPID = elevatorPIDSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -44,11 +45,12 @@ public class ElevatorPIDController extends CommandBase {
   @Override
   public void execute() {
 
-    // double error = 0.0;
-    // if (e_controller.getLeftY() < 0.0) {error = -1.7;}
-    // else {error = 1.7;}
+    double error = 0.0;
+    // if (e_controller.getLeftY() < 0.0) {error = -0.1;}
+    // else {error = 0.1;}
 
-    double desiredVelo = RebelUtil.linearDeadband(e_controller.getLeftY(), 0.05) * ElevatorPID.kMaxSpeed;
+    double desiredVelo = RebelUtil.linearDeadband(e_controller.getLeftY() + error, 0.05) * ElevatorPID.kMaxSpeed;
+
     m_elevatorPID.setVelocitySetpoint(desiredVelo);
     //System.out.println("Controller: "+e_controller.getLeftY());
   }   

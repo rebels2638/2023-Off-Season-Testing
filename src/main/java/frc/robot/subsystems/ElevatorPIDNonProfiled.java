@@ -23,8 +23,8 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 /** Elevator subsystem with feed-forward and PID for position */
-public class ElevatorPID extends SubsystemBase {
-    private static ElevatorPID instance = null;
+public class ElevatorPIDNonProfiled extends SubsystemBase {
+    private static ElevatorPIDNonProfiled instance = null;
 
     public static final double kMaxSpeed = 0.5; // meters per second
     public static final double kMaxAcceleration = 0.1; // meters per second squared
@@ -42,7 +42,7 @@ public class ElevatorPID extends SubsystemBase {
     private final WPI_TalonFX m_motor1 = new WPI_TalonFX(0);
     private final WPI_TalonFX m_motor2 = new WPI_TalonFX(3);
 
-    private final ProfiledPIDController m_controller = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
+    private final PIDController m_controller = new PIDController(12, 0, 0);
     private final PIDController m_velocityController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
 
@@ -71,19 +71,20 @@ public class ElevatorPID extends SubsystemBase {
     private final GenericEntry voltageSupplied;
     private final GenericEntry voltageSetpoint;
 
-    public ElevatorPID() {
+    public ElevatorPIDNonProfiled() {
         m_motor1.setInverted(false); // they changed the motor
         m_motor2.setInverted(false);
 
         // reset elevator
         m_motor1.setNeutralMode(NeutralMode.Brake);
         m_motor2.setNeutralMode(NeutralMode.Brake);
+        zeroEncoder();
 
         m_motor1.set(ControlMode.PercentOutput, 0);
         m_motor2.set(ControlMode.PercentOutput, 0);
         setToVelocityControlMode(true);
+        setGoal(0);
         setVelocitySetpoint(0);
-        setGoal(new TrapezoidProfile.State(0, 0));
         resetHeightAccumulator();
         m_controller.setTolerance(0.03, 0.03);
         
@@ -100,11 +101,12 @@ public class ElevatorPID extends SubsystemBase {
 
         tab.add("Zero Encoder",
                 new InstantCommand(() -> zeroEncoder()));
+        zeroEncoder();
     }
 
-    public static ElevatorPID getInstance() {
+    public static ElevatorPIDNonProfiled getInstance() {
         if (instance == null) {
-            instance = new ElevatorPID();
+            instance = new ElevatorPIDNonProfiled();
         }
         return instance;
     }
@@ -121,12 +123,12 @@ public class ElevatorPID extends SubsystemBase {
         return encoderUnits * kRotationsPerNativeUnit * kMetersPerRotation;
     }
 
-    public void setGoal(TrapezoidProfile.State goalState) {
-        m_controller.setGoal(goalState);
+    public void setGoal(double height) {
+        m_controller.setSetpoint(height);
     }
 
     public boolean atGoal() {
-        return m_controller.atGoal();
+        return m_controller.atSetpoint();
     }
 
     public void setVelocitySetpoint(double velocitySetpoint) {
@@ -162,21 +164,9 @@ public class ElevatorPID extends SubsystemBase {
         return (getCurrentVelocity() - m_lastVelocity) / (Timer.getFPGATimestamp() - m_lastTime);
     }
 
-    public double getHeightSetpoint() {
-        return m_velocityControlEnabled ? m_heightAccumulator : m_controller.getSetpoint().position;
-    }
-
-    public double getVelocitySetpoint() {
-        return m_velocityControlEnabled ? m_velocitySetpoint : m_controller.getSetpoint().velocity;
-    }
-
-    public double getAccelerationSetpoint() {
-        return m_velocityControlEnabled ? 0.0
-                : (getVelocitySetpoint() - m_lastVelocitySetpoint) / (Timer.getFPGATimestamp() - m_lastTime);
-    }
-
     public void zeroEncoder() {
         m_motor1.getSensorCollection().setIntegratedSensorPosition(0, 30);
+        m_motor2.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
 
     public void updateShuffleboard() {
@@ -184,9 +174,6 @@ public class ElevatorPID extends SubsystemBase {
         elevatorPosition.setDouble(getCurrentHeight());
         elevatorVelocity.setDouble(getCurrentVelocity());
         elevatorAcceleration.setDouble(getCurrentAcceleration());
-        elevatorPositionSetpoint.setDouble(getHeightSetpoint());
-        elevatorVelocitySetpoint.setDouble(getVelocitySetpoint());
-        elevatorAccelerationSetpoint.setDouble(getAccelerationSetpoint());
         voltageSupplied.setDouble(m_motor1.getMotorOutputVoltage());
         voltageSetpoint.setDouble(m_voltageSetpoint);
     }
@@ -196,18 +183,11 @@ public class ElevatorPID extends SubsystemBase {
     */
     @Override
     public void periodic() {
-        double i = 0;
-        if(getVelocitySetpoint() < 0){
-            i = 0.825 * 2;
-        }
-        else{
-            i = 0;
-        }
-
-        double feedforward = m_feedforward.calculate(getVelocitySetpoint(), getAccelerationSetpoint());
+        // double m_error = m_controller.getSetpoint() - getCurrentHeight();
+        double velocityPID = m_velocitySetpoint * 5;
         double positionPID = m_controller.calculate(getCurrentHeight());
-        double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
         double pid = m_velocityControlEnabled ? velocityPID : positionPID;
+        double feedforward = ElevatorConstants.kG + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * ElevatorConstants.kS;
         double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
         if (getCurrentHeight() >= kUpperLimit && voltage > 0.0) {
             voltage = 0.0;
@@ -215,19 +195,14 @@ public class ElevatorPID extends SubsystemBase {
             voltage = 0.0;
         }
 
-        m_voltageSetpoint = voltage;
         // System.out.println("Elevator : " + voltage);
-        feedforward = RebelUtil.constrain(feedforward,-2.4, 2.4);
-        m_motor1.setVoltage(feedforward - i);
-        m_motor2.setVoltage(feedforward - i);
-        System.out.println(feedforward - i);
+        m_voltageSetpoint = RebelUtil.constrain(voltage,-12, 12);
+        m_motor1.setVoltage(m_voltageSetpoint);
+        m_motor2.setVoltage(m_voltageSetpoint);
 
         updateShuffleboard();
-
-        m_lastVelocitySetpoint = getVelocitySetpoint();
         m_lastVelocity = getCurrentVelocity();
         m_lastTime = Timer.getFPGATimestamp();
-        m_heightAccumulator += getVelocitySetpoint() * Robot.kDefaultPeriod;
     }
 
     public void breakMotor() {

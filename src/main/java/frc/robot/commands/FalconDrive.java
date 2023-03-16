@@ -8,6 +8,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.FalconDrivetrain;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 
@@ -17,8 +18,12 @@ public class FalconDrive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final FalconDrivetrain m_driveSubsystem;
   private final XboxController xboxDriver;
-  private final double MAX_FORWARD_SPEED = 5 * 0.5;
-  private final double MAX_TURN_SPEED = 5 * 0.5;
+  private final double MAX_FORWARD_SPEED = 5;
+  private final double MAX_TURN_SPEED = 5;
+
+  private final SlewRateLimiter rateLimiter;
+  private double MAX_FORWARD_ACCEL = 5;
+  private double MAX_BACKWARD_ACCEL = -5;
   /**
    * Creates a new ExampleCommand.
    *
@@ -27,6 +32,7 @@ public class FalconDrive extends CommandBase {
   public FalconDrive(FalconDrivetrain driveSubsystem, XboxController controller) {
     xboxDriver = controller;
     m_driveSubsystem = driveSubsystem;
+    rateLimiter = new SlewRateLimiter(MAX_FORWARD_ACCEL, MAX_BACKWARD_ACCEL, 0);
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_driveSubsystem);
   }
@@ -41,6 +47,8 @@ public class FalconDrive extends CommandBase {
     double forwardSpeed = RebelUtil.linearDeadband(xboxDriver.getLeftY(), 0.1) * MAX_FORWARD_SPEED;
     double turnSpeed = RebelUtil.linearDeadband(xboxDriver.getRightX(), 0.1) * MAX_TURN_SPEED;
     
+    forwardSpeed = rateLimiter.calculate(forwardSpeed);
+
     m_driveSubsystem.drive(forwardSpeed, turnSpeed);
   }
 

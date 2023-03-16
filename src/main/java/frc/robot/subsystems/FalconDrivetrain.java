@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -59,7 +60,7 @@ public class FalconDrivetrain extends SubsystemBase {
   private static final double kTrackWidth = DriveConstants.TRACK_WIDTH_METERS; // meters
   private static final double kWheelRadius = GearboxConstants.WHEEL_DIAMETER / 2; // meters
   private static final int kEncoderResolution = 2048;
-  private static final double kGearingRatio = 8.333;
+  private static final double kGearingRatio = 20.833;
 
   private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
   private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
@@ -80,13 +81,13 @@ public class FalconDrivetrain extends SubsystemBase {
   private final MotorControllerGroup m_leftGroup = new MotorControllerGroup(m_leftLeader, m_leftFollower);
   private final MotorControllerGroup m_rightGroup = new MotorControllerGroup(m_rightLeader, m_rightFollower);
 
-  private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 14);
+private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 14);
   private final Solenoid m_rightSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 15);
 
   // private final Gyro m_gyro = new AHRS(Port.kUSB);
 
-  private final PIDController m_leftPIDController = new PIDController(0.026947, 0, 0);
-  private final PIDController m_rightPIDController = new PIDController(0.026947, 0, 0);
+  private final PIDController m_leftPIDController = new PIDController(0, 0, 0);
+  private final PIDController m_rightPIDController = new PIDController(0, 0, 0);
 
   private double m_leftSetpoint = 0.0;
   private double m_rightSetpoint = 0.0;
@@ -136,17 +137,16 @@ public class FalconDrivetrain extends SubsystemBase {
   private EncoderSim m_rightEncoderSim;
 
   public FalconDrivetrain() {
-    m_leftLeader.setNeutralMode(NeutralMode.Coast);
-    m_leftFollower.setNeutralMode(NeutralMode.Coast);
-    m_rightLeader.setNeutralMode(NeutralMode.Coast);
-    m_rightFollower.setNeutralMode(NeutralMode.Coast);
+    m_leftLeader.setNeutralMode(NeutralMode.Brake);
+    m_leftFollower.setNeutralMode(NeutralMode.Brake);
+    m_rightLeader.setNeutralMode(NeutralMode.Brake);
+    m_rightFollower.setNeutralMode(NeutralMode.Brake);
 
     m_leftGroup.setInverted(DriveConstants.FALCON_LEFT_GROUP_INVERTED);
     m_rightGroup.setInverted(DriveConstants.FALCON_RIGHT_GROUP_INVERTED);
     m_leftEncoder.setDistancePerPulse(2 * Math.PI * kWheelRadius / kEncoderResolution);
     m_rightEncoder.setDistancePerPulse(2 * Math.PI * kWheelRadius / kEncoderResolution);
-    m_leftLeader.getSensorCollection().setIntegratedSensorPosition(0, 30);
-    m_rightLeader.getSensorCollection().setIntegratedSensorPosition(0, 30);
+    zeroEncoder();
     m_leftEncoder.reset();
     m_rightEncoder.reset();
     // m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), m_leftEncoder.getDistance(),
@@ -178,6 +178,8 @@ public class FalconDrivetrain extends SubsystemBase {
       m_leftEncoderSim = new EncoderSim(m_leftEncoder);
       m_rightEncoderSim = new EncoderSim(m_rightEncoder);
     }
+
+    tab.add("Zero Encoders", new InstantCommand(() -> zeroEncoder()));
   }
 
   public double metersToNative(double meters) {
@@ -196,11 +198,11 @@ public class FalconDrivetrain extends SubsystemBase {
 }
 
   public double getCurrentEncoderPosition(WPI_TalonFX motor) {
-    return -motor.getSensorCollection().getIntegratedSensorPosition();
+    return motor.getSensorCollection().getIntegratedSensorPosition();
   }
 
   public double getCurrentEncoderRate(WPI_TalonFX motor) {
-    return -motor.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
+    return motor.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
   }
 
   public double getLeftSideMeters() {
@@ -230,16 +232,6 @@ public class FalconDrivetrain extends SubsystemBase {
         .calculate(getRightSideVelocity(), speeds.rightMetersPerSecond);
     m_leftVoltageSetpoint = leftFeedforward + leftPID;
     m_rightVoltageSetpoint = rightFeedforward + rightPID;
-    /* 
-    if(Math.abs(m_leftLeader.getSupplyCurrent()) > 0 && Math.abs(speeds.leftMetersPerSecond) < 0.01){
-      m_leftVoltageSetpoint  = 0;
-    }  
-    if(Math.abs(m_rightLeader.getSupplyCurrent()) > 0 && Math.abs(speeds.rightMetersPerSecond) < 0.01){
-      m_rightVoltageSetpoint = 0;
-    }
-    */
-
-    
     
     m_leftGroup.setVoltage(m_leftVoltageSetpoint);
     m_rightGroup.setVoltage(m_rightVoltageSetpoint);
@@ -281,14 +273,16 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   public void resetOdometry(Pose2d pose) {
-    resetEncoders();
+    zeroEncoder();
     m_differentialDrivetrainSimulator.setPose(pose);
     // m_odometry.resetPosition(pose.getRotation(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), pose);
   }
 
-  public void resetEncoders() {
-    m_leftEncoder.reset();
-    m_rightEncoder.reset();
+  public void zeroEncoder() {
+    m_leftLeader.getSensorCollection().setIntegratedSensorPosition(0, 30);
+    m_leftFollower.getSensorCollection().setIntegratedSensorPosition(0, 30);
+    m_rightLeader.getSensorCollection().setIntegratedSensorPosition(0, 30);
+    m_rightFollower.getSensorCollection().setIntegratedSensorPosition(0, 30);
   }
 
   public double getAverageEncoderDistance() {
@@ -312,6 +306,7 @@ public class FalconDrivetrain extends SubsystemBase {
   public void periodic() {
     this.updateOdometry();
     this.updateSmartDashBoard();
+    this.updateShuffleboard();
   }
 
   @Override

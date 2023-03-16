@@ -45,7 +45,7 @@ public final class Auto
     PATH_COMMANDS.put("linPistonOpen", new LinSlideFullyOut(LinearSlide.getInstance(), LinSlidePiston.getInstance()));
     PATH_COMMANDS.put("clawOpen", new InstantCommand(Claw.getInstance()::push));
     PATH_COMMANDS.put("clawClose", new InstantCommand(Claw.getInstance()::pull));
-    PATH_COMMANDS.put("resetDTEncoders", new InstantCommand(FalconDrivetrain.getInstance()::resetEncoders));
+    PATH_COMMANDS.put("resetDTEncoders", new InstantCommand(FalconDrivetrain.getInstance()::zeroEncoder));
 
   }
 

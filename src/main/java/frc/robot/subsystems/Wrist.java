@@ -26,15 +26,15 @@ public class Wrist extends SubsystemBase {
     public static final double kMaxAcceleration = 1; // radians? per second squared
 
     private static final int kEncoderResolution = 2048;
-    private static final int kGearingRatio = 9 * (30 / 12);
+    private static final double kGearingRatio = 90.0 * (30.0 / 12.0);
     private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
     private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
     private static final double kRadiansPerRotation = 2 * Math.PI;
-    private static final double kFeedforwardAngleOffset = -2.2061;
+    private static final double kFeedforwardAngleOffset = 0;
 
-    public static final double kP = 6.2154; // 5.8146 (it was actually 7.1682 but we increased it)
+    public static final double kP = 3; // 5.8146 (it was actually 7.1682 but we increased it)
     public static final double kI = 0;
-    public static final double kD = 0.48101;
+    public static final double kD = 0.0;
 
     public static final double kS = 0.10299; // 0.068689;
     public static final double kV = 0.36865; // 4.3647;
@@ -43,8 +43,7 @@ public class Wrist extends SubsystemBase {
 
     private final WPI_TalonFX m_wrist = new WPI_TalonFX(5);
     
-    private final ProfiledPIDController m_controller = new ProfiledPIDController(kP, kI, kD,
-            new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
+    private final PIDController m_controller = new PIDController(kP, kI, kD);
     private final PIDController m_velocityController = new PIDController(0.0087647, 0, 0);
     private final ArmFeedforward m_feedforward = new ArmFeedforward(kS, kG, kV, kA);
 
@@ -58,10 +57,11 @@ public class Wrist extends SubsystemBase {
     private double m_lastVelocity = 0;
     private double m_lastTime = Timer.getFPGATimestamp();
 
-    private static double kUpperLimit = 98000;
-    private static double kLowerLimit = -27500.0;
+    private static double kUpperLimit = 110000.0;
+    private static double kLowerLimit = -90000.0;
 
     private final ShuffleboardTab tab;
+
 
     private final GenericEntry wristEncoderPosition;
     private final GenericEntry wristPosition;
@@ -96,6 +96,7 @@ public class Wrist extends SubsystemBase {
 
         tab.add("Zero Encoder",
                 new InstantCommand(() -> zeroEncoder()));
+        
     }
     
     public double nativeToRad(double encoderUnits) {
@@ -103,11 +104,11 @@ public class Wrist extends SubsystemBase {
     }
 
     public void setGoal(double goalAngle) {
-        m_controller.setGoal(goalAngle + kFeedforwardAngleOffset); // radians
+        m_controller.setSetpoint(goalAngle + kFeedforwardAngleOffset); // radians
     }
 
     public boolean atGoal() {
-        return m_controller.atGoal();
+        return m_controller.atSetpoint();
     }
 
     public void setVelocitySetpoint(double velocitySetpoint) {
@@ -145,11 +146,11 @@ public class Wrist extends SubsystemBase {
 
     public double getAngleSetpoint() {
         return m_velocityControlEnabled ? m_angleAccumulator
-                : m_controller.getSetpoint().position;
+                : m_controller.getSetpoint();
     }
 
     public double getVelocitySetpoint() {
-        return m_velocityControlEnabled ? m_velocitySetpoint : m_controller.getSetpoint().velocity;
+        return m_velocityControlEnabled ? m_velocitySetpoint : 0;
     }
 
     public double getAccelerationSetpoint() {
@@ -178,13 +179,13 @@ public class Wrist extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        double feedforward = m_feedforward.calculate(getAngleSetpoint(), getVelocitySetpoint(),
-                getAccelerationSetpoint());
         double positionPID = m_controller.calculate(getCurrentAngle());
-        double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
-        double pid = m_velocityControlEnabled ? velocityPID : positionPID;
+        double velocityPID = m_velocitySetpoint * 4;
+        double pid = (m_velocityControlEnabled ? velocityPID : positionPID);
+        // double feedforward = kG + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * kS;
+        // double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
 
-        double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
+        double voltage = RebelUtil.constrain(pid, -12.0, 12.0);
         if (getCurrentEncoderPosition() >= kUpperLimit && voltage > 0.0) {
             voltage = 0.0;
         } else if (getCurrentEncoderPosition() <= kLowerLimit && voltage < 0.0) {
@@ -192,6 +193,8 @@ public class Wrist extends SubsystemBase {
         }
 
         m_voltageSetpoint = voltage;
+        RebelUtil.constrain(m_voltageSetpoint, -4, 4);
+
         m_wrist.setVoltage(voltage);
 
         updateShuffleboard();
