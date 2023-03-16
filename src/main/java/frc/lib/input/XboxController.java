@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.RebelUtil;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 /**
  * Implementation of an Xbox controller
@@ -15,8 +16,7 @@ public class XboxController implements Controller {
     private Joystick joystick;
 
     private Trigger aButton, bButton, xButton, yButton, leftMiddleButton, rightMiddleButton, leftBumper, rightBumper,
-            leftStick, rightStick, leftTriggerButton, rightTriggerButton, rightStickYButton,
-            upDpad, downDpad, leftDpad, rightDpad;
+            leftStick, rightStick, leftTriggerButton, rightTriggerButton, rightStickYButton, upDpad, downDpad, leftDpad, rightDpad;
 
     public XboxController(Joystick joystick) {
         this.joystick = joystick;
@@ -40,7 +40,10 @@ public class XboxController implements Controller {
         this.rightBumper = new JoystickButton(joystick, BUMPER_RIGHT);
         this.leftStick = new JoystickButton(joystick, BUTTON_LEFT_STICK);
         this.rightStick = new JoystickButton(joystick, BUTTON_RIGHT_STICK);
-
+        this.upDpad = new POVButton(joystick, 0);
+        this.rightDpad = new POVButton(joystick, 90);
+        this.downDpad = new POVButton(joystick, 180);
+        this.leftDpad = new POVButton(joystick, 270);
     }
 
     /**
