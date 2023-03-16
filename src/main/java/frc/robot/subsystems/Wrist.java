@@ -20,6 +20,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 public class Wrist extends SubsystemBase {
     
@@ -209,7 +210,7 @@ public class Wrist extends SubsystemBase {
         } else if (getCurrentEncoderPosition() <= kLowerLimit && voltage < 0.0) {
             voltage = 0.0;
         }
-        System.out.println(voltage);
+        System.out.println(getCurrentAngle());
         m_voltageSetpoint = voltage;
         RebelUtil.constrain(m_voltageSetpoint, -4, 4);
 

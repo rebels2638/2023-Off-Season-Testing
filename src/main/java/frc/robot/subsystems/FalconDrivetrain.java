@@ -231,12 +231,12 @@ private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
         .calculate(getLeftSideVelocity(),speeds.leftMetersPerSecond);
     double rightPID = m_rightPIDController
         .calculate(getRightSideVelocity(), speeds.rightMetersPerSecond);
-    m_leftVoltageSetpoint = leftFeedforward + leftPID * 1.2;
-    m_rightVoltageSetpoint = rightFeedforward + rightPID * 1.2;
+    m_leftVoltageSetpoint = leftFeedforward + leftPID;
+    m_rightVoltageSetpoint = rightFeedforward + rightPID;
     
     RebelUtil.constrain(m_leftVoltageSetpoint, -12, 12);
     RebelUtil.constrain(m_rightVoltageSetpoint, -12, 12);
-    m_leftGroup.setVoltage(m_leftVoltageSetpoint);
+    m_leftGroup.setVoltage(m_leftVoltageSetpoint );
     m_rightGroup.setVoltage(m_rightVoltageSetpoint);
   }
 
