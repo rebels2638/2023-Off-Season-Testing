@@ -147,28 +147,22 @@ public final class ConstantsFXDriveTrain {
         /**
          * Motor CPR / gear reduction = effective CPR
          **/
-        public static final double HIGH_GEAR_REDUCTION = 8.33;// 15.0;
+        public static final double HIGH_GEAR_REDUCTION = 9.167;// 15.0;
         public static final double HIGH_GEAR_EFFECTIVE_CPR = FALCON_CPR * HIGH_GEAR_REDUCTION;
 
-        public static final double LOW_GEAR_REDUCTION = 3.67;
+        public static final double LOW_GEAR_REDUCTION = 20.833;
         public static final double LOW_GEAR_EFFECTIVE_CPR = FALCON_CPR * LOW_GEAR_REDUCTION;
 
         // Feed forward/back gains
-        public static final double STATIC_GAIN = 0.625; // volts
-        public static final double VELOCITY_GAIN = 4.7; // volt seconds per meter
-        public static final double ACCEL_GAIN = 0.289; // volt seconds squared per meter
+        public static final double STATIC_GAIN_HIGH = 0.1728; // volts
+        public static final double VELOCITY_GAIN_HIGH = 1.7575; // volt seconds per meter
+        public static final double ACCEL_GAIN_HIGH = 0.42374; // volt seconds squared per meter
+        public static final double GRAVITY_GAIN_HIGH = 0.0;
 
-        public static final SimpleMotorFeedforward FEED_FORWARD = new SimpleMotorFeedforward(STATIC_GAIN, VELOCITY_GAIN,
-                ACCEL_GAIN);
-
-        // motion magic
-        public static final double MOTION_P = 0.2;
-        public static final double MOTION_I = 0.0;
-        public static final double MOTION_D = 0.0;
-        public static final double MOTION_F = 0.2;
-        public static final double MOTION_CRUISE_VELOCITY = 1;
-        public static final double MOTION_ACCELERATION = .5;
-        public static final double MOTION_TOLERANCE = 200;
+        public static final double STATIC_GAIN_LOW = 0.1728; // volts
+        public static final double VELOCITY_GAIN_LOW = 1.7575; // volt seconds per meter
+        public static final double ACCEL_GAIN_LOW = 0.42374; // volt seconds squared per meter
+        public static final double GRAVITY_GAIN_LOW = 0.0;
 
         public static final NeutralMode DEFAULT_NEUTRAL_MODE = NeutralMode.Brake;
     }

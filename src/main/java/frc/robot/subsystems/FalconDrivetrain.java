@@ -45,7 +45,6 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-
 import frc.robot.utils.ConstantsFXDriveTrain.DriveConstants;
 import frc.robot.utils.ConstantsFXDriveTrain.GearboxConstants;
 import frc.lib.RebelUtil;
@@ -61,12 +60,12 @@ public class FalconDrivetrain extends SubsystemBase {
   private static final double kTrackWidth = DriveConstants.TRACK_WIDTH_METERS; // meters
   private static final double kWheelRadius = GearboxConstants.WHEEL_DIAMETER / 2; // meters
   private static final int kEncoderResolution = 2048;
-  private static final double kGearingRatio = 20.833;
+  private boolean inHighGear = true;
 
-  private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
-  private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
-  private static final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
-  private static final double kRotationsPerMeter = 1 / kMetersPerRotation;
+  private double kNativeUnitsPerRotation = kEncoderResolution * getGearingRatio();
+  private double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
+  private double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
+  private double kRotationsPerMeter = 1 / kMetersPerRotation;
   /*
    * =============================================================================
    * ==============
@@ -82,10 +81,10 @@ public class FalconDrivetrain extends SubsystemBase {
   private final MotorControllerGroup m_leftGroup = new MotorControllerGroup(m_leftLeader, m_leftFollower);
   private final MotorControllerGroup m_rightGroup = new MotorControllerGroup(m_rightLeader, m_rightFollower);
 
-private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 14);
+  private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 14);
   private final Solenoid m_rightSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 15);
 
-  // private final Gyro m_gyro = new AHRS(Port.kUSB);
+  private final Gyro m_gyro = new AHRS(Port.kUSB);
 
   private final PIDController m_leftPIDController = new PIDController(0, 0, 0);
   private final PIDController m_rightPIDController = new PIDController(0, 0, 0);
@@ -111,7 +110,7 @@ private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
   private final GenericEntry rightMotorVelocitySetpoint;
   private final GenericEntry rightMotorVoltageSupplied;
   private final GenericEntry rightMotorVoltageSetpoint;
-  
+
   private double m_leftVoltageSetpoint;
   private double m_rightVoltageSetpoint;
 
@@ -119,7 +118,9 @@ private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
 
   // private final DifferentialDriveOdometry m_odometry;
 
-  public final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(0.1728, 1.7575, 0.42374);
+  public final SimpleMotorFeedforward m_feedforwardHigh = new SimpleMotorFeedforward(GearboxConstants.STATIC_GAIN_HIGH, GearboxConstants.VELOCITY_GAIN_HIGH, GearboxConstants.ACCEL_GAIN_HIGH);
+  public final SimpleMotorFeedforward m_feedforwardLow = new SimpleMotorFeedforward(GearboxConstants.STATIC_GAIN_LOW, GearboxConstants.VELOCITY_GAIN_LOW, GearboxConstants.ACCEL_GAIN_LOW);
+  public SimpleMotorFeedforward m_feedforward = inHighGear ? m_feedforwardHigh : m_feedforwardLow;
   /*
    * =============================================================================
    * ================
@@ -133,11 +134,12 @@ private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
       KAlinear, KVAngular, KAAngular);
   private DifferentialDrivetrainSim m_differentialDrivetrainSimulator;
   private Gyro m_gyroSim;
-  // private final static AHRS gyro = new AHRS(Port.kUSB);
   private EncoderSim m_leftEncoderSim;
   private EncoderSim m_rightEncoderSim;
 
   public FalconDrivetrain() {
+    switchToHighGear();
+
     m_leftLeader.setNeutralMode(NeutralMode.Brake);
     m_leftFollower.setNeutralMode(NeutralMode.Brake);
     m_rightLeader.setNeutralMode(NeutralMode.Brake);
@@ -150,8 +152,6 @@ private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
     zeroEncoder();
     m_leftEncoder.reset();
     m_rightEncoder.reset();
-    // m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), m_leftEncoder.getDistance(),
-        // m_rightEncoder.getDistance());
 
     tab = Shuffleboard.getTab("Drive");
     leftMotorEncoderPosition = tab.add("Left Encoder Position", 0.0).getEntry();
@@ -183,6 +183,13 @@ private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
     tab.add("Zero Encoders", new InstantCommand(() -> zeroEncoder()));
   }
 
+  public static FalconDrivetrain getInstance() {
+    if (instance == null) {
+      instance = new FalconDrivetrain();
+    }
+    return instance;
+  }
+
   public double metersToNative(double meters) {
     return meters * kRotationsPerMeter * kNativeUnitsPerRotation;
   }
@@ -191,12 +198,16 @@ private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
     return encoderUnits * kRotationsPerNativeUnit * kMetersPerRotation;
   }
 
-  public static FalconDrivetrain getInstance() {
-    if (instance == null) {
-        instance = new FalconDrivetrain();
-    }
-    return instance;
-}
+  public double getGearingRatio() {
+    return inHighGear ? GearboxConstants.HIGH_GEAR_REDUCTION : GearboxConstants.LOW_GEAR_REDUCTION;
+  }
+
+  public void recalcConversionFactors() {
+    kNativeUnitsPerRotation = kEncoderResolution * getGearingRatio();
+    kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
+    kMetersPerRotation = 2 * Math.PI * kWheelRadius;
+    kRotationsPerMeter = 1 / kMetersPerRotation;
+  }
 
   public double getCurrentEncoderPosition(WPI_TalonFX motor) {
     return motor.getSensorCollection().getIntegratedSensorPosition();
@@ -228,12 +239,12 @@ private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
     var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
     var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
     double leftPID = m_leftPIDController
-        .calculate(getLeftSideVelocity(),speeds.leftMetersPerSecond);
+        .calculate(getLeftSideVelocity(), speeds.leftMetersPerSecond);
     double rightPID = m_rightPIDController
         .calculate(getRightSideVelocity(), speeds.rightMetersPerSecond);
     m_leftVoltageSetpoint = leftFeedforward + leftPID * 1.2;
     m_rightVoltageSetpoint = rightFeedforward + rightPID * 1.2;
-    
+
     RebelUtil.constrain(m_leftVoltageSetpoint, -12, 12);
     RebelUtil.constrain(m_rightVoltageSetpoint, -12, 12);
     m_leftGroup.setVoltage(m_leftVoltageSetpoint);
@@ -271,14 +282,9 @@ private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
     setSpeeds(m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0.0, rot)));
   }
 
-  public void updateOdometry() {
-    // m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
-  }
-
   public void resetOdometry(Pose2d pose) {
     zeroEncoder();
     m_differentialDrivetrainSimulator.setPose(pose);
-    // m_odometry.resetPosition(pose.getRotation(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), pose);
   }
 
   public void zeroEncoder() {
@@ -297,8 +303,7 @@ private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
   }
 
   public Pose2d getPose() {
-    // return m_odometry.getPoseMeters();
-    return new Pose2d();
+    return PoseEstimator.getInstance().getCurrentPose();
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
@@ -307,7 +312,6 @@ private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
 
   @Override
   public void periodic() {
-    this.updateOdometry();
     this.updateSmartDashBoard();
     this.updateShuffleboard();
   }
@@ -326,17 +330,16 @@ private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
   }
 
   public void zeroHeading() {
-    // m_gyro.reset();
+    m_gyro.reset();
   }
 
   public double getHeading() {
-    // return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if the GYRO is REVERSED.
-    return 0.0;
+    return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if
+    // the GYRO is REVERSED.
   }
 
   public Rotation2d getRotation2d() {
-    // return m_gyro.getRotation2d();
-    return new Rotation2d();
+    return m_gyro.getRotation2d();
   }
 
   /*
@@ -355,10 +358,16 @@ private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
   public void switchToHighGear() {
     m_leftSolenoid.set(true);
     m_rightSolenoid.set(true);
+    inHighGear = true;
+    recalcConversionFactors();
+    m_feedforward = m_feedforwardHigh;
   }
 
   public void switchToLowGear() {
     m_leftSolenoid.set(false);
     m_rightSolenoid.set(false);
+    inHighGear = false;
+    recalcConversionFactors();
+    m_feedforward = m_feedforwardLow;
   }
 }

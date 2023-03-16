@@ -28,6 +28,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // Not finished yet
 
 public class PoseEstimator extends SubsystemBase {
+    private static PoseEstimator instance = null;
+
     private PhotonCamera photonCamera = new PhotonCamera("camera");
     private FalconDrivetrain driveTrainSubsytem;
 
@@ -43,10 +45,10 @@ public class PoseEstimator extends SubsystemBase {
     private static DifferentialDrivePoseEstimator poseEstimator;
     private double previousPipelineTimestamp = 0;
 
-    public PoseEstimator(FalconDrivetrain drive) {
-        this.driveTrainSubsytem = drive;
+    public PoseEstimator() {
+        this.driveTrainSubsytem = FalconDrivetrain.getInstance();
 
-        poseEstimator = new DifferentialDrivePoseEstimator(drive.m_kinematics,
+        poseEstimator = new DifferentialDrivePoseEstimator(driveTrainSubsytem.m_kinematics,
                 driveTrainSubsytem.getRotation2d(), driveTrainSubsytem.getLeftSideMeters(),
                 driveTrainSubsytem.getRightSideMeters(), new Pose2d(),
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), // Local measurement standard deviations.
@@ -55,6 +57,13 @@ public class PoseEstimator extends SubsystemBase {
                                                                             // X, Y, and theta.
     }
     // def not scuffed
+
+    public static PoseEstimator getInstance() {
+        if (instance == null) {
+            instance = new PoseEstimator();
+        }
+        return instance;
+    }
 
     @Override
     public void periodic() {
