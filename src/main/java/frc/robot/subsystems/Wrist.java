@@ -58,7 +58,7 @@ public class Wrist extends SubsystemBase {
     private double m_lastTime = Timer.getFPGATimestamp();
 
     private static double kUpperLimit = 110000.0;
-    private static double kLowerLimit = -90000.0;
+    private static double kLowerLimit = -44900.0;
 
     private final ShuffleboardTab tab;
 
@@ -95,7 +95,7 @@ public class Wrist extends SubsystemBase {
         voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
 
         tab.add("Zero Encoder",
-                new InstantCommand(() -> zeroEncoder()));
+                new InstantCommand(() -> this.zeroEncoder()));
         
     }
     
@@ -191,7 +191,7 @@ public class Wrist extends SubsystemBase {
         } else if (getCurrentEncoderPosition() <= kLowerLimit && voltage < 0.0) {
             voltage = 0.0;
         }
-
+        System.out.println(voltage);
         m_voltageSetpoint = voltage;
         RebelUtil.constrain(m_voltageSetpoint, -4, 4);
 

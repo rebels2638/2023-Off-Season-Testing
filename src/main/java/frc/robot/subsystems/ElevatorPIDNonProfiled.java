@@ -57,7 +57,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     private double m_lastTime = Timer.getFPGATimestamp();
 
     private static double kUpperLimit = 0.843;
-    private static double kLowerLimit = 0;
+    private static double kLowerLimit = 0.01;
 
     private final ShuffleboardTab tab;
 
@@ -100,7 +100,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
 
         tab.add("Zero Encoder",
-                new InstantCommand(() -> zeroEncoder()));
+                new InstantCommand(() -> this.zeroEncoder()));
         zeroEncoder();
     }
 
@@ -138,6 +138,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     public void setToVelocityControlMode(boolean on) {
         m_velocityControlEnabled = on;
         resetHeightAccumulator();
+        this.setVelocitySetpoint(0);
     }
 
     public void resetHeightAccumulator() {
@@ -189,10 +190,12 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         double pid = m_velocityControlEnabled ? velocityPID : positionPID;
         double feedforward = ElevatorConstants.kG + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * ElevatorConstants.kS;
         double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
-        if (getCurrentHeight() >= kUpperLimit && voltage > 0.0) {
+        if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
             voltage = 0.0;
+            System.out.println("STOPEDDD");
         } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
             voltage = 0.0;
+            System.out.println("STOPEDDD");
         }
 
         // System.out.println("Elevator : " + voltage);

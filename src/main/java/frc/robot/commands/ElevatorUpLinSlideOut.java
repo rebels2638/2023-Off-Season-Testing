@@ -11,15 +11,16 @@ import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.LinearSlide;
 import frc.robot.commands.ElevatorCancel;
 
-public class GoOut extends ParallelCommandGroup {
-    public GoOut() {
+public class ElevatorUpLinSlideOut extends ParallelCommandGroup {
+    public ElevatorUpLinSlideOut() {
         addCommands(
-            new ElevatorUp(ElevatorPIDNonProfiled.getInstance()),
             new SequentialCommandGroup(
+                new ElevatorUp(ElevatorPIDNonProfiled.getInstance()),
                 new TimerCommand(1),
                 new LinSlideFullyOut(LinearSlide.getInstance(), LinSlidePiston.getInstance()),
-                new ElevatorCancel(ElevatorPID.getInstance())
+                new ElevatorCancel(ElevatorPIDNonProfiled.getInstance())
             )
-        );
+            )
+        ;
     }
 }

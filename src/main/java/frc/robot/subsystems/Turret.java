@@ -201,7 +201,7 @@ public class Turret extends SubsystemBase {
         double positionPID = m_controller.calculate(getCurrentAngle());
         // double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
         // double pid = m_velocityControlEnabled ? velocityPID : positionPID;
-
+        System.out.println(m_motor.getSelectedSensorPosition());
         double voltage = RebelUtil.constrain(positionPID, -12.0, 12.0);
         if (getCurrentEncoderPosition() >= kUpperLimit && voltage > 0.0) {
             voltage = 0.0;

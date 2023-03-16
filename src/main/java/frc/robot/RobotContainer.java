@@ -48,8 +48,8 @@ import frc.robot.subsystems.Wrist;
 import frc.robot.commands.WristController;
 import frc.robot.commands.WristUp;
 import frc.robot.commands.FieldOrientedDrive;
-import frc.robot.commands.GoIn;
-import frc.robot.commands.GoOut;
+import frc.robot.commands.ElevatorDownLinSlideIn;
+import frc.robot.commands.ElevatorUpLinSlideOut;
 import frc.robot.commands.LinSlidePIDController;
 import frc.robot.commands.LinearSlideController;
 import frc.robot.commands.LinSlideFullyIn;
@@ -135,12 +135,6 @@ public class RobotContainer {
       new TurretController(turret, xboxOperator)
     );
     
-    // this.fourBarArm.setDefaultCommand(
-    // new FourBarArmController(fourBarArm, xboxOperator));
-
-    // this.fourBarArmPID.(
-    // new FourBarArmPIDController(fourBarArmPID, xboxOperator));
-
     // this.elevatorPID.setDefaultCommand(
     //     new ElevatorPIDController(elevatorPID, xboxOperator));
 
@@ -180,8 +174,8 @@ public class RobotContainer {
     //   new ElevatorCancel(elevatorPID));
     this.elevatorFinal.setDefaultCommand(
       new ElevatorPIDController(elevatorFinal, xboxOperator)); // added, untested
-    this.xboxOperator.getBButton().onTrue(new GoOut());
-    this.xboxOperator.getXButton().onTrue(new GoIn());
+    this.xboxOperator.getBButton().onTrue(new ElevatorUpLinSlideOut());
+    this.xboxOperator.getXButton().onTrue(new ElevatorDownLinSlideIn());
     this.xboxOperator.getYButton().onTrue(new ElevatorUp(elevatorFinal));
     
     // this.xboxOperator.getYButton().onTrue(new ElevatorUp(elevatorFinal));

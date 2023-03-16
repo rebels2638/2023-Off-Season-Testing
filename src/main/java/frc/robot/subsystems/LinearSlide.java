@@ -34,7 +34,7 @@ public class LinearSlide extends SubsystemBase {
 
         tab = Shuffleboard.getTab("Linear Slide");
         linSlideEncoderPosition = tab.add("Lin_Encoder_Position", 0.0).getEntry();
-        tab.add("Zero Encoder", new InstantCommand(() -> zeroEncoder()));
+        tab.add("Zero Encoder", new InstantCommand(() -> this.zeroEncoder()));
         m_setpoint = 0.0;
     }
 
@@ -59,6 +59,13 @@ public class LinearSlide extends SubsystemBase {
     @Override
     public void periodic() {
         linSlideEncoderPosition.setDouble(m_linslide.getSensorCollection().getIntegratedSensorPosition());
+        
+        if (getCurrentEncoderPosition() >= kMaxEncoderLimit && m_setpoint > 0.0) {
+            m_setpoint = 0.0;
+        } else if (getCurrentEncoderPosition() <= kMinEncoderLimit && m_setpoint < 0.0) {
+            m_setpoint = 0.0;
+        }
+        
         m_linslide.set(ControlMode.PercentOutput, m_setpoint * (inverted ? -1 : 1));
 
     }
