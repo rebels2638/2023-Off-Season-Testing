@@ -190,10 +190,11 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         double pid = m_velocityControlEnabled ? velocityPID : positionPID;
         double feedforward = ElevatorConstants.kG + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * ElevatorConstants.kS;
         double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
-        if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
+        if (getCurrentEncoderPosition() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
             voltage = 0.0;
             System.out.println("STOPEDDD");
-        } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
+
+        } else if (getCurrentEncoderPosition() <= kLowerLimit && voltage < 0.0) {
             voltage = 0.0;
             System.out.println("STOPEDDD");
         }
