@@ -115,7 +115,7 @@ public class RobotContainer {
     this.drive.setDefaultCommand(
         new FalconDrive(drive, xboxDriver));
 
-    // this.drive.setDefaultCommand(
+    // this.drive.setDefaultCommand
         // new Drive(drive, xboxDriver));
 
     this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
@@ -131,9 +131,9 @@ public class RobotContainer {
     //   new LinSlidePIDController(linslidePID, xboxOperator)
     // );
     
-    // this.turret.setDefaultCommand( 
-    //   new TurretController(turret, xboxOperator)
-    // );
+    this.turret.setDefaultCommand( 
+      new TurretController(turret, xboxOperator)
+    );
     
     // this.fourBarArm.setDefaultCommand(
     // new FourBarArmController(fourBarArm, xboxOperator));
@@ -180,9 +180,10 @@ public class RobotContainer {
     //   new ElevatorCancel(elevatorPID));
     this.elevatorFinal.setDefaultCommand(
       new ElevatorPIDController(elevatorFinal, xboxOperator)); // added, untested
-    this.xboxOperator.getYButton().onTrue(new GoOut());
+    this.xboxOperator.getBButton().onTrue(new GoOut());
     this.xboxOperator.getXButton().onTrue(new GoIn());
-    this.xboxOperator.getBButton().onTrue(new ElevatorUp(elevatorFinal));
+    this.xboxOperator.getYButton().onTrue(new ElevatorUp(elevatorFinal));
+    
     // this.xboxOperator.getYButton().onTrue(new ElevatorUp(elevatorFinal));
     // this.xboxOperator.getXButton().onTrue(new ElevatorDown(elevatorFinal));
     // this.xboxOperator.getAButton().onTrue(new PositionPresets(elevatorPID, arm, linslide, turret, "loadingStation"));

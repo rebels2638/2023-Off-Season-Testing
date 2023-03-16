@@ -26,7 +26,7 @@ public class LinSlidePiston extends SubsystemBase {
     }
 
     public void push() {
-        System.out.println("here");
+        //System.out.println("here");
         solenoid.set(DoubleSolenoid.Value.kReverse);
         state = true;
     }

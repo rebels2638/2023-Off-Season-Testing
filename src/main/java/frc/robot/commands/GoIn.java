@@ -9,6 +9,7 @@ import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.ElevatorPIDNonProfiled;
 import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.LinearSlide;
+import frc.robot.commands.ElevatorCancel;
 
 public class GoIn extends ParallelCommandGroup{
     public GoIn() {
@@ -16,7 +17,8 @@ public class GoIn extends ParallelCommandGroup{
             new LinSlideFullyIn(LinearSlide.getInstance(), LinSlidePiston.getInstance()),
             new SequentialCommandGroup(
                 new TimerCommand(0.5),
-                new ElevatorDown(ElevatorPIDNonProfiled.getInstance())
+                new ElevatorDown(ElevatorPIDNonProfiled.getInstance()),
+                new ElevatorCancel(ElevatorPID.getInstance())
             )
         );
     }
