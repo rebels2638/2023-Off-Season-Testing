@@ -97,6 +97,9 @@ public class FalconDrivetrain extends SubsystemBase {
 
   private final ShuffleboardTab tab;
 
+  private final GenericEntry kGHigh;
+  private final GenericEntry kGLow;
+
   private final GenericEntry leftMotorEncoderPosition;
   private final GenericEntry leftMotorPosition;
   private final GenericEntry leftMotorVelocity;
@@ -110,6 +113,8 @@ public class FalconDrivetrain extends SubsystemBase {
   private final GenericEntry rightMotorVelocitySetpoint;
   private final GenericEntry rightMotorVoltageSupplied;
   private final GenericEntry rightMotorVoltageSetpoint;
+
+  private final GenericEntry gyroPitch;
 
   private double m_leftVoltageSetpoint;
   private double m_rightVoltageSetpoint;
@@ -154,6 +159,8 @@ public class FalconDrivetrain extends SubsystemBase {
     m_rightEncoder.reset();
 
     tab = Shuffleboard.getTab("Drive");
+    kGLow = tab.add("kG Low", 0.0).getEntry();
+    kGHigh = tab.add("kG High", 0.0).getEntry();
     leftMotorEncoderPosition = tab.add("Left Encoder Position", 0.0).getEntry();
     leftMotorPosition = tab.add("Left Meters", 0.0).getEntry();
     leftMotorVelocity = tab.add("Left Velocity", 0.0).getEntry();
@@ -167,6 +174,8 @@ public class FalconDrivetrain extends SubsystemBase {
     rightMotorVelocitySetpoint = tab.add("Right Velocity Setpoint", 0.0).getEntry();
     rightMotorVoltageSupplied = tab.add("Right Motor Voltage", 0.0).getEntry();
     rightMotorVoltageSetpoint = tab.add("Right Voltage Setpoint", 0.0).getEntry();
+    
+    gyroPitch = tab.add("Gyro Pitch", 0.0).getEntry();
 
     if (RobotBase.isSimulation()) {
       // TODO: EDIT VALUES TO BE ACCURATE
@@ -236,8 +245,9 @@ public class FalconDrivetrain extends SubsystemBase {
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
     m_leftSetpoint = speeds.leftMetersPerSecond;
     m_rightSetpoint = speeds.rightMetersPerSecond;
-    var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
-    var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
+    var kG = inHighGear ? kGHigh.getDouble(0.0) : kGLow.getDouble(0.0);
+    var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond) + kG * Math.cos(PoseEstimator.getInstance().getPitch());
+    var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond) + kG * Math.cos(PoseEstimator.getInstance().getPitch());
     double leftPID = m_leftPIDController
         .calculate(getLeftSideVelocity(), speeds.leftMetersPerSecond);
     double rightPID = m_rightPIDController
@@ -276,6 +286,8 @@ public class FalconDrivetrain extends SubsystemBase {
     rightMotorVelocitySetpoint.setDouble(m_rightSetpoint);
     rightMotorVoltageSetpoint.setDouble(m_rightLeader.getMotorOutputVoltage());
     rightMotorVoltageSupplied.setDouble(m_rightVoltageSetpoint);
+
+    gyroPitch.setDouble(PoseEstimator.getInstance().getPitch());    
   }
 
   public void drive(double xSpeed, double rot) {

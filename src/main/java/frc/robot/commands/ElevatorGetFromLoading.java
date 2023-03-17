@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.ElevatorPIDNonProfiled;
 import frc.robot.subsystems.LinSlidePiston;
@@ -13,17 +12,11 @@ import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.Wrist;
 import frc.robot.commands.ElevatorCancel;
 
-public class ElevatorUpLinSlideOut extends ParallelCommandGroup {
-    public
-
-    ElevatorUpLinSlideOut() {
+public class ElevatorGetFromLoading extends ParallelCommandGroup {
+    public ElevatorGetFromLoading() {
         addCommands(
-            new ParallelCommandGroup(
-                new ElevatorUp(ElevatorPIDNonProfiled.getInstance()),
-                new SequentialCommandGroup(
-                    new TimerCommand(0.5),
-                    new ParallelCommandGroup(
-                        new LinSlideFullyOut(LinearSlide.getInstance(), LinSlidePiston.getInstance()),
-                        new WristUp(Wrist.getInstance())))));
+                new ParallelCommandGroup(
+                        new ElevatorUp(ElevatorPIDNonProfiled.getInstance()),
+                        new WristStraight(Wrist.getInstance())));
     }
 }

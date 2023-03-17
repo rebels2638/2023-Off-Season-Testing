@@ -9,17 +9,19 @@ import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.ElevatorPIDNonProfiled;
 import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.LinearSlide;
+import frc.robot.subsystems.Wrist;
 import frc.robot.commands.ElevatorCancel;
 
-public class ElevatorDownLinSlideIn extends ParallelCommandGroup{
+public class ElevatorDownLinSlideIn extends ParallelCommandGroup {
     public ElevatorDownLinSlideIn() {
         addCommands(
             new SequentialCommandGroup(
-                new LinSlideFullyIn(LinearSlide.getInstance(), LinSlidePiston.getInstance()),
-                new TimerCommand(0.5),
-                new ElevatorDown(ElevatorPIDNonProfiled.getInstance()),
-                new ElevatorCancel(ElevatorPIDNonProfiled.getInstance())
-            )
-        );
+                new WristUp(Wrist.getInstance()),
+                new ParallelCommandGroup(
+                        new LinSlideFullyIn(LinearSlide.getInstance(), LinSlidePiston.getInstance()),
+                        new SequentialCommandGroup(
+                                new TimerCommand(1.5),
+                                new ElevatorDown(ElevatorPIDNonProfiled.getInstance()),
+                                new WristTurtle(Wrist.getInstance())))));
     }
 }

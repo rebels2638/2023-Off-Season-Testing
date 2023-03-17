@@ -45,7 +45,7 @@ public class PoseEstimator extends SubsystemBase {
     private static final Vector<N3> vision = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
     private static DifferentialDrivePoseEstimator poseEstimator;
-    private final Gyro m_gyro = new AHRS(Port.kUSB);
+    private final AHRS m_gyro = new AHRS(Port.kUSB);
     private double previousPipelineTimestamp = 0;
 
     public PoseEstimator() {
@@ -97,6 +97,10 @@ public class PoseEstimator extends SubsystemBase {
 
     public Pose2d getCurrentPose() {
         return poseEstimator.getEstimatedPosition();
+    }
+
+    public double getPitch() {
+        return m_gyro.getPitch();
     }
 
     public static double degreesToRadians(int degrees) {

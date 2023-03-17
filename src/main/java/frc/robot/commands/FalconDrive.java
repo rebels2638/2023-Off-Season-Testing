@@ -22,8 +22,8 @@ public class FalconDrive extends CommandBase {
   private final double MAX_TURN_SPEED = 5;
 
   private final SlewRateLimiter rateLimiter;
-  private double MAX_FORWARD_ACCEL = 5;
-  private double MAX_BACKWARD_ACCEL = -5;
+  private double MAX_FORWARD_ACCEL = 7;
+  private double MAX_BACKWARD_ACCEL = -7;
   /**
    * Creates a new ExampleCommand.
    *

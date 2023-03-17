@@ -13,7 +13,7 @@ public class WristUp extends CommandBase {
 //   private final double kHeightUpPosition = 0.381; // meters
 //   private final TrapezoidProfile.State kGoalState = new TrapezoidProfile.State(kHeightUpPosition, 0.0);
   
-  private final double goalAngle = Math.PI / 4; // radians
+  private final double goalAngle = Math.PI / 3; // radians
 
   public WristUp(Wrist subsystem) {
     m_armSubsystem = subsystem;

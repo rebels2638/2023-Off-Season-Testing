@@ -54,6 +54,7 @@ import frc.robot.commands.ElevatorDownLinSlideIn;
 import frc.robot.commands.ElevatorUpLinSlideOut;
 import frc.robot.commands.LinSlidePIDController;
 import frc.robot.commands.LinearSlideController;
+import frc.robot.commands.Place;
 import frc.robot.commands.LinSlideFullyIn;
 import frc.robot.commands.LinSlideFullyOut;
 import frc.robot.subsystems.LinSlidePID;
@@ -182,9 +183,9 @@ public class RobotContainer {
     // new ElevatorCancel(elevatorPID));
     this.elevatorFinal.setDefaultCommand(
         new ElevatorPIDController(elevatorFinal, xboxOperator)); // added, untested
-    this.xboxOperator.getBButton().onTrue(new ElevatorUpLinSlideOut());
+    this.xboxOperator.getYButton().onTrue(new ElevatorUpLinSlideOut());
     this.xboxOperator.getXButton().onTrue(new ElevatorDownLinSlideIn());
-    this.xboxOperator.getYButton().onTrue(new ElevatorUp(elevatorFinal));
+    this.xboxOperator.getBButton().onTrue(new Place());
 
     // this.xboxOperator.getYButton().onTrue(new ElevatorUp(elevatorFinal));
     // this.xboxOperator.getXButton().onTrue(new ElevatorDown(elevatorFinal));

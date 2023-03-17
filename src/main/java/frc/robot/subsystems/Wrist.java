@@ -23,6 +23,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 public class Wrist extends SubsystemBase {
+    private static Wrist instance = null;
     
     public static final double kMaxSpeed = 2.5; // radians? per second
     public static final double kMaxAcceleration = 1; // radians? per second squared
@@ -34,9 +35,9 @@ public class Wrist extends SubsystemBase {
     private static final double kRadiansPerRotation = 2 * Math.PI;
     private static final double kFeedforwardAngleOffset = 0;
 
-    public static final double kP = 3; // 5.8146 (it was actually 7.1682 but we increased it)
+    public static final double kP = 15; // 5.8146 (it was actually 7.1682 but we increased it)
     public static final double kI = 0;
-    public static final double kD = 0.0;
+    public static final double kD = 0.3;
 
     public static final double kS = 0.10299; // 0.068689;
     public static final double kV = 0.36865; // 4.3647;
@@ -116,6 +117,14 @@ public class Wrist extends SubsystemBase {
         tab.add("Zero Encoder",
                 new InstantCommand(() -> this.zeroEncoder()));
         
+    }
+
+    // Singleton class, call getInstance to access instead of the constructor.
+    public static Wrist getInstance() {
+        if (instance == null) {
+            instance = new Wrist();
+        }
+        return instance;
     }
     
     public double nativeToRad(double encoderUnits) {
@@ -210,7 +219,7 @@ public class Wrist extends SubsystemBase {
         } else if (getCurrentEncoderPosition() <= kLowerLimit && voltage < 0.0) {
             voltage = 0.0;
         }
-        System.out.println(getCurrentAngle());
+        // System.out.println(getCurrentAngle());
         m_voltageSetpoint = voltage;
         RebelUtil.constrain(m_voltageSetpoint, -4, 4);
 

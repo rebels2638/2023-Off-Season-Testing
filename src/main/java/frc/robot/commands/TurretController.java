@@ -31,7 +31,7 @@ public class TurretController extends CommandBase {
   @Override
   public void execute() {
     double input = m_controller.getLeftX()*0.25;
-    System.out.println(input);
+    //System.out.println(input);
     m_turret.setPercentOutput(input);
 
   }
