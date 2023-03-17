@@ -29,6 +29,7 @@
       "/Shuffleboard/Arm/Zero Encoder": "Command",
       "/Shuffleboard/Auto/Command": "String Chooser",
       "/Shuffleboard/Auto/Path": "String Chooser",
+      "/Shuffleboard/Auto/ResetPoseEstimator": "Command",
       "/Shuffleboard/Commands/Zero Elevator Position": "Command",
       "/Shuffleboard/Drive/Zero Encoders": "Command",
       "/Shuffleboard/Elevator/Zero Encoder": "Command",

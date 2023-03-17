@@ -7,8 +7,7 @@ package frc.robot.subsystems;
 import java.util.Collections;
 import java.util.List;
 
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
@@ -17,20 +16,23 @@ import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.numbers.N5;
 import edu.wpi.first.math.numbers.N7;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.Auto;
 
 // Not finished yet
 
 public class PoseEstimator extends SubsystemBase {
     private static PoseEstimator instance = null;
 
-    private PhotonCamera photonCamera = new PhotonCamera("camera");
+    // private PhotonCamera photonCamera = new PhotonCamera("camera");
     private FalconDrivetrain driveTrainSubsytem;
 
     private static final List<Pose3d> targetPoses = Collections
@@ -43,13 +45,14 @@ public class PoseEstimator extends SubsystemBase {
     private static final Vector<N3> vision = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
     private static DifferentialDrivePoseEstimator poseEstimator;
+    private final Gyro m_gyro = new AHRS(Port.kUSB);
     private double previousPipelineTimestamp = 0;
 
     public PoseEstimator() {
         this.driveTrainSubsytem = FalconDrivetrain.getInstance();
 
         poseEstimator = new DifferentialDrivePoseEstimator(driveTrainSubsytem.m_kinematics,
-                driveTrainSubsytem.getRotation2d(), driveTrainSubsytem.getLeftSideMeters(),
+                m_gyro.getRotation2d(), driveTrainSubsytem.getLeftSideMeters(),
                 driveTrainSubsytem.getRightSideMeters(), new Pose2d(),
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), // Local measurement standard deviations.
                                                                              // Left encoder, right encoder, gyro.
@@ -67,23 +70,23 @@ public class PoseEstimator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        var pipelineResult = photonCamera.getLatestResult();
-        var resultTimestamp = pipelineResult.getTimestampSeconds();
-        if (resultTimestamp != previousPipelineTimestamp && pipelineResult.hasTargets()) {
-            previousPipelineTimestamp = resultTimestamp;
-            var target = pipelineResult.getBestTarget();
-            var fiducialId = target.getFiducialId();
-            if (target.getPoseAmbiguity() <= .2 && fiducialId >= 0 && fiducialId < targetPoses.size()) {
-                var targetPose = targetPoses.get(fiducialId);
-                Transform3d camToTarget = target.getBestCameraToTarget();
-                Pose3d camPose = targetPose.transformBy(camToTarget.inverse());
+        // var pipelineResult = photonCamera.getLatestResult();
+        // var resultTimestamp = pipelineResult.getTimestampSeconds();
+        // if (resultTimestamp != previousPipelineTimestamp && pipelineResult.hasTargets()) {
+        //     previousPipelineTimestamp = resultTimestamp;
+        //     var target = pipelineResult.getBestTarget();
+        //     var fiducialId = target.getFiducialId();
+        //     if (target.getPoseAmbiguity() <= .2 && fiducialId >= 0 && fiducialId < targetPoses.size()) {
+        //         var targetPose = targetPoses.get(fiducialId);
+        //         Transform3d camToTarget = target.getBestCameraToTarget();
+        //         Pose3d camPose = targetPose.transformBy(camToTarget.inverse());
 
-                var visionMeasurment = camPose.transformBy(camToTarget); // May be an issue here
-                poseEstimator.addVisionMeasurement(visionMeasurment.toPose2d(), resultTimestamp);
-            }
-        }
+        //         var visionMeasurment = camPose.transformBy(camToTarget); // May be an issue here
+        //         poseEstimator.addVisionMeasurement(visionMeasurment.toPose2d(), resultTimestamp);
+        //     }
+        // }
 
-        poseEstimator.update(driveTrainSubsytem.getRotation2d(),
+        poseEstimator.update(m_gyro.getRotation2d(),
                 driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());
     }
 
@@ -98,5 +101,10 @@ public class PoseEstimator extends SubsystemBase {
 
     public static double degreesToRadians(int degrees) {
         return (degrees / 180) * Math.PI;
+    }
+
+    public void resetPose() {
+        var e =  Auto.m_path.getInitialPose();
+        poseEstimator.resetPosition(e.getRotation(), 0, 0, e);
     }
 }

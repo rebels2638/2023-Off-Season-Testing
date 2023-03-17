@@ -44,6 +44,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.commands.TurretController;
 import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.PoseEstimator;
+// import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Wrist;
 import frc.robot.commands.WristController;
@@ -77,13 +78,13 @@ public class RobotContainer {
   private final XboxController xboxOperator;
 
   private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
-  private final FalconDrivetrain drive = FalconDrivetrain.getInstance();
   private final ElevatorPIDNonProfiled elevatorFinal = ElevatorPIDNonProfiled.getInstance();
   private final Turret turret = Turret.getInstance();
   private final LinearSlide linslide = LinearSlide.getInstance();
   private final LinSlidePiston LinPiston = LinSlidePiston.getInstance();
   private final Wrist wrist = new Wrist();
   private final Claw claw = Claw.getInstance();
+  private final FalconDrivetrain drive = FalconDrivetrain.getInstance();
 
   
   // private final Drivetrain drive = new Drivetrain();
@@ -218,6 +219,7 @@ public class RobotContainer {
     Shuffleboard.getTab("Encoders").add("Zero Encoder", new InstantCommand(() -> wrist.zeroEncoder()));
     Shuffleboard.getTab("Auto").add("Command", chooser);
     Shuffleboard.getTab("Auto").add("Path", pathChooser);
+    Shuffleboard.getTab("Auto").add("ResetPoseEstimator", new InstantCommand(PoseEstimator.getInstance()::resetPose));
   }
 
   /**

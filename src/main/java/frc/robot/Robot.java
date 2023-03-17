@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all 
     m_robotContainer = new RobotContainer();
     time = new Timer();
-    
+    CommandScheduler.getInstance().enable();
   }
 
   /**

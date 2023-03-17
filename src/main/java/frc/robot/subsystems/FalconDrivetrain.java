@@ -84,7 +84,7 @@ public class FalconDrivetrain extends SubsystemBase {
   private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 14);
   private final Solenoid m_rightSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 15);
 
-  private final Gyro m_gyro = new AHRS(Port.kUSB);
+  // private final Gyro m_gyro = new AHRS(Port.kUSB);
 
   private final PIDController m_leftPIDController = new PIDController(0, 0, 0);
   private final PIDController m_rightPIDController = new PIDController(0, 0, 0);
@@ -118,8 +118,8 @@ public class FalconDrivetrain extends SubsystemBase {
 
   // private final DifferentialDriveOdometry m_odometry;
 
-  public final SimpleMotorFeedforward m_feedforwardHigh = new SimpleMotorFeedforward(GearboxConstants.STATIC_GAIN_HIGH, GearboxConstants.VELOCITY_GAIN_HIGH, GearboxConstants.ACCEL_GAIN_HIGH);
-  public final SimpleMotorFeedforward m_feedforwardLow = new SimpleMotorFeedforward(GearboxConstants.STATIC_GAIN_LOW, GearboxConstants.VELOCITY_GAIN_LOW, GearboxConstants.ACCEL_GAIN_LOW);
+  private SimpleMotorFeedforward m_feedforwardHigh = new SimpleMotorFeedforward(GearboxConstants.STATIC_GAIN_HIGH, GearboxConstants.VELOCITY_GAIN_HIGH, GearboxConstants.ACCEL_GAIN_HIGH);
+  private SimpleMotorFeedforward m_feedforwardLow = new SimpleMotorFeedforward(GearboxConstants.STATIC_GAIN_LOW, GearboxConstants.VELOCITY_GAIN_LOW, GearboxConstants.ACCEL_GAIN_LOW);
   public SimpleMotorFeedforward m_feedforward = inHighGear ? m_feedforwardHigh : m_feedforwardLow;
   /*
    * =============================================================================
@@ -330,16 +330,18 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   public void zeroHeading() {
-    m_gyro.reset();
+    // m_gyro.reset();
   }
 
   public double getHeading() {
-    return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if
+    // return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if
+    return 0.0;
     // the GYRO is REVERSED.
   }
 
   public Rotation2d getRotation2d() {
-    return m_gyro.getRotation2d();
+    // return m_gyro.getRotation2d();
+    return new Rotation2d();
   }
 
   /*

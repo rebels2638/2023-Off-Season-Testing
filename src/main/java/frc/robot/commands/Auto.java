@@ -23,6 +23,7 @@ import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.FalconDrivetrain;
 import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.LinearSlide;
+import frc.robot.subsystems.PoseEstimator;
 import frc.robot.utils.AutoConstants;
 import frc.robot.utils.ConstantsFXDriveTrain.DriveConstants;
 
@@ -39,6 +40,8 @@ import com.pathplanner.lib.server.PathPlannerServer;
 public final class Auto
     extends CommandBase {
 
+  public static Command autoCommand;
+
   private static final Map<String, Command> PATH_COMMANDS = new HashMap<>();
   static {
     PATH_COMMANDS.put("linPistonClose", new LinSlideFullyIn(LinearSlide.getInstance(), LinSlidePiston.getInstance()));
@@ -46,14 +49,15 @@ public final class Auto
     PATH_COMMANDS.put("clawOpen", new InstantCommand(Claw.getInstance()::push));
     PATH_COMMANDS.put("clawClose", new InstantCommand(Claw.getInstance()::pull));
     PATH_COMMANDS.put("resetDTEncoders", new InstantCommand(FalconDrivetrain.getInstance()::zeroEncoder));
-
+    PATH_COMMANDS.put("resetPoseEstimator", new InstantCommand(PoseEstimator.getInstance()::resetPose));
+    
   }
 
   private FalconDrivetrain m_drive;
   private RobotContainer m_robot;
   private boolean finished = false;
   private ShuffleboardTab tab = Shuffleboard.getTab("Auto");
-  private PathPlannerTrajectory m_path;
+  public static PathPlannerTrajectory m_path;
   private RamseteAutoBuilder m_autoBuilder;
   private Command m_autoCommand;
 
