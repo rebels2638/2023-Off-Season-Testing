@@ -210,7 +210,7 @@ public class Wrist extends SubsystemBase {
         } else if (getCurrentEncoderPosition() <= kLowerLimit && voltage < 0.0) {
             voltage = 0.0;
         }
-        System.out.println(voltage);
+        System.out.println(getCurrentAngle());
         m_voltageSetpoint = voltage;
         RebelUtil.constrain(m_voltageSetpoint, -4, 4);
 
