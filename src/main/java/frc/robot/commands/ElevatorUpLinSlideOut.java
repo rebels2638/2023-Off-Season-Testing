@@ -24,6 +24,6 @@ public class ElevatorUpLinSlideOut extends ParallelCommandGroup {
                     new TimerCommand(0.5),
                     new ParallelCommandGroup(
                         new LinSlideFullyOut(LinearSlide.getInstance(), LinSlidePiston.getInstance()),
-                        new WristStraight(Wrist.getInstance())))));
+                        new WristUp(Wrist.getInstance())))));
     }
 }
