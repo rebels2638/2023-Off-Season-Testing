@@ -114,10 +114,11 @@ public class RobotContainer {
     // Run a linslide in command to start the match
     (new LinSlideFullyIn(linslide, LinPiston)).schedule();
     
+
     this.elevatorFinal.setDefaultCommand(new ElevatorPIDController(elevatorFinal, xboxOperator)); 
     this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
-    this.xboxOperator.getRightBumper().onTrue(new LinSlideFullyOut(linslide, LinPiston));
-    this.xboxOperator.getLeftBumper().onTrue(new LinSlideFullyIn(linslide, LinPiston));
+    this.xboxOperator.getRightBumper().onTrue(new Place());
+    this.xboxOperator.getLeftBumper().onTrue(new InstantCommand(() -> linslideToggle.toggle()));
 
     // presets
     this.xboxOperator.getYButton().onTrue(new ElevatorGetFromLoading());

@@ -35,6 +35,7 @@ public class LinearSlide extends SubsystemBase {
         tab = Shuffleboard.getTab("Linear Slide");
         linSlideEncoderPosition = tab.add("Lin_Encoder_Position", 0.0).getEntry();
         tab.add("Zero Encoder", new InstantCommand(() -> this.zeroEncoder()));
+        tab.add("Max Out Encoder", new InstantCommand(() -> this.maxOutEncoder()));
         m_setpoint = 0.0;
     }
 
@@ -76,5 +77,9 @@ public class LinearSlide extends SubsystemBase {
 
     public void zeroEncoder() {
         m_linslide.setSelectedSensorPosition(0);
+    }
+    
+    public void maxOutEncoder() {
+        m_linslide.setSelectedSensorPosition(56000);
     }
 }

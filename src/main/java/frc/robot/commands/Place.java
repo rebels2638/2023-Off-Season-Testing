@@ -16,8 +16,10 @@ import frc.robot.commands.ElevatorCancel;
 public class Place extends ParallelCommandGroup {
     public Place() {
         addCommands(
-                new SequentialCommandGroup(
+                new ParallelCommandGroup(
                         new WristStraight(Wrist.getInstance()),
-                        new InstantCommand(() -> Claw.getInstance().push())));
+                        new SequentialCommandGroup(
+                                new TimerCommand(0.4),
+                                new InstantCommand(() -> Claw.getInstance().push()))));
     }
 }

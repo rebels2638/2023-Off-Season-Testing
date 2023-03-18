@@ -64,7 +64,7 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("elevatorDownLinSlideIn", new ElevatorDownLinSlideIn());
 
         // idk if this should be dynamically loaded, as in using java.io.*
-        PATHS.put("hPath", "hPath");
+        PATHS.put("testPath", "testPath");
     }
 
     private FalconDrivetrain m_drive;

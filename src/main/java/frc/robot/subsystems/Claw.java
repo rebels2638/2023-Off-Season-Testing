@@ -24,7 +24,7 @@ public class Claw extends SubsystemBase {
 
     public Claw() { 
         this.solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH,0, 1);//0 and 1
-        this.push();
+        this.pull();
         state = true;
     }
 

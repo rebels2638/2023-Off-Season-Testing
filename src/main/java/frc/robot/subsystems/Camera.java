@@ -36,7 +36,10 @@ public class Camera extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Shuffleboard.getTab("Camera").add("Elevator View", photonCamera.getLatestResult());
+    Shuffleboard.getTab("Camera").add("Elevator View",
+    
+    
+    photonCamera.getLatestResult());
   }
 
   @Override
