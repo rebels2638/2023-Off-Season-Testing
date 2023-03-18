@@ -54,7 +54,7 @@ import frc.robot.commands.ElevatorDownLinSlideIn;
 import frc.robot.commands.ElevatorGetFromLoading;
 import frc.robot.commands.ElevatorUpLinSlideOut;
 import frc.robot.commands.LinSlidePIDController;
-import frc.robot.commands.LinearSlideController;
+import frc.robot.commands.LinSlideToggle;
 import frc.robot.commands.Place;
 import frc.robot.commands.LinSlideFullyIn;
 import frc.robot.commands.LinSlideFullyOut;
@@ -90,8 +90,6 @@ public class RobotContainer {
   private final FalconDrivetrain drive = FalconDrivetrain.getInstance();
   private final AutoRunner auto = AutoRunner.getInstance();
 
-  private final LinearSlideController linslideToggle = new LinearSlideController(linslide, LinPiston);
-
   // private final Drivetrain drive = new Drivetrain();
   // private final Arm arm = Arm.getInstance();
   // private final LinSlidePID linslidePID = new LinSlidePID();
@@ -118,7 +116,7 @@ public class RobotContainer {
     this.elevatorFinal.setDefaultCommand(new ElevatorPIDController(elevatorFinal, xboxOperator)); 
     this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
     this.xboxOperator.getRightBumper().onTrue(new Place());
-    this.xboxOperator.getLeftBumper().onTrue(new InstantCommand(() -> linslideToggle.toggle()));
+    this.xboxOperator.getLeftBumper().onTrue(new LinSlideToggle(linslide, LinPiston));
 
     // presets
     this.xboxOperator.getYButton().onTrue(new ElevatorGetFromLoading());

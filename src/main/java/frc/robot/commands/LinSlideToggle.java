@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 /** An example command that uses an example subsystem. */
-public class LinearSlideController extends CommandBase {
+public class LinSlideToggle extends CommandBase {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final LinearSlide m_LinearSlide;
     private final LinSlidePiston m_linPiston;
@@ -18,7 +18,7 @@ public class LinearSlideController extends CommandBase {
     public boolean extend = true;
     public static boolean state = false;
 
-    public LinearSlideController(LinearSlide subsystem, LinSlidePiston piston, XboxController xboxOperator) {
+    public LinSlideToggle(LinearSlide subsystem, LinSlidePiston piston, XboxController xboxOperator) {
         m_LinearSlide = subsystem;
         m_linPiston = piston;
         m_operator = xboxOperator;
@@ -26,7 +26,7 @@ public class LinearSlideController extends CommandBase {
         addRequirements(subsystem);
     }
 
-    public LinearSlideController(LinearSlide subsystem, LinSlidePiston piston) {
+    public LinSlideToggle(LinearSlide subsystem, LinSlidePiston piston) {
       m_LinearSlide = subsystem;
       m_linPiston = piston;
 
@@ -37,7 +37,16 @@ public class LinearSlideController extends CommandBase {
     @Override
     public void initialize() {
         // follow position control to goal state
-
+        state = m_LinearSlide.getCurrentEncoderPosition() > 20000;
+        if (state) {
+          var in = new LinSlideFullyIn(m_LinearSlide, m_linPiston);
+          in.schedule();
+          System.out.println("in: " + in);
+      } else {
+          var out = new LinSlideFullyOut(m_LinearSlide, m_linPiston);
+          out.schedule();
+          System.out.println("out: " + out);
+      }
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -46,7 +55,7 @@ public class LinearSlideController extends CommandBase {
       // double inputPercent = m_operator.getRightX();
       // m_LinearSlide.setPercentOutput(inputPercent);
 
-      m_LinearSlide.setPercentOutput(m_operator.getRightX());
+      // m_LinearSlide.setPercentOutput(m_operator.getRightX());
 
       // if (m_operator.getRightBumper().getAsBoolean()) {
       //     // System.out.println("IN!");
@@ -69,19 +78,6 @@ public class LinearSlideController extends CommandBase {
     // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
-
-  public void toggle() {
-    // System.out.println("ITS ON: " + state);
-    if (state) {
-        var in = new LinSlideFullyIn(m_LinearSlide, m_linPiston);
-        in.schedule();
-        System.out.println("in: " + in);
-    } else {
-        var out = new LinSlideFullyOut(m_LinearSlide, m_linPiston);
-        out.schedule();
-        System.out.println("out: " + out);
-    }
-}
 }

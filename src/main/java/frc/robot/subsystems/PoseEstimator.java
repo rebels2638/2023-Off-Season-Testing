@@ -90,7 +90,7 @@ public class PoseEstimator extends SubsystemBase {
                 driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());
     }
 
-    private String getFormattedPose() {
+    public String getFormattedPose() {
         var pose = getCurrentPose();
         return String.format("(%.2f, %.2f) %.2f degrees", pose.getX(), pose.getY(), pose.getRotation().getDegrees());
     }

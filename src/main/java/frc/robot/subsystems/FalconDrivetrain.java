@@ -115,7 +115,8 @@ public class FalconDrivetrain extends SubsystemBase {
   private final GenericEntry rightMotorVoltageSetpoint;
 
   private final GenericEntry gyroPitch;
-  private GenericEntry gyroAngle;
+  private final GenericEntry gyroAngle;
+  private final GenericEntry poseString;
 
   private double m_leftVoltageSetpoint;
   private double m_rightVoltageSetpoint;
@@ -178,6 +179,8 @@ public class FalconDrivetrain extends SubsystemBase {
     
     gyroPitch = tab.add("Gyro Pitch", 0.0).getEntry();
     gyroAngle = tab.add("Gyro Angle", 0.0).getEntry();
+
+    poseString = tab.add("Pose String", 0.0).getEntry();
 
     if (RobotBase.isSimulation()) {
       // TODO: EDIT VALUES TO BE ACCURATE
@@ -292,6 +295,8 @@ public class FalconDrivetrain extends SubsystemBase {
 
     gyroAngle.setDouble(getHeading());
     gyroPitch.setDouble(PoseEstimator.getInstance().getPitch());    
+
+    poseString.setString(PoseEstimator.getInstance().getFormattedPose());
   }
 
   public void drive(double xSpeed, double rot) {
