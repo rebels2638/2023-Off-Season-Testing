@@ -116,14 +116,14 @@ public class RobotContainer {
     
     this.elevatorFinal.setDefaultCommand(new ElevatorPIDController(elevatorFinal, xboxOperator)); 
     this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
-    this.xboxOperator.getRightBumper().onTrue(new InstantCommand(() -> this.claw.toggle()));
-    this.xboxOperator.getLeftBumper().onTrue(new InstantCommand(() -> linslideToggle.toggle()));
+    this.xboxOperator.getRightBumper().onTrue(new LinSlideFullyOut(linslide, LinPiston));
+    this.xboxOperator.getLeftBumper().onTrue(new LinSlideFullyIn(linslide, LinPiston));
 
     // presets
-    this.xboxOperator.getYButton().onTrue(new ElevatorUpLinSlideOut());
+    this.xboxOperator.getYButton().onTrue(new ElevatorGetFromLoading());
     this.xboxOperator.getXButton().onTrue(new ElevatorDownLinSlideIn());
-    this.xboxOperator.getBButton().onTrue(new Place());
-    this.xboxOperator.getAButton().onTrue(new ElevatorGetFromLoading());
+    this.xboxOperator.getBButton().onTrue(new ElevatorUpLinSlideOut());
+    this.xboxOperator.getAButton().onTrue(new InstantCommand(() -> this.claw.toggle()));
 
     // toggle gear
     this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));

@@ -192,7 +192,7 @@ public class FalconDrivetrain extends SubsystemBase {
     }
 
     tab.add("Zero Encoders", new InstantCommand(() -> zeroEncoder()));
-    Shuffleboard.getTab("Drive").add(new InstantCommand(() -> PoseEstimator.getInstance().resetHeading()));
+    tab.add("Zero Gyro", new InstantCommand(() -> zeroHeading()));
   }
 
   public static FalconDrivetrain getInstance() {
@@ -290,7 +290,7 @@ public class FalconDrivetrain extends SubsystemBase {
     rightMotorVoltageSetpoint.setDouble(m_rightLeader.getMotorOutputVoltage());
     rightMotorVoltageSupplied.setDouble(m_rightVoltageSetpoint);
 
-    gyroAngle.setDouble(PoseEstimator.getInstance().getAngle());
+    gyroAngle.setDouble(getHeading());
     gyroPitch.setDouble(PoseEstimator.getInstance().getPitch());    
   }
 
@@ -347,17 +347,24 @@ public class FalconDrivetrain extends SubsystemBase {
 
   public void zeroHeading() {
     // m_gyro.reset();
+    PoseEstimator.getInstance().resetHeading();
   }
 
   public double getHeading() {
     // return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if
-    return 0.0;
+    return PoseEstimator.getInstance().getAngle();
+    // the GYRO is REVERSED.
+  }
+
+  public double getPitch() {
+    // return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if
+    return PoseEstimator.getInstance().getPitch();
     // the GYRO is REVERSED.
   }
 
   public Rotation2d getRotation2d() {
     // return m_gyro.getRotation2d();
-    return new Rotation2d();
+    return PoseEstimator.getInstance().getCurrentPose().getRotation();
   }
 
   /*

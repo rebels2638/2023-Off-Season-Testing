@@ -111,14 +111,12 @@ public class PoseEstimator extends SubsystemBase {
         return (degrees / 180) * Math.PI;
     }
 
-    public void resetPose() {
-        FalconDrivetrain.getInstance().zeroEncoder();
-        var e =  AutoRunner.getInstance().getPath().getInitialPose();
-        poseEstimator.resetPosition(e.getRotation(), driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters(), e);
+    public void resetPose(Pose2d pose) {
+        driveTrainSubsytem.zeroEncoder();
+        poseEstimator.resetPosition(pose.getRotation(), driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters(), pose);
     }
 
     public void resetHeading() {
         m_gyro.reset();
-        
     }
 }

@@ -58,7 +58,6 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("clawOpen", new InstantCommand(Claw.getInstance()::push));
         PATH_COMMANDS.put("clawClose", new InstantCommand(Claw.getInstance()::pull));
         PATH_COMMANDS.put("resetDTEncoders", new InstantCommand(FalconDrivetrain.getInstance()::zeroEncoder));
-        PATH_COMMANDS.put("resetPoseEstimator", new InstantCommand(PoseEstimator.getInstance()::resetPose));
         PATH_COMMANDS.put("elevatorFullUp", new ElevatorUp(ElevatorPIDNonProfiled.getInstance()));
         PATH_COMMANDS.put("elevatorFullDown", new ElevatorDown(ElevatorPIDNonProfiled.getInstance()));
         PATH_COMMANDS.put("elevatorUpLinSlideOut", new ElevatorUpLinSlideOut());
@@ -79,11 +78,14 @@ public final class AutoRunner extends SubsystemBase {
 
     private final SendableChooser<String> pathChooser = new SendableChooser<String>();
 
+    private PoseEstimator m_poseEstimator;
+
     public AutoRunner() {
         m_drive = FalconDrivetrain.getInstance();
+        m_poseEstimator = PoseEstimator.getInstance();
         m_autoBuilder = new RamseteAutoBuilder(
                 m_drive::getPose,
-                m_drive::resetOdometry,
+                m_poseEstimator::resetPose,
                 new RamseteController(),
                 m_drive.m_kinematics,
                 m_drive.m_feedforward,
@@ -103,8 +105,6 @@ public final class AutoRunner extends SubsystemBase {
 
         Shuffleboard.getTab("Auto").add("Path", pathChooser);
         Shuffleboard.getTab("Auto").add("Load Path", new InstantCommand(() -> loadPath()));
-        Shuffleboard.getTab("Auto").add("ResetPoseEstimator",
-                new InstantCommand(PoseEstimator.getInstance()::resetPose));
     }
 
     public static AutoRunner getInstance() {
@@ -119,11 +119,12 @@ public final class AutoRunner extends SubsystemBase {
     }
 
     public void loadPath() {
-        System.out.println(pathChooser.getSelected());
         m_path = PathPlanner.loadPath(pathChooser.getSelected(), new PathConstraints(2, 0.25));
+        System.out.println(pathChooser.getSelected());
     }
 
     public Command getCommand() {
+        loadPath();
         return m_autoBuilder.fullAuto(m_path);
     }
 }
