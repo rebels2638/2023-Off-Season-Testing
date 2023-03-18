@@ -252,8 +252,8 @@ public class FalconDrivetrain extends SubsystemBase {
     m_leftSetpoint = speeds.leftMetersPerSecond;
     m_rightSetpoint = speeds.rightMetersPerSecond;
     var kG = inHighGear ? kGHigh.getDouble(0.0) : kGLow.getDouble(0.0);
-    var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond) + kG * Math.cos(PoseEstimator.getInstance().getPitch());
-    var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond) + kG * Math.cos(PoseEstimator.getInstance().getPitch());
+    var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond) + kG * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
+    var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond) + kG * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
     double leftPID = m_leftPIDController
         .calculate(getLeftSideVelocity(), speeds.leftMetersPerSecond);
     double rightPID = m_rightPIDController
@@ -381,8 +381,8 @@ public class FalconDrivetrain extends SubsystemBase {
    */
 
   public void setVoltageFromAuto(double leftVoltage, double rightVoltage) {
-    m_leftGroup.setVoltage(leftVoltage);
-    m_rightGroup.setVoltage(rightVoltage);
+    m_leftGroup.setVoltage(leftVoltage + kG * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
+    m_rightGroup.setVoltage(rightVoltage + kG * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
   }
 
   public void switchToHighGear() {
