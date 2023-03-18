@@ -381,8 +381,9 @@ public class FalconDrivetrain extends SubsystemBase {
    */
 
   public void setVoltageFromAuto(double leftVoltage, double rightVoltage) {
-    m_leftGroup.setVoltage(leftVoltage + kG * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
-    m_rightGroup.setVoltage(rightVoltage + kG * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
+    var kG = inHighGear ? kGHigh.getDouble(0.0) : kGLow.getDouble(0.0);
+    m_leftGroup.setVoltage(leftVoltage + kG * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0)));
+    m_rightGroup.setVoltage(rightVoltage + kG * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0)));
   }
 
   public void switchToHighGear() {
