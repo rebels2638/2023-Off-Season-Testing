@@ -48,6 +48,7 @@ public class LinSlideFullyIn extends CommandBase {
     public void end(boolean interrupted) {
         m_linslide.setPercentOutput(0.0);
         m_linslide.zeroEncoder();
+        LinearSlideController.state = true;
     }
 
     // Returns true when the command should end.

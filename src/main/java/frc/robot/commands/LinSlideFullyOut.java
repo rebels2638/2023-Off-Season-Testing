@@ -44,6 +44,7 @@ public class LinSlideFullyOut extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         m_linslide.setPercentOutput(0.0);
+        LinearSlideController.state = false;
     }
 
     // Returns true when the command should end.

@@ -3,23 +3,35 @@ package frc.robot.commands;
 import frc.lib.input.XboxController;
 import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.LinearSlide;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 /** An example command that uses an example subsystem. */
 public class LinearSlideController extends CommandBase {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final LinearSlide m_LinearSlide;
-    private final XboxController m_operator;
+    private final LinSlidePiston m_linPiston;
+    private XboxController m_operator;
     public boolean extend = true;
+    public static boolean state = false;
 
-    public LinearSlideController(LinearSlide subsystem, XboxController xboxOperator) {
+    public LinearSlideController(LinearSlide subsystem, LinSlidePiston piston, XboxController xboxOperator) {
         m_LinearSlide = subsystem;
+        m_linPiston = piston;
         m_operator = xboxOperator;
 
         addRequirements(subsystem);
     }
+
+    public LinearSlideController(LinearSlide subsystem, LinSlidePiston piston) {
+      m_LinearSlide = subsystem;
+      m_linPiston = piston;
+
+      addRequirements(subsystem);
+  }
 
     // Called when the command is initially scheduled.
     @Override
@@ -59,4 +71,17 @@ public class LinearSlideController extends CommandBase {
   public boolean isFinished() {
     return false;
   }
+
+  public void toggle() {
+    // System.out.println("ITS ON: " + state);
+    if (state) {
+        var in = new LinSlideFullyIn(m_LinearSlide, m_linPiston);
+        in.schedule();
+        System.out.println("in: " + in);
+    } else {
+        var out = new LinSlideFullyOut(m_LinearSlide, m_linPiston);
+        out.schedule();
+        System.out.println("out: " + out);
+    }
+}
 }
