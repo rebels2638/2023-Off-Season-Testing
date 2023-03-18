@@ -65,6 +65,7 @@ public final class AutoRunner extends SubsystemBase {
 
         // idk if this should be dynamically loaded, as in using java.io.*
         PATHS.put("testPath", "testPath");
+        PATHS.put("rightCone", "Rcone_better");
     }
 
     private FalconDrivetrain m_drive;
