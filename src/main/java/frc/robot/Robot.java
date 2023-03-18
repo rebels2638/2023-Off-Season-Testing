@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all 
-    m_robotContainer = new RobotContainer();
+    m_robotContainer = RobotContainer.getInstance();
     time = new Timer();
     CommandScheduler.getInstance().enable();
   }

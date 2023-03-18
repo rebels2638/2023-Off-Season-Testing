@@ -60,8 +60,8 @@ public class Wrist extends SubsystemBase {
     private double m_lastVelocity = 0;
     private double m_lastTime = Timer.getFPGATimestamp();
 
-    private static double kUpperLimit = 110000.0;
-    private static double kLowerLimit = -44900.0;
+    private static double kUpperLimit = Math.PI * (3/4);//110000.0;
+    private static double kLowerLimit = Math.PI / 4;
 
     private final ShuffleboardTab tab;
 
@@ -103,8 +103,8 @@ public class Wrist extends SubsystemBase {
         resetAngleAccumulator();
         
         // shuff
-        tab = Shuffleboard.getTab("Arm");
-        wristEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
+        tab = Shuffleboard.getTab("Wrist");
+        wristEncoderPosition = tab.add("Arm Position", 0.0).getEntry();
         wristPosition = tab.add("Angle", 0.0).getEntry();
         wristVelocity = tab.add("Velocity", 0.0).getEntry();
         wristAcceleration = tab.add("Acceleration", 0.0).getEntry();
@@ -214,9 +214,9 @@ public class Wrist extends SubsystemBase {
         // double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
 
         double voltage = RebelUtil.constrain(pid, -12.0, 12.0);
-        if (getCurrentEncoderPosition() >= kUpperLimit && voltage > 0.0) {
+        if (getCurrentAngle() >= kUpperLimit && voltage > 0.0) {
             voltage = 0.0;
-        } else if (getCurrentEncoderPosition() <= kLowerLimit && voltage < 0.0) {
+        } else if (getCurrentAngle() <= kLowerLimit && voltage < 0.0) {
             voltage = 0.0;
         }
         // System.out.println(getCurrentAngle());

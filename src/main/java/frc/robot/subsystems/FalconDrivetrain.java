@@ -86,8 +86,8 @@ public class FalconDrivetrain extends SubsystemBase {
 
   // private final Gyro m_gyro = new AHRS(Port.kUSB);
 
-  private final PIDController m_leftPIDController = new PIDController(0, 0, 0);
-  private final PIDController m_rightPIDController = new PIDController(0, 0, 0);
+  private final PIDController m_leftPIDController = new PIDController(0.65405, 0, 0);
+  private final PIDController m_rightPIDController = new PIDController(0.65405, 0, 0);
 
   private double m_leftSetpoint = 0.0;
   private double m_rightSetpoint = 0.0;
@@ -115,6 +115,7 @@ public class FalconDrivetrain extends SubsystemBase {
   private final GenericEntry rightMotorVoltageSetpoint;
 
   private final GenericEntry gyroPitch;
+  private GenericEntry gyroAngle;
 
   private double m_leftVoltageSetpoint;
   private double m_rightVoltageSetpoint;
@@ -176,6 +177,7 @@ public class FalconDrivetrain extends SubsystemBase {
     rightMotorVoltageSetpoint = tab.add("Right Voltage Setpoint", 0.0).getEntry();
     
     gyroPitch = tab.add("Gyro Pitch", 0.0).getEntry();
+    gyroAngle = tab.add("Gyro Angle", 0.0).getEntry();
 
     if (RobotBase.isSimulation()) {
       // TODO: EDIT VALUES TO BE ACCURATE
@@ -190,6 +192,7 @@ public class FalconDrivetrain extends SubsystemBase {
     }
 
     tab.add("Zero Encoders", new InstantCommand(() -> zeroEncoder()));
+    Shuffleboard.getTab("Drive").add(new InstantCommand(() -> PoseEstimator.getInstance().resetHeading()));
   }
 
   public static FalconDrivetrain getInstance() {
@@ -287,6 +290,7 @@ public class FalconDrivetrain extends SubsystemBase {
     rightMotorVoltageSetpoint.setDouble(m_rightLeader.getMotorOutputVoltage());
     rightMotorVoltageSupplied.setDouble(m_rightVoltageSetpoint);
 
+    gyroAngle.setDouble(PoseEstimator.getInstance().getAngle());
     gyroPitch.setDouble(PoseEstimator.getInstance().getPitch());    
   }
 
@@ -296,7 +300,7 @@ public class FalconDrivetrain extends SubsystemBase {
 
   public void resetOdometry(Pose2d pose) {
     zeroEncoder();
-    m_differentialDrivetrainSimulator.setPose(pose);
+    if(Robot.isSimulation()) m_differentialDrivetrainSimulator.setPose(pose);
   }
 
   public void zeroEncoder() {

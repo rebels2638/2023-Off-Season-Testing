@@ -20,7 +20,7 @@
           "linPistonOpen"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "after",
+        "waitBehavior": "none",
         "waitTime": 24.0
       }
     },
@@ -30,8 +30,8 @@
         "y": 2.916041780728354
       },
       "prevControl": {
-        "x": 8.825478823568204,
-        "y": 2.916041780728354
+        "x": 11.51722563060511,
+        "y": 2.8904769348000237
       },
       "nextControl": null,
       "holonomicAngle": 0,

@@ -18,6 +18,6 @@ public class Place extends ParallelCommandGroup {
         addCommands(
                 new SequentialCommandGroup(
                         new WristStraight(Wrist.getInstance()),
-                        new InstantCommand(() -> Claw.getInstance().pull())));
+                        new InstantCommand(() -> Claw.getInstance().push())));
     }
 }

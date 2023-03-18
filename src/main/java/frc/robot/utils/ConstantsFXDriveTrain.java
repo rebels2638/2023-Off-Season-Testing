@@ -154,9 +154,9 @@ public final class ConstantsFXDriveTrain {
         public static final double LOW_GEAR_EFFECTIVE_CPR = FALCON_CPR * LOW_GEAR_REDUCTION;
 
         // Feed forward/back gains
-        public static final double STATIC_GAIN_HIGH = 0.1728; // volts
-        public static final double VELOCITY_GAIN_HIGH = 1.7575; // volt seconds per meter
-        public static final double ACCEL_GAIN_HIGH = 0.42374; // volt seconds squared per meter
+        public static final double STATIC_GAIN_HIGH = 0.15377; // volts
+        public static final double VELOCITY_GAIN_HIGH = 2.0255; // volt seconds per meter
+        public static final double ACCEL_GAIN_HIGH = 0.17382; // volt seconds squared per meter
         public static final double GRAVITY_GAIN_HIGH = 0.0;
 
         public static final double STATIC_GAIN_LOW = 0.1728; // volts

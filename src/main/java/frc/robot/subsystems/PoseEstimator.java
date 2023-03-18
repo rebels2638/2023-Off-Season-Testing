@@ -25,7 +25,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.Auto;
+import frc.robot.subsystems.AutoRunner;
 
 // Not finished yet
 
@@ -103,12 +103,22 @@ public class PoseEstimator extends SubsystemBase {
         return m_gyro.getPitch();
     }
 
+    public double getAngle() {
+        return m_gyro.getAngle();
+    }
+
     public static double degreesToRadians(int degrees) {
         return (degrees / 180) * Math.PI;
     }
 
     public void resetPose() {
-        var e =  Auto.m_path.getInitialPose();
-        poseEstimator.resetPosition(e.getRotation(), 0, 0, e);
+        FalconDrivetrain.getInstance().zeroEncoder();
+        var e =  AutoRunner.getInstance().getPath().getInitialPose();
+        poseEstimator.resetPosition(e.getRotation(), driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters(), e);
+    }
+
+    public void resetHeading() {
+        m_gyro.reset();
+        
     }
 }

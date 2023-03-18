@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,7 +26,6 @@ import frc.robot.commands.ElevatorCancel;
 import frc.robot.commands.ElevatorController;
 // import frc.robot.commands.ArmPositionSet;
 // import frc.robot.commands.ArmUp;
-import frc.robot.commands.Auto;
 import frc.robot.commands.AutoBalance;
 // import frc.robot.subsystems.ArmPID;
 // import frc.robot.commands.ArmPIDController;
@@ -40,6 +43,7 @@ import frc.robot.subsystems.FalconDrivetrain;
 import frc.robot.subsystems.LinSlidePID;
 import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.AutoRunner;
 // import frc.robot.commands.PositionPresets;
 import frc.robot.commands.TurretController;
 import frc.robot.subsystems.LinearSlide;
@@ -51,6 +55,7 @@ import frc.robot.commands.WristController;
 import frc.robot.commands.WristUp;
 import frc.robot.commands.FieldOrientedDrive;
 import frc.robot.commands.ElevatorDownLinSlideIn;
+import frc.robot.commands.ElevatorGetFromLoading;
 import frc.robot.commands.ElevatorUpLinSlideOut;
 import frc.robot.commands.LinSlidePIDController;
 import frc.robot.commands.LinearSlideController;
@@ -74,20 +79,21 @@ import frc.robot.utils.ConstantsArmElevator.ArmConstants;
 public class RobotContainer {
   // ---------- Robot Subsystems ---------- \\
 
+  public static RobotContainer instance = null;
   // The robot's controllers
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
 
+  private final Wrist wrist = Wrist.getInstance();
   private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
   private final ElevatorPIDNonProfiled elevatorFinal = ElevatorPIDNonProfiled.getInstance();
   private final Turret turret = Turret.getInstance();
   private final LinearSlide linslide = LinearSlide.getInstance();
   private final LinSlidePiston LinPiston = LinSlidePiston.getInstance();
-  private final Wrist wrist = new Wrist();
   private final Claw claw = Claw.getInstance();
   private final FalconDrivetrain drive = FalconDrivetrain.getInstance();
+  private final AutoRunner auto = AutoRunner.getInstance();
 
-  
   // private final Drivetrain drive = new Drivetrain();
   // private final Arm arm = Arm.getInstance();
   // private final LinSlidePID linslidePID = new LinSlidePID();
@@ -99,8 +105,6 @@ public class RobotContainer {
 
   // Create a Sendable Chooser, which allows us to select between Commands (in
   // this case, auto commands)
-  private final SendableChooser<Command> chooser = new SendableChooser<Command>();
-  private final SendableChooser<String> pathChooser = new SendableChooser<String>();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -143,7 +147,7 @@ public class RobotContainer {
     // this.armPID.setDefaultCommand(
     // new ArmPIDController(armPID, xboxOperator));
 
-    this.xboxOperator.getAButton().onTrue(
+    this.xboxOperator.getRightBumper().onTrue(
         new InstantCommand(() -> this.claw.toggle()));
 
     // this.linslide.setDefaultCommand(new LinearSlideController(linslide,
@@ -157,8 +161,8 @@ public class RobotContainer {
     // Run a linslide in command to start the match
     (new LinSlideFullyIn(linslide, LinPiston)).schedule();
 
-    this.xboxOperator.getRightBumper().onTrue(new LinSlideFullyOut(linslide, LinPiston));
-    this.xboxOperator.getLeftBumper().onTrue(new LinSlideFullyIn(linslide, LinPiston));
+    this.xboxOperator.getAButton().onTrue(new ElevatorGetFromLoading());
+    this.xboxOperator.getLeftBumper().onTrue(new LinSlideFullyOut(linslide, LinPiston));
 
     // this.xboxOperator.getUpDpad().onTrue(new InstantCommand(() ->
     // this.turret.setGoal(0)));
@@ -214,13 +218,17 @@ public class RobotContainer {
     this.xboxDriver.getLeftBumper().onTrue(
         new InstantCommand(() -> this.drive.switchToLowGear()));
 
-    chooser.addOption("RamseteFollower", new Auto(drive, this));
-    pathChooser.addOption("hPath", "hPath.wpilib.json");
 
     Shuffleboard.getTab("Encoders").add("Zero Encoder", new InstantCommand(() -> wrist.zeroEncoder()));
-    Shuffleboard.getTab("Auto").add("Command", chooser);
-    Shuffleboard.getTab("Auto").add("Path", pathChooser);
-    Shuffleboard.getTab("Auto").add("ResetPoseEstimator", new InstantCommand(PoseEstimator.getInstance()::resetPose));
+
+    Shuffleboard.getTab("Drive").add("Zero Heading", new InstantCommand(PoseEstimator.getInstance()::resetHeading));
+  }
+
+  public static RobotContainer getInstance() {
+    if (instance == null) {
+      instance = new RobotContainer();
+    }
+    return instance;
   }
 
   /**
@@ -230,12 +238,6 @@ public class RobotContainer {
    */
 
   public Command getAutonomousCommand() {
-    Command chosen = chooser.getSelected();
-    return chosen;
-  }
-
-  public String getPathFileName() {
-    String chosen = pathChooser.getSelected();
-    return chosen;
+    return auto.getCommand();
   }
 }
