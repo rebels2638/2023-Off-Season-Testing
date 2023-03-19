@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.commands.AutoBalance;
 import frc.robot.commands.AutoPlace;
 import frc.robot.commands.ElevatorDown;
 import frc.robot.commands.ElevatorDownLinSlideIn;
@@ -26,6 +27,7 @@ import frc.robot.commands.ElevatorUpLinSlideOut;
 import frc.robot.commands.LinSlideFullyIn;
 import frc.robot.commands.LinSlideFullyOut;
 import frc.robot.commands.Place;
+import frc.robot.commands.WristDown;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -67,6 +69,8 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("elevatorDownLinSlideIn", new ElevatorDownLinSlideIn());
         PATH_COMMANDS.put("resetGyro", new InstantCommand(PoseEstimator.getInstance()::resetHeading));
         PATH_COMMANDS.put("autoPlace", new AutoPlace());
+        PATH_COMMANDS.put("wristDown", new WristDown(Wrist.getInstance()));
+        PATH_COMMANDS.put("autoBalance", new AutoBalance(FalconDrivetrain.getInstance(), PoseEstimator.getInstance()));
 
         // idk if this should be dynamically loaded, as in using java.io.*
         PATHS.put("testPath", "testPath");

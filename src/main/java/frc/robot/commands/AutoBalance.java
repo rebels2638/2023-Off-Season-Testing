@@ -13,6 +13,7 @@ import com.ctre.phoenix.CANifier.PWMChannel;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,105 +30,83 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-
 /** An example command that uses an example subsystem. */
 public class AutoBalance extends CommandBase {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final FalconDrivetrain m_driveTrain;
-  //private final SerialPort sPort = new SerialPort(200, Port.kUSB);
+	@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
+	private final FalconDrivetrain m_driveTrain;
+	// private final SerialPort sPort = new SerialPort(200, Port.kUSB);
 
-  private final AHRS gyro = new AHRS(Port.kUSB);
-  private final PoseEstimator poseEstimatorSubsystem;
-  private final double yawErrorMargin = 5;
-  private final double pitchErrorMargin = 3;
-  
-  private final double rkp = 1; // r = rotation
-  private final double rki = 0;
-  private final double rkd = 1;
+	private final PoseEstimator poseEstimatorSubsystem;
+	private final double yawErrorMargin = 3;
+	private final double pitchErrorMargin = 2;
+	private final double yawVeloErrorMargin = 5;
+	private final double pitchVeloErrorMargin = 5;
 
-  private double dkp = SmartDashboard.getNumber("", 1);
-  private double dki = 0; // d = degrees relitive to ground 
-  private double dkd = 1;
-  private double m_headingSetpoint;
-  private boolean bBalanced = false;
+	private final double rkp = 1; // r = rotation
+	private final double rki = 0;
+	private final double rkd = 0;
 
-  private ProfiledPIDController rpidController;
-  private ProfiledPIDController dpidController;
+	private double dkp = 1;
+	private double dki = 0; // d = degrees relitive to ground
+	private double dkd = 0;
+	private double m_headingSetpoint;
+	private boolean bBalanced = false;
 
-  private ShuffleboardTab tab;
+	private PIDController rpidController;
+	private PIDController dpidController;
 
-  private final GenericEntry CurrentPitch;
-  private final GenericEntry headingSetPoint;
-  
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
-  public AutoBalance(FalconDrivetrain drive, PoseEstimator pose) {
-    m_driveTrain = drive;
-    poseEstimatorSubsystem = pose;
-    rpidController = new ProfiledPIDController(rkp, rki, rkd, new TrapezoidProfile.Constraints(5, 1));
-    dpidController = new ProfiledPIDController(dkp, dki, dkd, new TrapezoidProfile.Constraints(.1, 1));
+	/**
+	 * Creates a new ExampleCommand.
+	 *
+	 * @param subsystem The subsystem used by this command.
+	 */
+	public AutoBalance(FalconDrivetrain drive, PoseEstimator pose) {
+		m_driveTrain = drive;
+		poseEstimatorSubsystem = pose;
+		rpidController = new PIDController(rkp, rki, rkd);
+		dpidController = new PIDController(dkp, dki, dkd);
 
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(drive);
-    addRequirements(pose);
+		// Use addRequirements() here to declare subsystem dependencies.
+		addRequirements(drive, pose);
+	}
 
+	// Called when the command is initially scheduled.
+	@Override
+	public void initialize() {
+		SmartDashboard.putNumber("Balance kp", 0);
+		SmartDashboard.putNumber("Balance kd", 0);
+		rpidController.setTolerance(yawErrorMargin, yawVeloErrorMargin);
+		dpidController.setTolerance(pitchErrorMargin, pitchVeloErrorMargin);
+	}
 
-    tab = Shuffleboard.getTab("AutoBalance");
-    CurrentPitch = tab.add("Current_pitch",0.0).getEntry();
-    headingSetPoint = tab.add("heading_SetPoint", 0.0).getEntry();
+	// Called every time the scheduler runs while the command is scheduled.
+	@Override
+	public void execute() {
+		dkp = SmartDashboard.getNumber("Balance kp", 0);
+		dkd = SmartDashboard.getNumber("Balance kd", 0);
+		Pose2d currentPose = poseEstimatorSubsystem.getCurrentPose();
+		double currentRot = currentPose.getRotation().getRadians();
+		m_headingSetpoint = 0.0;
 
-  }
+		if (Math.cos(currentRot) < 0.0)
+			m_headingSetpoint = Math.PI;
+		if (!rpidController.atSetpoint()) {
+			m_driveTrain.drive(0, rpidController.calculate(currentRot, m_headingSetpoint));
+		} else if (!dpidController.atSetpoint()) {
+			m_driveTrain.drive(dpidController.calculate(poseEstimatorSubsystem.getPitch(), 0), 0);
+		} else {
+			bBalanced = true;
+		}
+	}
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    SmartDashboard.putNumber("Balance kp", 0);
-    SmartDashboard.putNumber("Balance kd", 0);
-    rpidController.setTolerance(yawErrorMargin);
-    dpidController.setTolerance(pitchErrorMargin);
-  }
+	// Called once the command ends or is interrupted.
+	@Override
+	public void end(boolean interrupted) {
+	}
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    dkp = SmartDashboard.getNumber("Balance kp", 0);
-    dkd = SmartDashboard.getNumber("Balance kd", 0);
-    // Pose2d currentPose = poseEstimatorSubsystem.getCurrentPose();
-    // double currentRot = currentPose.getRotation().getRadians();
-    // m_headingSetpoint = 0.0;
-    
-    // if(Math.cos(currentRot) < 0.0) m_headingSetpoint = Math.PI;
-    // rpidController.setGoal(m_headingSetpoint);
-    // dpidController.setGoal(0);
-    // if ( rpidController.atGoal() ){
-    //     m_driveTrain.drive(0, rpidController.calculate(currentRot));
-    // }
-    // else if (dpidController.atGoal()){
-    //     float currentPitch = gyro.getPitch();
-    //     m_driveTrain.drive( (m_headingSetpoint == 0 ? 1 : -1) * dpidController.calculate( (double) currentPitch), 0 );
-    //   }
-    // else {
-    //   bBalanced = true;
-    // }
-    // updateShuffleboard();
-    // System.out.println(gyro.getRoll());
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return bBalanced;
-  }
-  void updateShuffleboard(){
-    CurrentPitch.setDouble(gyro.getPitch());
-    headingSetPoint.setDouble(m_headingSetpoint);
-  }
+	// Returns true when the command should end.
+	@Override
+	public boolean isFinished() {
+		return bBalanced;
+	}
 }
-
