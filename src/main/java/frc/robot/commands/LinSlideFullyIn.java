@@ -14,7 +14,7 @@ public class LinSlideFullyIn extends CommandBase {
     private final LinearSlide m_linslide;
     private final LinSlidePiston m_piston;
     public boolean finished = false;
-    public int minEncoderVelo = 3000;
+    public int minEncoderVelo = 9000;
 
     public LinSlideFullyIn(LinearSlide linslide, LinSlidePiston piston) {
         m_linslide = linslide;
@@ -30,12 +30,13 @@ public class LinSlideFullyIn extends CommandBase {
         // follow position control to goal state
         finished = false;
         m_piston.pull();
-        m_linslide.setPercentOutput(-0.5);
+        m_linslide.setPercentOutput(-0.6);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        if(m_linslide.getCurrentEncoderPosition() < 3000) m_linslide.setPercentOutput(-0.4);
         if(Math.abs(m_linslide.getCurrentEncoderRate()) < minEncoderVelo && m_linslide.getCurrentEncoderPosition() < 10000) {
             m_piston.push();
             m_linslide.setPercentOutput(0.0);
