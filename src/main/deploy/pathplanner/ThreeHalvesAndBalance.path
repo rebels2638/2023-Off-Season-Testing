@@ -96,10 +96,9 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "clawClose",
-          "elevatorDownLinSlideIn"
+          "clawClose"
         ],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -159,6 +158,12 @@
       "position": 1.954545454545455,
       "names": [
         "wristDown"
+      ]
+    },
+    {
+      "position": 3.3636363636363593,
+      "names": [
+        "elevatorDownLinSlideIn"
       ]
     }
   ]
