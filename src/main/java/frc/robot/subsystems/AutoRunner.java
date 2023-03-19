@@ -75,6 +75,7 @@ public final class AutoRunner extends SubsystemBase {
         // idk if this should be dynamically loaded, as in using java.io.*
         PATHS.put("testPath", "testPath");
         PATHS.put("Rcone_better_3", "Rcone_better_3");
+        PATHS.put("OneConeBackUp Station 1", "OneConeBackUp1");
     }
 
     private FalconDrivetrain m_drive;
