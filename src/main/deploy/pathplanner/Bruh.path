@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 2.260311895259834,
-        "y": 0.7599075653172623
+        "x": 1.0,
+        "y": 3.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4026525479867884,
-        "y": 0.7827784812445421
+        "x": 2.0,
+        "y": 3.0
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -24,41 +24,37 @@
     },
     {
       "anchorPoint": {
-        "x": 1.5181641291671273,
-        "y": 0.7633275778471216
+        "x": 2.0264964923653097,
+        "y": 3.899491165601446
       },
       "prevControl": {
-        "x": 1.6782889042185882,
-        "y": 0.784327548345674
+        "x": 2.0264964923653097,
+        "y": 2.899491165601446
       },
       "nextControl": {
-        "x": 1.6782889042185882,
-        "y": 0.784327548345674
+        "x": 2.0264964923653097,
+        "y": 2.899491165601446
       },
       "holonomicAngle": 0,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": true,
+      "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "elevatorUpLinSlideOut",
-          "clawOpen",
-          "elevatorDownLinSlideIn"
-        ],
-        "executionBehavior": "sequential",
+        "names": [],
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 5.96192358206084,
-        "y": 0.8052063925323212
+        "x": 2.918462213529277,
+        "y": 3.0075254444374795
       },
       "prevControl": {
-        "x": 5.299233567123162,
-        "y": 0.5321954795738415
+        "x": 1.9184622135292768,
+        "y": 3.0075254444374795
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -67,9 +63,7 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "elevatorDownLinSlideIn"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0

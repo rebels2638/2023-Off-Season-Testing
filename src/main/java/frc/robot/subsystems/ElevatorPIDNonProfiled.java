@@ -42,7 +42,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     private final WPI_TalonFX m_motor1 = new WPI_TalonFX(0);
     private final WPI_TalonFX m_motor2 = new WPI_TalonFX(3);
 
-    private final PIDController m_controller = new PIDController(12, 0, 0);
+    private final PIDController m_controller = new PIDController(12, 3, 0);
     private final PIDController m_velocityController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
 
@@ -57,7 +57,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     private double m_lastTime = Timer.getFPGATimestamp();
 
     private static double kUpperLimit = 0.843;
-    private static double kLowerLimit = 0.01;
+    private static double kLowerLimit = -0.3;
 
     private final ShuffleboardTab tab;
 
@@ -86,7 +86,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         setGoal(0);
         setVelocitySetpoint(0);
         resetHeightAccumulator();
-        m_controller.setTolerance(0.03, 0.03);
+        m_controller.setTolerance(0.03, 0.1);
         
         tab = Shuffleboard.getTab("Elevator");
         elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();

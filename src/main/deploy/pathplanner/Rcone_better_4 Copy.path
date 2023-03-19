@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 2.260311895259834,
-        "y": 0.7599075653172623
+        "x": 2.354413747289035,
+        "y": 1.0502066196440099
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4026525479867884,
-        "y": 0.7827784812445421
+        "x": 2.017191438229032,
+        "y": 1.0405716965280103
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -24,16 +24,16 @@
     },
     {
       "anchorPoint": {
-        "x": 1.5181641291671273,
-        "y": 0.7633275778471216
+        "x": 1.477635743733028,
+        "y": 0.7515240030480062
       },
       "prevControl": {
-        "x": 1.6782889042185882,
-        "y": 0.784327548345674
+        "x": 1.9497469764170317,
+        "y": 1.0598415427600094
       },
       "nextControl": {
-        "x": 1.6782889042185882,
-        "y": 0.784327548345674
+        "x": 1.9497469764170317,
+        "y": 1.0598415427600094
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -42,23 +42,21 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "elevatorUpLinSlideOut",
-          "clawOpen",
-          "elevatorDownLinSlideIn"
+          "autoPlace"
         ],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallelDeadline",
         "waitBehavior": "none",
-        "waitTime": 0
+        "waitTime": 0.0
       }
     },
     {
       "anchorPoint": {
-        "x": 5.96192358206084,
-        "y": 0.8052063925323212
+        "x": 5.872851837825415,
+        "y": 0.8358371986631598
       },
       "prevControl": {
-        "x": 5.299233567123162,
-        "y": 0.5321954795738415
+        "x": 4.872851837825415,
+        "y": 0.8358371986631598
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -67,17 +65,12 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "elevatorDownLinSlideIn"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "maxVelocity": null,
-  "maxAcceleration": null,
-  "isReversed": false,
   "markers": []
 }

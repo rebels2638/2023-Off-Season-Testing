@@ -38,14 +38,14 @@ public final class ConstantsFXDriveTrain {
         };
 
         // Left gearbox
-        public static final int FALCON_LEFT_FRONT_ID = 13; // 13 1
-        public static final int FALCON_LEFT_BACK_ID = 12; // 12 2
-        public static final boolean FALCON_LEFT_GROUP_INVERTED = false;
+        public static final int FALCON_LEFT_FRONT_ID = 15; // 13 1
+        public static final int FALCON_LEFT_BACK_ID = 14; // 12 2
+        public static final boolean FALCON_LEFT_GROUP_INVERTED = true;
 
         // Right gearbox
-        public static final int FALCON_RIGHT_FRONT_ID = 15; // 14 3
-        public static final int FALCON_RIGHT_BACK_ID = 14; // 15 4
-        public static final boolean FALCON_RIGHT_GROUP_INVERTED = true;
+        public static final int FALCON_RIGHT_FRONT_ID = 12; // 14 3
+        public static final int FALCON_RIGHT_BACK_ID = 13; // 15 4
+        public static final boolean FALCON_RIGHT_GROUP_INVERTED = false;
 
         // Solenoid
         public static final int PCM_ID = 0;
@@ -89,7 +89,7 @@ public final class ConstantsFXDriveTrain {
         public static final double ANGLE_TOLERANCE = 2.0;
 
         // PID Values
-        public static final double kP = 2.0;
+        public static final double kP = 0.65405;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
         public static final double ARCADE_STATIC_GAIN = 0.0;

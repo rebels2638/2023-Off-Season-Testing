@@ -18,12 +18,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.commands.AutoPlace;
 import frc.robot.commands.ElevatorDown;
 import frc.robot.commands.ElevatorDownLinSlideIn;
 import frc.robot.commands.ElevatorUp;
 import frc.robot.commands.ElevatorUpLinSlideOut;
 import frc.robot.commands.LinSlideFullyIn;
 import frc.robot.commands.LinSlideFullyOut;
+import frc.robot.commands.Place;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -38,6 +40,7 @@ import frc.robot.utils.ConstantsFXDriveTrain.DriveConstants;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Arrays;
 
 import com.pathplanner.lib.*;
@@ -55,23 +58,25 @@ public final class AutoRunner extends SubsystemBase {
                 new LinSlideFullyIn(LinearSlide.getInstance(), LinSlidePiston.getInstance()));
         PATH_COMMANDS.put("linPistonOpen",
                 new LinSlideFullyOut(LinearSlide.getInstance(), LinSlidePiston.getInstance()));
-        PATH_COMMANDS.put("clawOpen", new InstantCommand(Claw.getInstance()::push));
+        PATH_COMMANDS.put("clawOpen", new Place());
         PATH_COMMANDS.put("clawClose", new InstantCommand(Claw.getInstance()::pull));
         PATH_COMMANDS.put("resetDTEncoders", new InstantCommand(FalconDrivetrain.getInstance()::zeroEncoder));
         PATH_COMMANDS.put("elevatorFullUp", new ElevatorUp(ElevatorPIDNonProfiled.getInstance()));
         PATH_COMMANDS.put("elevatorFullDown", new ElevatorDown(ElevatorPIDNonProfiled.getInstance()));
         PATH_COMMANDS.put("elevatorUpLinSlideOut", new ElevatorUpLinSlideOut());
         PATH_COMMANDS.put("elevatorDownLinSlideIn", new ElevatorDownLinSlideIn());
+        PATH_COMMANDS.put("resetGyro", new InstantCommand(PoseEstimator.getInstance()::resetHeading));
+        PATH_COMMANDS.put("autoPlace", new AutoPlace());
 
         // idk if this should be dynamically loaded, as in using java.io.*
         PATHS.put("testPath", "testPath");
-        PATHS.put("rightCone", "Rcone_better");
+        PATHS.put("Rcone_better_3", "Rcone_better_3");
     }
 
     private FalconDrivetrain m_drive;
     private boolean finished = false;
     private ShuffleboardTab tab = Shuffleboard.getTab("Auto");
-    public static PathPlannerTrajectory m_path;
+    public static List<PathPlannerTrajectory> m_path;
 
     public static AutoRunner instance = null;
     private RamseteAutoBuilder m_autoBuilder;
@@ -85,7 +90,7 @@ public final class AutoRunner extends SubsystemBase {
         m_drive = FalconDrivetrain.getInstance();
         m_poseEstimator = PoseEstimator.getInstance();
         m_autoBuilder = new RamseteAutoBuilder(
-                m_drive::getPose,
+                m_poseEstimator::getCurrentPose,
                 m_poseEstimator::resetPose,
                 new RamseteController(),
                 m_drive.m_kinematics,
@@ -115,12 +120,12 @@ public final class AutoRunner extends SubsystemBase {
         return instance;
     }
 
-    public PathPlannerTrajectory getPath() {
+    public List<PathPlannerTrajectory> getPath() {
         return m_path;
     }
 
     public void loadPath() {
-        m_path = PathPlanner.loadPath(pathChooser.getSelected(), new PathConstraints(2, 0.25));
+        m_path = PathPlanner.loadPathGroup(pathChooser.getSelected(), new PathConstraints(1, 0.5));
         System.out.println(pathChooser.getSelected());
     }
 

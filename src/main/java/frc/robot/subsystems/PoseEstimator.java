@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.kauailabs.navx.frc.AHRS.SerialDataType;
 
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
@@ -35,22 +36,21 @@ public class PoseEstimator extends SubsystemBase {
     // private PhotonCamera photonCamera = new PhotonCamera("camera");
     private FalconDrivetrain driveTrainSubsytem;
 
-    private static final List<Pose3d> targetPoses = Collections
-            .unmodifiableList(List.of(new Pose3d(0, 0, 0, new Rotation3d(0, 0, degreesToRadians(180))),
-                    (new Pose3d(0, 0, 0, new Rotation3d(0, 0, degreesToRadians(180))))));
+    // private static final List<Pose3d> targetPoses = Collections
+    //         .unmodifiableList(List.of(new Pose3d(0, 0, 0, new Rotation3d(0, 0, degreesToRadians(180))),
+    //                 (new Pose3d(0, 0, 0, new Rotation3d(0, 0, degreesToRadians(180))))));
 
-    private static final Vector<N7> stateStDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5), 0.05, 0.05,
-            0.05, 0.05);
-    private static final Vector<N5> local = VecBuilder.fill(Units.degreesToRadians(0.01), 0.01, 0.01, 0.01, 0.01);
-    private static final Vector<N3> vision = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
+    // private static final Vector<N7> stateStDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5), 0.05, 0.05,
+    //         0.05, 0.05);
+    // private static final Vector<N5> local = VecBuilder.fill(Units.degreesToRadians(0.01), 0.01, 0.01, 0.01, 0.01);
+    // private static final Vector<N3> vision = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
     private static DifferentialDrivePoseEstimator poseEstimator;
-    private final AHRS m_gyro = new AHRS(Port.kUSB);
-    private double previousPipelineTimestamp = 0;
+    private AHRS m_gyro = new AHRS(Port.kUSB1);
+    // private double previousPipelineTimestamp = 0;
 
     public PoseEstimator() {
         this.driveTrainSubsytem = FalconDrivetrain.getInstance();
-
         poseEstimator = new DifferentialDrivePoseEstimator(driveTrainSubsytem.m_kinematics,
                 m_gyro.getRotation2d(), driveTrainSubsytem.getLeftSideMeters(),
                 driveTrainSubsytem.getRightSideMeters(), new Pose2d(),
@@ -85,7 +85,7 @@ public class PoseEstimator extends SubsystemBase {
         //         poseEstimator.addVisionMeasurement(visionMeasurment.toPose2d(), resultTimestamp);
         //     }
         // }
-
+        
         poseEstimator.update(m_gyro.getRotation2d(),
                 driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());
     }
@@ -100,6 +100,7 @@ public class PoseEstimator extends SubsystemBase {
     }
 
     public double getPitch() {
+        // return 0.0;
         return m_gyro.getPitch();
     }
 
