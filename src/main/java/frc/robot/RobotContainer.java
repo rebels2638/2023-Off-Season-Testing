@@ -189,4 +189,12 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return auto.getCommand();
   }
+
+  public void resetForAuto() {
+    FalconDrivetrain.getInstance().zeroEncoder();
+    PoseEstimator.getInstance().resetPitchOffset();
+    ElevatorPIDNonProfiled.getInstance().zeroEncoder();
+    LinearSlide.getInstance().zeroEncoder();
+    Wrist.getInstance().turtleEncoder();
+  }
 }

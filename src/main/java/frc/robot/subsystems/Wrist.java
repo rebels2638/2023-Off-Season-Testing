@@ -190,6 +190,10 @@ public class Wrist extends SubsystemBase {
         m_wrist.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
 
+    public void turtleEncoder() {
+        m_wrist.getSensorCollection().setIntegratedSensorPosition(136529, 30);
+    }
+
     public void updateShuffleboard() {
         wristEncoderPosition.setDouble(getCurrentEncoderPosition());
         wristPosition.setDouble(getCurrentAngle());

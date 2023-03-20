@@ -37,9 +37,9 @@ public class AutoBalance extends CommandBase {
 	// private final SerialPort sPort = new SerialPort(200, Port.kUSB);
 
 	private final PoseEstimator poseEstimatorSubsystem;
-	private final double yawErrorMargin = 3;
-	private final double pitchErrorMargin = 2;
+	private final double yawErrorMargin = 5;
 	private final double yawVeloErrorMargin = 5;
+	private final double pitchErrorMargin = 2;
 	private final double pitchVeloErrorMargin = 5;
 
 	private final double rkp = 1; // r = rotation
@@ -86,8 +86,8 @@ public class AutoBalance extends CommandBase {
 	public void execute() {
 		dkp = SmartDashboard.getNumber("Balance kp", 0);
 		dkd = SmartDashboard.getNumber("Balance kd", 0);
-		dpidController.setP(dkp);
-		dpidController.setD(dkd);
+		// dpidController.setP(dkp);
+		// dpidController.setD(dkd);
 		Pose2d currentPose = poseEstimatorSubsystem.getCurrentPose();
 		double currentRot = currentPose.getRotation().getRadians();
 		m_headingSetpoint = 0.0;

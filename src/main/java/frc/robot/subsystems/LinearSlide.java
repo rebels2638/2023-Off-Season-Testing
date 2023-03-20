@@ -33,6 +33,7 @@ public class LinearSlide extends SubsystemBase {
         m_linslide.setNeutralMode(NeutralMode.Coast); // changed from brake
 
         tab = Shuffleboard.getTab("Linear Slide");
+        inverted = false;
         linSlideEncoderPosition = tab.add("Lin_Encoder_Position", 0.0).getEntry();
         tab.add("Zero Encoder", new InstantCommand(() -> this.zeroEncoder()));
         tab.add("Max Out Encoder", new InstantCommand(() -> this.maxOutEncoder()));

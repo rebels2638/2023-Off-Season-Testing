@@ -69,6 +69,7 @@ public class Robot extends TimedRobot {
     time.reset();
     time.start();
     
+    m_robotContainer.resetForAuto();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     
     // schedule the autonomous command (example)

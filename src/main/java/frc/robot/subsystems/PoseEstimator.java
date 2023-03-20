@@ -114,13 +114,16 @@ public class PoseEstimator extends SubsystemBase {
         pitchOffset = m_gyro.getPitch();
     }
 
+    public void setYawAdjustment(double deg) {
+        m_gyro.setAngleAdjustment(deg);
+    }
+
     public static double degreesToRadians(int degrees) {
         return (degrees / 180.0) * Math.PI;
     }
 
     public void resetPose(Pose2d pose) {
-        driveTrainSubsytem.zeroEncoder();
-        resetPitchOffset();
+        setYawAdjustment(pose.getRotation().getDegrees());
         poseEstimator.resetPosition(pose.getRotation(), driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters(), pose);
     }
 

@@ -118,6 +118,7 @@ public final class AutoRunner extends SubsystemBase {
 
         Shuffleboard.getTab("Auto").add("Path", pathChooser);
         Shuffleboard.getTab("Auto").add("Load Path", new InstantCommand(() -> loadPath()));
+        
     }
 
     public static AutoRunner getInstance() {
