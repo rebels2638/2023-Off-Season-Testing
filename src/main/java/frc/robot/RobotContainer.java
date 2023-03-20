@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import frc.robot.commands.ElevatorCancel;
 // import frc.robot.commands.ArmPositionSet;
@@ -196,5 +197,13 @@ public class RobotContainer {
     ElevatorPIDNonProfiled.getInstance().zeroEncoder();
     LinearSlide.getInstance().zeroEncoder();
     Wrist.getInstance().turtleEncoder();
+  }
+
+  public void checkControllers() {
+    // double desiredVeloWrist = RebelUtil.linearDeadband(xboxOperator.getRightY(), 0.15)  * Wrist.kMaxSpeed;
+    // if(desiredVeloWrist != 0) wrist.setToVelocityControlMode(true);
+    
+    // double desiredVeloElev = RebelUtil.linearDeadband(xboxOperator.getLeftY(), 0.15) * ElevatorPID.kMaxSpeed;
+    // if(desiredVeloElev != 0) elevatorFinal.setToVelocityControlMode(true);
   }
 }

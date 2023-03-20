@@ -76,8 +76,9 @@ public final class AutoRunner extends SubsystemBase {
         PATHS.put("testPath", "testPath");
         PATHS.put("OneAndBack3Working", "OneAndBack3Working");
         PATHS.put("OneAndBack1Working", "OneAndBack1Working");
-        PATHS.put("OneAndBack2", "OneAndBack2");
         PATHS.put("OneAndBack1", "OneAndBack1");
+        PATHS.put("OneAndBack2", "OneAndBack2");
+        PATHS.put("OneAndBack3", "OneAndBack3");
     }
 
     private FalconDrivetrain m_drive;

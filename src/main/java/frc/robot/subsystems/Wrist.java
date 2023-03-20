@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.RebelUtil;
 import frc.robot.Robot;
+import frc.robot.commands.WristReady;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -116,6 +117,7 @@ public class Wrist extends SubsystemBase {
 
         tab.add("Zero Encoder",
                 new InstantCommand(() -> this.zeroEncoder()));
+        tab.add("Wrist Ready", new WristReady(this));
         
     }
 

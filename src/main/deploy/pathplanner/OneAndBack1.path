@@ -3,12 +3,12 @@
     {
       "anchorPoint": {
         "x": 1.923577370692544,
-        "y": 4.677102307129007
+        "y": 4.68
       },
       "prevControl": null,
       "nextControl": {
         "x": 1.7863518751288572,
-        "y": 4.677102307129007
+        "y": 4.68
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -24,15 +24,15 @@
     },
     {
       "anchorPoint": {
-        "x": 1.5347717999287636,
+        "x": 1.6148200056742477,
         "y": 4.71140868101993
       },
       "prevControl": {
-        "x": 1.5506892802973664,
+        "x": 1.6307374860428505,
         "y": 4.708025316122329
       },
       "nextControl": {
-        "x": 1.5506892802973664,
+        "x": 1.6307374860428505,
         "y": 4.708025316122329
       },
       "holonomicAngle": 0,
@@ -42,11 +42,9 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "elevatorUpLinSlideOut",
-          "clawOpen",
-          "elevatorDownLinSlideIn"
+          "autoPlace"
         ],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0.0
       }

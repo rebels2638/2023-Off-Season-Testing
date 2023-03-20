@@ -123,7 +123,7 @@ public class PoseEstimator extends SubsystemBase {
     }
 
     public void resetPose(Pose2d pose) {
-        setYawAdjustment(pose.getRotation().getDegrees());
+        setYawAdjustment(pose.getRotation().getDegrees() - getAngle());
         poseEstimator.resetPosition(pose.getRotation(), driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters(), pose);
     }
 
