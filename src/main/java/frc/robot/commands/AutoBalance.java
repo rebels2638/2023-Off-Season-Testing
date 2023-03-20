@@ -65,6 +65,8 @@ public class AutoBalance extends CommandBase {
 		poseEstimatorSubsystem = pose;
 		rpidController = new PIDController(rkp, rki, rkd);
 		dpidController = new PIDController(dkp, dki, dkd);
+		rpidController.enableContinuousInput(-Math.PI, Math.PI);
+		dpidController.enableContinuousInput(-Math.PI, Math.PI);
 
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(drive, pose);
@@ -93,7 +95,7 @@ public class AutoBalance extends CommandBase {
 		if (!rpidController.atSetpoint()) {
 			m_driveTrain.drive(0, rpidController.calculate(currentRot, m_headingSetpoint));
 		} else if (!dpidController.atSetpoint()) {
-			m_driveTrain.drive(dpidController.calculate(poseEstimatorSubsystem.getPitch(), 0), 0);
+			m_driveTrain.drive(dpidController.calculate(poseEstimatorSubsystem.getPitch() * (Math.PI / 180.0), 0), 0);
 		} else {
 			bBalanced = true;
 		}

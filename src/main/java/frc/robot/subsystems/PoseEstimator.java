@@ -47,10 +47,12 @@ public class PoseEstimator extends SubsystemBase {
 
     private static DifferentialDrivePoseEstimator poseEstimator;
     private AHRS m_gyro = new AHRS(Port.kUSB1);
+	private double pitchOffset = 0.0;
     // private double previousPipelineTimestamp = 0;
 
     public PoseEstimator() {
         this.driveTrainSubsytem = FalconDrivetrain.getInstance();
+        pitchOffset = m_gyro.getPitch();
         poseEstimator = new DifferentialDrivePoseEstimator(driveTrainSubsytem.m_kinematics,
                 m_gyro.getRotation2d(), driveTrainSubsytem.getLeftSideMeters(),
                 driveTrainSubsytem.getRightSideMeters(), new Pose2d(),
@@ -101,19 +103,24 @@ public class PoseEstimator extends SubsystemBase {
 
     public double getPitch() {
         // return 0.0;
-        return m_gyro.getPitch();
+        return m_gyro.getPitch() - pitchOffset;
     }
 
     public double getAngle() {
         return m_gyro.getAngle();
     }
 
+    public void resetPitchOffset() {
+        pitchOffset = m_gyro.getPitch();
+    }
+
     public static double degreesToRadians(int degrees) {
-        return (degrees / 180) * Math.PI;
+        return (degrees / 180.0) * Math.PI;
     }
 
     public void resetPose(Pose2d pose) {
         driveTrainSubsytem.zeroEncoder();
+        resetPitchOffset();
         poseEstimator.resetPosition(pose.getRotation(), driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters(), pose);
     }
 

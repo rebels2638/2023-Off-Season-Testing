@@ -29,7 +29,7 @@ public class LinSlideFullyOut extends CommandBase {
     public void initialize() {
         finished = false;
         m_piston.pull();
-        m_linslide.setPercentOutput(0.55);
+        m_linslide.setPercentOutput(0.65);
     }
 
     // Called every time the scheduler runs while the command is scheduled.

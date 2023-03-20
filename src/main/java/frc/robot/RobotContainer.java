@@ -133,6 +133,7 @@ public class RobotContainer {
     // toggle gear
     this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
     this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
+    this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, PoseEstimator.getInstance()));
 
     // this.turret.setDefaultCommand(new TurretController(turret, xboxOperator));
 
