@@ -86,6 +86,8 @@ public class AutoBalance extends CommandBase {
 	public void execute() {
 		dkp = SmartDashboard.getNumber("Balance kp", 0);
 		dkd = SmartDashboard.getNumber("Balance kd", 0);
+		dpidController.setP(dkp);
+		dpidController.setD(dkd);
 		Pose2d currentPose = poseEstimatorSubsystem.getCurrentPose();
 		double currentRot = currentPose.getRotation().getRadians();
 		m_headingSetpoint = 0.0;
