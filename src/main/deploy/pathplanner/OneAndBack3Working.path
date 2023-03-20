@@ -44,7 +44,7 @@
         "names": [
           "autoPlace"
         ],
-        "executionBehavior": "parallelDeadline",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0.0
       }
