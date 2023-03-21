@@ -73,7 +73,16 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("autoBalance", new AutoBalance(FalconDrivetrain.getInstance(), PoseEstimator.getInstance()));
 
         // idk if this should be dynamically loaded, as in using java.io.*
-        PATHS.put("testPath", "testPath");
+        
+        PATHS.put("taxi", "taxi");
+        PATHS.put("OneConeAndPick1", "OneConeAndPick1");
+        PATHS.put("OneCubeAndPick1", "OneCubeAndPick1");
+        PATHS.put("OneConeAndPickAndBalance1", "OneConeAndPickAndBalance1");
+        PATHS.put("OneConeAndBalance2", "OneConeAndBalance2");
+        PATHS.put("OneCubeAndBalance2", "OneCubeAndBalance2");
+        PATHS.put("OneConeAndPick3", "OneConeAndPick3");
+        PATHS.put("OneCubeAndPick3", "OneCubeAndPick3");
+
         PATHS.put("OneAndBack3Working", "OneAndBack3Working");
         PATHS.put("OneAndBack1Working", "OneAndBack1Working");
         PATHS.put("OneAndBack1", "OneAndBack1");
@@ -97,6 +106,7 @@ public final class AutoRunner extends SubsystemBase {
     public AutoRunner() {
         m_drive = FalconDrivetrain.getInstance();
         m_poseEstimator = PoseEstimator.getInstance();
+        pathChooser.setDefaultOption("taxi", "taxi");
         m_autoBuilder = new RamseteAutoBuilder(
                 m_poseEstimator::getCurrentPose,
                 m_poseEstimator::resetPose,

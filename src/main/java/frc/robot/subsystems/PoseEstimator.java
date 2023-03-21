@@ -123,6 +123,7 @@ public class PoseEstimator extends SubsystemBase {
     }
 
     public void resetPose(Pose2d pose) {
+        FalconDrivetrain.getInstance().zeroEncoder();
         setYawAdjustment(pose.getRotation().getDegrees() - getAngle());
         poseEstimator.resetPosition(pose.getRotation(), driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters(), pose);
     }

@@ -1,0 +1,112 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.923577370692544,
+        "y": 0.81
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.7042503784107264,
+        "y": 0.81
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.5919490897469664,
+        "y": 0.8
+      },
+      "prevControl": {
+        "x": 1.7201947467720542,
+        "y": 0.8343633202326711
+      },
+      "nextControl": {
+        "x": 1.7201947467720542,
+        "y": 0.8343633202326711
+      },
+      "holonomicAngle": 0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "autoPlace"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 5.559930261184315,
+        "y": 1.1328877040580565
+      },
+      "prevControl": {
+        "x": 5.559930261184315,
+        "y": 0.5592736766868893
+      },
+      "nextControl": {
+        "x": 5.559930261184315,
+        "y": 0.5592736766868893
+      },
+      "holonomicAngle": 0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.463372354293904,
+        "y": 0.8317403396881933
+      },
+      "prevControl": {
+        "x": 6.147884639239762,
+        "y": 0.8030596383196352
+      },
+      "nextControl": null,
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "clawClose",
+          "elevatorDownLinSlideIn"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": [
+    {
+      "position": 1.6909090909090898,
+      "names": [
+        "event",
+        "wristDown"
+      ]
+    }
+  ]
+}

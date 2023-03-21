@@ -192,7 +192,7 @@ public class RobotContainer {
   }
 
   public void resetForAuto() {
-    FalconDrivetrain.getInstance().zeroEncoder();
+    // FalconDrivetrain.getInstance().zeroEncoder();
     PoseEstimator.getInstance().resetPitchOffset();
     ElevatorPIDNonProfiled.getInstance().zeroEncoder();
     LinearSlide.getInstance().zeroEncoder();
@@ -200,7 +200,9 @@ public class RobotContainer {
   }
 
   public void checkControllers() {
-    // double desiredVeloWrist = RebelUtil.linearDeadband(xboxOperator.getRightY(), 0.15)  * Wrist.kMaxSpeed;
+    // TODO: Uncomment this when we ensure deadband is high enough to not interfere with other commands
+
+    // double desiredVeloWrist = RebelUtil.linearDeadband(xboxOperator.getRightY(), 0.15) * Wrist.kMaxSpeed;
     // if(desiredVeloWrist != 0) wrist.setToVelocityControlMode(true);
     
     // double desiredVeloElev = RebelUtil.linearDeadband(xboxOperator.getLeftY(), 0.15) * ElevatorPID.kMaxSpeed;

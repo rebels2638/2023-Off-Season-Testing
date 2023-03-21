@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.946448286619825,
-        "y": 2.996089986473838
+        "x": 1.923577370692544,
+        "y": 4.725
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.803044779777033,
-        "y": 2.996089986473838
+        "x": 1.7042503784107264,
+        "y": 4.725
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -24,16 +24,16 @@
     },
     {
       "anchorPoint": {
-        "x": 1.3868882120590724,
-        "y": 3.0
+        "x": 1.5919490897469664,
+        "y": 4.725
       },
       "prevControl": {
-        "x": 1.5130013606370027,
-        "y": 2.96030926223475
+        "x": 1.721817427780284,
+        "y": 4.752604367402162
       },
       "nextControl": {
-        "x": 1.5130013606370027,
-        "y": 2.96030926223475
+        "x": 1.721817427780284,
+        "y": 4.752604367402162
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -42,27 +42,25 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "elevatorUpLinSlideOut",
-          "clawOpen",
-          "elevatorDownLinSlideIn"
+          "autoPlace"
         ],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 5.651536666839382,
-        "y": 3.0
+        "x": 5.557612395224791,
+        "y": 4.45655970423052
       },
       "prevControl": {
-        "x": 4.867144269480962,
-        "y": 3.0
+        "x": 5.748747213049982,
+        "y": 4.780018626703921
       },
       "nextControl": {
-        "x": 4.867144269480962,
-        "y": 3.0
+        "x": 5.748747213049982,
+        "y": 4.780018626703921
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -78,12 +76,12 @@
     },
     {
       "anchorPoint": {
-        "x": 3.8904761404387282,
-        "y": 3.0
+        "x": 6.469178449468011,
+        "y": 4.750613270115429
       },
       "prevControl": {
-        "x": 4.427995346651445,
-        "y": 3.0
+        "x": 5.969287387463664,
+        "y": 4.853532018175148
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -93,13 +91,22 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "autoBalance"
+          "clawClose",
+          "elevatorDownLinSlideIn"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "markers": []
+  "markers": [
+    {
+      "position": 1.6636363636363631,
+      "names": [
+        "event",
+        "wristDown"
+      ]
+    }
+  ]
 }
