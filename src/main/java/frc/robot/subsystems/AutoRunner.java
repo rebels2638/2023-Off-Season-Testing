@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.AutoPlace;
+import frc.robot.commands.CallAutoBalance;
 import frc.robot.commands.ElevatorDown;
 import frc.robot.commands.ElevatorDownLinSlideIn;
 import frc.robot.commands.ElevatorUp;
@@ -87,11 +88,13 @@ public final class AutoRunner extends SubsystemBase {
         PATHS.put("OneCubeAndPick3", "OneCubeAndPick3");
         PATHS.put("OneCubeLowAndPick3", "OneCubeLowAndPick3");
 
-        PATHS.put("OneAndBack3Working", "OneAndBack3Working");
-        PATHS.put("OneAndBack1Working", "OneAndBack1Working");
-        PATHS.put("OneAndBack1", "OneAndBack1");
-        PATHS.put("OneAndBack2", "OneAndBack2");
-        PATHS.put("OneAndBack3", "OneAndBack3");
+
+        //  IGNORE
+        // PATHS.put("OneAndBack3Working", "OneAndBack3Working");
+        // PATHS.put("OneAndBack1Working", "OneAndBack1Working");
+        // PATHS.put("OneAndBack1", "OneAndBack1");
+        // PATHS.put("OneAndBack2", "OneAndBack2");
+        // PATHS.put("OneAndBack3", "OneAndBack3");
     }
 
     private FalconDrivetrain m_drive;
@@ -148,12 +151,12 @@ public final class AutoRunner extends SubsystemBase {
     }
 
     public void loadPath() {
-        m_path = PathPlanner.loadPathGroup(pathChooser.getSelected(), new PathConstraints(1, 0.5));
+        m_path = PathPlanner.loadPathGroup(pathChooser.getSelected(), new PathConstraints(1.5, 0.75));
         System.out.println(pathChooser.getSelected());
     }
 
     public void loadPathString(String pathName) {
-        m_path = PathPlanner.loadPathGroup(pathName, new PathConstraints(1, 0.5));
+        m_path = PathPlanner.loadPathGroup(pathName, new PathConstraints(1, 0.75));
     }
 
     public Command getCommand() {

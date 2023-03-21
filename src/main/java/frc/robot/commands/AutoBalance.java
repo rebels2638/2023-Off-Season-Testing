@@ -75,6 +75,7 @@ public class AutoBalance extends CommandBase {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
+		m_driveTrain.setBalancing(true);
 		SmartDashboard.putNumber("Balance kp", 0);
 		SmartDashboard.putNumber("Balance kd", 0);
 		rpidController.setTolerance(yawErrorMargin, yawVeloErrorMargin);
@@ -84,23 +85,26 @@ public class AutoBalance extends CommandBase {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		dkp = SmartDashboard.getNumber("Balance kp", 0);
-		dkd = SmartDashboard.getNumber("Balance kd", 0);
 		// dpidController.setP(dkp);
 		// dpidController.setD(dkd);
 		Pose2d currentPose = poseEstimatorSubsystem.getCurrentPose();
 		double currentRot = currentPose.getRotation().getRadians();
 		m_headingSetpoint = 0.0;
 
+		double rpidVoltage = rpidController.calculate(currentRot, m_headingSetpoint);
+		double dpidVoltage = dpidController.calculate(poseEstimatorSubsystem.getPitch() * (Math.PI / 180.0), 0);
+
 		if (Math.cos(currentRot) < 0.0)
 			m_headingSetpoint = Math.PI;
 		if (!rpidController.atSetpoint()) {
-			m_driveTrain.drive(0, rpidController.calculate(currentRot, m_headingSetpoint));
+			m_driveTrain.drive(0, rpidVoltage);
 		} else if (!dpidController.atSetpoint()) {
-			m_driveTrain.drive(dpidController.calculate(poseEstimatorSubsystem.getPitch() * (Math.PI / 180.0), 0), 0);
+			m_driveTrain.drive(dpidVoltage, 0);
 		} else {
-			bBalanced = true;
+			m_driveTrain.drive(0, 0);
 		}
+
+		System.out.println("In autobalance command");
 	}
 
 	// Called once the command ends or is interrupted.
@@ -111,6 +115,6 @@ public class AutoBalance extends CommandBase {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return bBalanced;
+		return false;
 	}
 }

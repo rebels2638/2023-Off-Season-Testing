@@ -51,19 +51,16 @@
     },
     {
       "anchorPoint": {
-        "x": 5.559930261184315,
-        "y": 1.1328877040580565
+        "x": 6.051777695566803,
+        "y": 0.8347884313457634
       },
       "prevControl": {
-        "x": 5.559930261184315,
-        "y": 0.5592736766868893
+        "x": 5.506580918742866,
+        "y": 0.8347884313457634
       },
-      "nextControl": {
-        "x": 5.559930261184315,
-        "y": 0.5592736766868893
-      },
+      "nextControl": null,
       "holonomicAngle": 0,
-      "isReversal": true,
+      "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
@@ -73,40 +70,7 @@
         "waitBehavior": "none",
         "waitTime": 0
       }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.463372354293904,
-        "y": 0.8317403396881933
-      },
-      "prevControl": {
-        "x": 6.147884639239762,
-        "y": 0.8030596383196352
-      },
-      "nextControl": null,
-      "holonomicAngle": 0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [
-          "clawClose",
-          "elevatorDownLinSlideIn"
-        ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
     }
   ],
-  "markers": [
-    {
-      "position": 1.7999999999999985,
-      "names": [
-        "event",
-        "wristDown"
-      ]
-    }
-  ]
+  "markers": []
 }

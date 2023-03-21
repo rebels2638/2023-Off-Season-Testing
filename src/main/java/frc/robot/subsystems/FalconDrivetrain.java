@@ -120,6 +120,8 @@ public class FalconDrivetrain extends SubsystemBase {
   private double m_leftVoltageSetpoint;
   private double m_rightVoltageSetpoint;
 
+  private boolean isBalancing = false;
+
   public final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(kTrackWidth);
 
   // private final DifferentialDriveOdometry m_odometry;
@@ -145,6 +147,7 @@ public class FalconDrivetrain extends SubsystemBase {
 
   public FalconDrivetrain() {
     switchToHighGear();
+    isBalancing = false;
 
     m_leftLeader.setNeutralMode(NeutralMode.Brake);
     m_leftFollower.setNeutralMode(NeutralMode.Brake);
@@ -247,6 +250,10 @@ public class FalconDrivetrain extends SubsystemBase {
     return nativeToMeters(getCurrentEncoderRate(m_rightLeader));
   }
 
+  public void setBalancing(boolean balancing) {
+    isBalancing = balancing;
+  }
+
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
     m_leftSetpoint = speeds.leftMetersPerSecond;
     m_rightSetpoint = speeds.rightMetersPerSecond;
@@ -254,6 +261,7 @@ public class FalconDrivetrain extends SubsystemBase {
     var kGReal = 4.44;
     var kGDiff = -1.09;
     var kGFinal = kGReal + (PoseEstimator.getInstance().getPitch() > 0.0 ? 1.0 : -1.0) * kGDiff;
+    if(!isBalancing) kGFinal *= -1;
     if(Math.abs(PoseEstimator.getInstance().getPitch()) < 5.0) kGFinal = 0.0;
     var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond) + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
     var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond) + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));

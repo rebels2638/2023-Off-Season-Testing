@@ -13,12 +13,12 @@ import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.Wrist;
 import frc.robot.commands.ElevatorCancel;
 
-public class AutoPlace extends ParallelCommandGroup {
+public class AutoPlace extends SequentialCommandGroup {
     public AutoPlace() {
         addCommands(
-                new SequentialCommandGroup(
-                        new ElevatorUpLinSlideOut(),
-                        new Place(),
-                        new ElevatorDownLinSlideIn()));
+                new ElevatorUpLinSlideOut(),
+                new Place(),
+                new ElevatorDownLinSlideIn(),
+                new InstantCommand(() -> System.out.println("WHEN THE AUTO")));
     }
 }

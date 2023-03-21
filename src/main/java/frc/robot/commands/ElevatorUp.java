@@ -3,6 +3,7 @@ package frc.robot.commands;
 import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.ElevatorPIDNonProfiled;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.FalconDrivetrain;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -25,6 +26,7 @@ public class ElevatorUp extends CommandBase {
     // follow position control to goal state
     m_elevatorSubsystem.setToVelocityControlMode(false);
     m_elevatorSubsystem.setGoal(kHeightUpPosition);
+    FalconDrivetrain.getInstance().setBalancing(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -61,8 +61,10 @@ public class Wrist extends SubsystemBase {
     private double m_lastVelocity = 0;
     private double m_lastTime = Timer.getFPGATimestamp();
 
-    private final double kUpperLimit = Math.PI * (3.0/4.0);//110000.0;
+    private final double kUpperLimit = Math.PI * (4.0/7.0);//110000.0;
     private final double kLowerLimit = -Math.PI / 4.0;
+
+    // 4*pi/7 pi/2 7pi/14, 8pi/14, perhaps change to 6pi/14
 
     private final ShuffleboardTab tab;
 

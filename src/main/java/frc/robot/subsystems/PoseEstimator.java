@@ -90,6 +90,8 @@ public class PoseEstimator extends SubsystemBase {
         
         poseEstimator.update(m_gyro.getRotation2d(),
                 driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());
+
+        // System.out.println("In pose estimator subsystem");
     }
 
     public String getFormattedPose() {
