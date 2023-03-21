@@ -28,6 +28,7 @@ import frc.robot.commands.LinSlideFullyIn;
 import frc.robot.commands.LinSlideFullyOut;
 import frc.robot.commands.Place;
 import frc.robot.commands.WristDown;
+import frc.robot.commands.WristUp;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -70,6 +71,8 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("resetGyro", new InstantCommand(PoseEstimator.getInstance()::resetHeading));
         PATH_COMMANDS.put("autoPlace", new AutoPlace());
         PATH_COMMANDS.put("wristDown", new WristDown(Wrist.getInstance()));
+        PATH_COMMANDS.put("clawUnpinch", new InstantCommand(Claw.getInstance()::push));
+        PATH_COMMANDS.put("wristUp", new WristUp(Wrist.getInstance()));
         PATH_COMMANDS.put("autoBalance", new AutoBalance(FalconDrivetrain.getInstance(), PoseEstimator.getInstance()));
 
         // idk if this should be dynamically loaded, as in using java.io.*
@@ -82,6 +85,7 @@ public final class AutoRunner extends SubsystemBase {
         PATHS.put("OneCubeAndBalance2", "OneCubeAndBalance2");
         PATHS.put("OneConeAndPick3", "OneConeAndPick3");
         PATHS.put("OneCubeAndPick3", "OneCubeAndPick3");
+        PATHS.put("OneCubeLowAndPick3", "OneCubeLowAndPick3");
 
         PATHS.put("OneAndBack3Working", "OneAndBack3Working");
         PATHS.put("OneAndBack1Working", "OneAndBack1Working");

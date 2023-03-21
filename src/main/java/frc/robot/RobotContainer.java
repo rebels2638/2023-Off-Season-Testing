@@ -49,6 +49,7 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Wrist;
 import frc.robot.commands.WristController;
 import frc.robot.commands.WristDown;
+import frc.robot.commands.WristStraight;
 import frc.robot.commands.WristTurtle;
 import frc.robot.commands.WristUp;
 import frc.robot.commands.FieldOrientedDrive;
@@ -129,7 +130,8 @@ public class RobotContainer {
     this.xboxOperator.getXButton().onTrue(new ElevatorDownLinSlideIn());
     this.xboxOperator.getBButton().onTrue(new ElevatorUpLinSlideOut());
     this.xboxOperator.getAButton().onTrue(new InstantCommand(() -> this.claw.toggle()));
-    this.xboxOperator.getLeftMiddleButton().onTrue(new ToPickup());
+    this.xboxOperator.getLeftMiddleButton().onTrue(new WristDown(Wrist.getInstance()));
+    this.xboxOperator.getRightMiddleButton().onTrue(new WristStraight(Wrist.getInstance()));
 
     // toggle gear
     this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
