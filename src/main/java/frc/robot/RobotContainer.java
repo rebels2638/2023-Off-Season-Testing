@@ -135,7 +135,10 @@ public class RobotContainer {
     this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
     this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
     this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, PoseEstimator.getInstance()));
-
+    
+    auto.loadPathString("backUp");
+    this.xboxDriver.getBButton().whileTrue(auto.getCommand());
+    
     // this.turret.setDefaultCommand(new TurretController(turret, xboxOperator));
 
     // this.xboxOperator.getUpDpad().onTrue(new InstantCommand(() ->
@@ -188,6 +191,7 @@ public class RobotContainer {
    */
 
   public Command getAutonomousCommand() {
+    auto.loadPath();
     return auto.getCommand();
   }
 

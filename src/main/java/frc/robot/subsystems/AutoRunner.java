@@ -148,8 +148,11 @@ public final class AutoRunner extends SubsystemBase {
         System.out.println(pathChooser.getSelected());
     }
 
+    public void loadPathString(String pathName) {
+        m_path = PathPlanner.loadPathGroup(pathName, new PathConstraints(1, 0.5));
+    }
+
     public Command getCommand() {
-        loadPath();
         return m_autoBuilder.fullAuto(m_path);
     }
 }
