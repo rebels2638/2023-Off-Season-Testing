@@ -46,7 +46,7 @@ public class AutoBalance extends CommandBase {
 	private final double rki = 0;
 	private final double rkd = 0;
 
-	private double dkp = 1;
+	private double dkp = -3;
 	private double dki = 0; // d = degrees relitive to ground
 	private double dkd = 0;
 	private double m_headingSetpoint;
@@ -91,8 +91,8 @@ public class AutoBalance extends CommandBase {
 		double currentRot = currentPose.getRotation().getRadians();
 		m_headingSetpoint = 0.0;
 
-		if (Math.cos(currentRot) < 0.0)
-			{m_headingSetpoint = Math.PI;}
+		// if (Math.cos(currentRot) < 0.0)
+		// 	{m_headingSetpoint = Math.PI;}
 
 		rpidController.setSetpoint(m_headingSetpoint);
 		dpidController.setSetpoint(0.0);
