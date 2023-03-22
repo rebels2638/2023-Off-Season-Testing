@@ -14,19 +14,21 @@ import frc.robot.subsystems.Wrist;
 import frc.robot.commands.ElevatorCancel;
 
 public class ToPickup extends ParallelCommandGroup {
-    public ToPickup() {
-        addCommands(
-                new ParallelCommandGroup(
-                        new SequentialCommandGroup(
-                                new WristTurtle(Wrist.getInstance()),
-                                new TimerCommand(0.25),
-                                new WristDown(Wrist.getInstance())),
-                        new ParallelCommandGroup(
-                                new LinSlideFullyIn(LinearSlide.getInstance(), LinSlidePiston.getInstance()),
+        public ToPickup() {
+                addCommands(
                                 new SequentialCommandGroup(
-                                        new TimerCommand(0.5),
-                                        new ParallelCommandGroup(
-                                                new InstantCommand(() -> Claw.getInstance().push()),
-                                                new ElevatorDown(ElevatorPIDNonProfiled.getInstance()))))));
-    }
+                                                new WristTurtle(Wrist.getInstance()),
+                                                new TimerCommand(0.25),
+                                                new WristDown(Wrist.getInstance())),
+                                new ParallelCommandGroup(
+                                                new LinSlideFullyIn(LinearSlide.getInstance(),
+                                                                LinSlidePiston.getInstance()),
+                                                new SequentialCommandGroup(
+                                                                new TimerCommand(0.5),
+                                                                new ParallelCommandGroup(
+                                                                                new InstantCommand(() -> Claw
+                                                                                                .getInstance().push()),
+                                                                                new ElevatorDown(ElevatorPIDNonProfiled
+                                                                                                .getInstance())))));
+        }
 }

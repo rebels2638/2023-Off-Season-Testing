@@ -16,11 +16,10 @@ import frc.robot.commands.ElevatorCancel;
 public class ElevatorUpLinSlideOut extends ParallelCommandGroup {
     public ElevatorUpLinSlideOut() {
         addCommands(
-                new ParallelCommandGroup(
-                        new WristUp(Wrist.getInstance()),
-                        new ElevatorUp(ElevatorPIDNonProfiled.getInstance()),
-                        new SequentialCommandGroup(
-                                new TimerCommand(0.5),
-                                new LinSlideFullyOut(LinearSlide.getInstance(), LinSlidePiston.getInstance()))));
+                new WristUp(Wrist.getInstance()),
+                new ElevatorUp(ElevatorPIDNonProfiled.getInstance()),
+                new SequentialCommandGroup(
+                        new TimerCommand(0.5),
+                        new LinSlideFullyOut(LinearSlide.getInstance(), LinSlidePiston.getInstance())));
     }
 }

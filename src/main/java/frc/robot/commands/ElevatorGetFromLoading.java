@@ -13,13 +13,12 @@ import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.Wrist;
 import frc.robot.commands.ElevatorCancel;
 
-public class ElevatorGetFromLoading extends ParallelCommandGroup {
-    public ElevatorGetFromLoading() {
-        addCommands(
-                new SequentialCommandGroup(
-                        new ParallelCommandGroup(
-                                new ElevatorUp(ElevatorPIDNonProfiled.getInstance()),
-                                new InstantCommand(() -> Claw.getInstance().push())),
-                        new WristStraight(Wrist.getInstance())));
-    }
+public class ElevatorGetFromLoading extends SequentialCommandGroup {
+        public ElevatorGetFromLoading() {
+                addCommands(
+                                new ParallelCommandGroup(
+                                                new ElevatorUp(ElevatorPIDNonProfiled.getInstance()),
+                                                new InstantCommand(() -> Claw.getInstance().push())),
+                                new WristStraight(Wrist.getInstance()));
+        }
 }
