@@ -37,10 +37,10 @@ public class AutoBalance extends CommandBase {
 	// private final SerialPort sPort = new SerialPort(200, Port.kUSB);
 
 	private final PoseEstimator poseEstimatorSubsystem;
-	private final double yawErrorMargin = 5;
-	private final double yawVeloErrorMargin = 5;
-	private final double pitchErrorMargin = 2;
-	private final double pitchVeloErrorMargin = 5;
+	private final double yawErrorMargin = 5 * (Math.PI / 180);
+	private final double yawVeloErrorMargin = 5 * (Math.PI / 180);
+	private final double pitchErrorMargin = 2 * (Math.PI / 180);
+	private final double pitchVeloErrorMargin = 5 * (Math.PI / 180);
 
 	private final double rkp = 1; // r = rotation
 	private final double rki = 0;
@@ -91,20 +91,26 @@ public class AutoBalance extends CommandBase {
 		double currentRot = currentPose.getRotation().getRadians();
 		m_headingSetpoint = 0.0;
 
-		double rpidVoltage = rpidController.calculate(currentRot, m_headingSetpoint);
-		double dpidVoltage = dpidController.calculate(poseEstimatorSubsystem.getPitch() * (Math.PI / 180.0), 0);
-
 		if (Math.cos(currentRot) < 0.0)
-			m_headingSetpoint = Math.PI;
+			{m_headingSetpoint = Math.PI;}
+
+		rpidController.setSetpoint(m_headingSetpoint);
+		dpidController.setSetpoint(0.0);
+
+		double rpidVoltage = rpidController.calculate(currentRot);
+		double dpidVoltage = dpidController.calculate(poseEstimatorSubsystem.getPitch() * (Math.PI / 180.0));
+
 		if (!rpidController.atSetpoint()) {
+			// System.out.println("NOTSETPOINT R");
 			m_driveTrain.drive(0, rpidVoltage);
 		} else if (!dpidController.atSetpoint()) {
+			// System.out.println("NOTSETPOINT D");
 			m_driveTrain.drive(dpidVoltage, 0);
 		} else {
 			m_driveTrain.drive(0, 0);
 		}
 
-		System.out.println("In autobalance command");
+		// System.out.println("In autobalance command");
 	}
 
 	// Called once the command ends or is interrupted.

@@ -215,6 +215,8 @@ public class Wrist extends SubsystemBase {
      */
     @Override
     public void periodic() {
+        if(!m_wrist.isAlive()) System.out.println("Wrist Motor Not Alive");
+
         double positionPID = m_controller.calculate(getCurrentAngle());
         double velocityPID = m_velocitySetpoint * 4;
         double pid = (m_velocityControlEnabled ? velocityPID : positionPID);

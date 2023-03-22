@@ -17,8 +17,10 @@ public class ElevatorDownLinSlideIn extends SequentialCommandGroup {
                 addCommands(
                                 new WristTurtle(Wrist.getInstance()),
                                 new InstantCommand(() -> System.out.println("WRIST IN")),
-                                new InAndDown(LinearSlide.getInstance(),
-                                                LinSlidePiston.getInstance()),
+                                new ParallelCommandGroup(
+                                                new LinSlideFullyIn(LinearSlide.getInstance(),
+                                                                LinSlidePiston.getInstance()),
+                                                new ElevatorDown(ElevatorPIDNonProfiled.getInstance())),
                                 new InstantCommand(() -> System.out.println("Fsfsfsfs")));
         }
 }

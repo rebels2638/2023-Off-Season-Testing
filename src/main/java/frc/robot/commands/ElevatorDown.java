@@ -26,8 +26,6 @@ public class ElevatorDown extends CommandBase {
     // follow position control to goal state
     m_elevatorSubsystem.setToVelocityControlMode(false);
     m_elevatorSubsystem.setGoal(kHeightDownPosition);
-    
-    FalconDrivetrain.getInstance().setBalancing(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -37,6 +35,7 @@ public class ElevatorDown extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    FalconDrivetrain.getInstance().setBalancing(true);
     m_elevatorSubsystem.setToVelocityControlMode(true);
   }
 

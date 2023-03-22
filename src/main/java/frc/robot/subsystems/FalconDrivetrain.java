@@ -395,6 +395,7 @@ public class FalconDrivetrain extends SubsystemBase {
     var kGReal = 4.44;
     var kGDiff = -1.09;
     var kGFinal = kGReal + (PoseEstimator.getInstance().getPitch() > 0.0 ? 1.0 : -1.0) * kGDiff;
+    if(!isBalancing) kGFinal *= -1;
     if(Math.abs(PoseEstimator.getInstance().getPitch()) < 5.0) kGFinal = 0.0;
     m_leftGroup.setVoltage(leftVoltage + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0)));
     m_rightGroup.setVoltage(rightVoltage + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0)));

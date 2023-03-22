@@ -196,6 +196,8 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
 
         } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
             voltage = 0.0;
+        } else if(LinearSlide.getInstance().getCurrentEncoderPosition() > 15000) {
+            voltage = ElevatorConstants.kG;
         }
 
         // System.out.println("Elevator : " + voltage);
