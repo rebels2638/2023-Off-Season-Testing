@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -43,8 +44,15 @@ import frc.robot.utils.AutoConstants;
 import frc.robot.utils.ConstantsFXDriveTrain.DriveConstants;
 
 import java.util.Map;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import java.util.HashMap;
 import java.util.List;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.Arrays;
 
 import com.pathplanner.lib.*;
@@ -77,7 +85,7 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("autoBalance", new AutoBalance(FalconDrivetrain.getInstance(), PoseEstimator.getInstance()));
 
         // idk if this should be dynamically loaded, as in using java.io.*
-        
+
         PATHS.put("taxi", "taxi");
         PATHS.put("OneConeAndPick1", "OneConeAndPick1");
         PATHS.put("OneCubeAndPick1", "OneCubeAndPick1");
@@ -88,8 +96,7 @@ public final class AutoRunner extends SubsystemBase {
         PATHS.put("OneCubeAndPick3", "OneCubeAndPick3");
         PATHS.put("OneCubeLowAndPick3", "OneCubeLowAndPick3");
 
-
-        //  IGNORE
+        // IGNORE
         // PATHS.put("OneAndBack3Working", "OneAndBack3Working");
         // PATHS.put("OneAndBack1Working", "OneAndBack1Working");
         // PATHS.put("OneAndBack1", "OneAndBack1");
@@ -136,7 +143,7 @@ public final class AutoRunner extends SubsystemBase {
 
         Shuffleboard.getTab("Auto").add("Path", pathChooser);
         Shuffleboard.getTab("Auto").add("Load Path", new InstantCommand(() -> loadPath()));
-        
+
     }
 
     public static AutoRunner getInstance() {
@@ -151,12 +158,30 @@ public final class AutoRunner extends SubsystemBase {
     }
 
     public void loadPath() {
-        m_path = PathPlanner.loadPathGroup(pathChooser.getSelected(), new PathConstraints(1.5, 0.75));
+        loadPathString(pathChooser.getSelected());
         System.out.println(pathChooser.getSelected());
     }
 
     public void loadPathString(String pathName) {
-        m_path = PathPlanner.loadPathGroup(pathName, new PathConstraints(1, 0.75));
+        boolean isReversed = false;
+        try (BufferedReader br = new BufferedReader(
+                new FileReader(
+                        new File(Filesystem.getDeployDirectory(), "pathplanner/" + pathName + ".path")))) {
+            StringBuilder fileContentBuilder = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                fileContentBuilder.append(line);
+            }
+
+            String fileContent = fileContentBuilder.toString();
+            JSONObject json = (JSONObject) new JSONParser().parse(fileContent);
+
+            isReversed = (boolean) json.get("isReversed");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        m_path = PathPlanner.loadPathGroup(pathName, isReversed, new PathConstraints(1.5, 0.75));
     }
 
     public Command getCommand() {
