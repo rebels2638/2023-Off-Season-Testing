@@ -149,9 +149,6 @@ public class FalconDrivetrain extends SubsystemBase {
     switchToHighGear();
     isBalancing = true;
 
-    prevLeft = 0;
-    prevRight = 0;
-
     m_leftLeader.setNeutralMode(NeutralMode.Brake);
     m_leftFollower.setNeutralMode(NeutralMode.Brake);
     m_rightLeader.setNeutralMode(NeutralMode.Brake);
