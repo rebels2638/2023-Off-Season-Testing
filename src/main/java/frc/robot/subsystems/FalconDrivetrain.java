@@ -57,14 +57,18 @@ public class FalconDrivetrain extends SubsystemBase {
 
   private static FalconDrivetrain instance = null;
   private static final double kTrackWidth = DriveConstants.TRACK_WIDTH_METERS; // meters
-  private static final double kWheelRadius = GearboxConstants.WHEEL_DIAMETER / 2; // meters
+  private static final double kWheelRadiusStandard = GearboxConstants.WHEEL_DIAMETER_STANDARD / 2; // meters
+  private static final double kWheelRadiusOmni = GearboxConstants.WHEEL_DIAMETER_OMNI / 2; // meters
   private static final int kEncoderResolution = 2048;
   private boolean inHighGear = true;
 
   private double kNativeUnitsPerRotation = kEncoderResolution * getGearingRatio();
   private double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
-  private double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
-  private double kRotationsPerMeter = 1 / kMetersPerRotation;
+  private double kMetersPerRotationStandard = 2 * Math.PI * kWheelRadiusStandard;
+  private double kMetersPerRotationOmni = 2 * Math.PI * kWheelRadiusOmni;
+  private double kMetersPerRotationFront = (kMetersPerRotationStandard + kMetersPerRotationOmni) / 2.0;
+  private double kMetersPerRotationBack = (kMetersPerRotationStandard + kMetersPerRotationStandard) / 2.0;
+  private double kRotationsPerMeter = 1 / kMetersPerRotationBack;
   /*
    * =============================================================================
    * ==============
@@ -85,8 +89,10 @@ public class FalconDrivetrain extends SubsystemBase {
 
   // private final Gyro m_gyro = new AHRS(Port.kUSB);
 
-  private final PIDController m_leftPIDController = new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD);
-  private final PIDController m_rightPIDController = new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD);
+  private final PIDController m_leftPIDController = new PIDController(DriveConstants.kP, DriveConstants.kI,
+      DriveConstants.kD);
+  private final PIDController m_rightPIDController = new PIDController(DriveConstants.kP, DriveConstants.kI,
+      DriveConstants.kD);
 
   private double m_leftSetpoint = 0.0;
   private double m_rightSetpoint = 0.0;
@@ -120,14 +126,24 @@ public class FalconDrivetrain extends SubsystemBase {
   private double m_leftVoltageSetpoint;
   private double m_rightVoltageSetpoint;
 
+  private double leftMetersTraveled = 0.0;
+  private double rightMetersTraveled = 0.0;
+
+  private double prevLeftBack = 0;
+  private double prevLeftFront = 0;
+  private double prevRightFront = 0;
+  private double prevRightBack = 0;
+
   private boolean isBalancing = false;
 
   public final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(kTrackWidth);
 
   // private final DifferentialDriveOdometry m_odometry;
 
-  private SimpleMotorFeedforward m_feedforwardHigh = new SimpleMotorFeedforward(GearboxConstants.STATIC_GAIN_HIGH, GearboxConstants.VELOCITY_GAIN_HIGH, GearboxConstants.ACCEL_GAIN_HIGH);
-  private SimpleMotorFeedforward m_feedforwardLow = new SimpleMotorFeedforward(GearboxConstants.STATIC_GAIN_LOW, GearboxConstants.VELOCITY_GAIN_LOW, GearboxConstants.ACCEL_GAIN_LOW);
+  private SimpleMotorFeedforward m_feedforwardHigh = new SimpleMotorFeedforward(GearboxConstants.STATIC_GAIN_HIGH,
+      GearboxConstants.VELOCITY_GAIN_HIGH, GearboxConstants.ACCEL_GAIN_HIGH);
+  private SimpleMotorFeedforward m_feedforwardLow = new SimpleMotorFeedforward(GearboxConstants.STATIC_GAIN_LOW,
+      GearboxConstants.VELOCITY_GAIN_LOW, GearboxConstants.ACCEL_GAIN_LOW);
   public SimpleMotorFeedforward m_feedforward = inHighGear ? m_feedforwardHigh : m_feedforwardLow;
   /*
    * =============================================================================
@@ -149,6 +165,13 @@ public class FalconDrivetrain extends SubsystemBase {
     switchToHighGear();
     isBalancing = true;
 
+    leftMetersTraveled = 0.0;
+    rightMetersTraveled = 0.0;
+    prevLeftBack = 0;
+    prevLeftFront = 0;
+    prevRightFront = 0;
+    prevRightBack = 0;
+
     m_leftLeader.setNeutralMode(NeutralMode.Brake);
     m_leftFollower.setNeutralMode(NeutralMode.Brake);
     m_rightLeader.setNeutralMode(NeutralMode.Brake);
@@ -156,8 +179,6 @@ public class FalconDrivetrain extends SubsystemBase {
 
     m_leftGroup.setInverted(DriveConstants.FALCON_LEFT_GROUP_INVERTED);
     m_rightGroup.setInverted(DriveConstants.FALCON_RIGHT_GROUP_INVERTED);
-    m_leftEncoder.setDistancePerPulse(2 * Math.PI * kWheelRadius / kEncoderResolution);
-    m_rightEncoder.setDistancePerPulse(2 * Math.PI * kWheelRadius / kEncoderResolution);
     zeroEncoder();
     m_leftEncoder.reset();
     m_rightEncoder.reset();
@@ -178,7 +199,7 @@ public class FalconDrivetrain extends SubsystemBase {
     rightMotorVelocitySetpoint = tab.add("Right Velocity Setpoint", 0.0).getEntry();
     rightMotorVoltageSupplied = tab.add("Right Motor Voltage", 0.0).getEntry();
     rightMotorVoltageSetpoint = tab.add("Right Voltage Setpoint", 0.0).getEntry();
-    
+
     gyroPitch = tab.add("Gyro Pitch", 0.0).getEntry();
     gyroAngle = tab.add("Gyro Angle", 0.0).getEntry();
 
@@ -189,7 +210,7 @@ public class FalconDrivetrain extends SubsystemBase {
       m_differentialDrivetrainSimulator = new DifferentialDrivetrainSim(m_drivetrainSystem,
           DCMotor.getCIM(4),
           26.667, kTrackWidth,
-          kWheelRadius,
+          kWheelRadiusStandard,
           null);
       // m_gyroSim = m_gyro;
       m_leftEncoderSim = new EncoderSim(m_leftEncoder);
@@ -212,7 +233,7 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   public double nativeToMeters(double encoderUnits) {
-    return encoderUnits * kRotationsPerNativeUnit * kMetersPerRotation;
+    return encoderUnits * kRotationsPerNativeUnit * (getPitch() > 0 ? kMetersPerRotationBack : kMetersPerRotationFront);
   }
 
   public double getGearingRatio() {
@@ -222,8 +243,6 @@ public class FalconDrivetrain extends SubsystemBase {
   public void recalcConversionFactors() {
     kNativeUnitsPerRotation = kEncoderResolution * getGearingRatio();
     kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
-    kMetersPerRotation = 2 * Math.PI * kWheelRadius;
-    kRotationsPerMeter = 1 / kMetersPerRotation;
   }
 
   public double getCurrentEncoderPosition(WPI_TalonFX motor) {
@@ -235,19 +254,47 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   public double getLeftSideMeters() {
-    return (nativeToMeters(-getCurrentEncoderPosition(m_leftLeader)) + nativeToMeters(-getCurrentEncoderPosition(m_leftFollower))) / 2.0;
+    return leftMetersTraveled;
   }
 
   public double getRightSideMeters() {
-    return (nativeToMeters(getCurrentEncoderPosition(m_rightLeader)) + nativeToMeters(getCurrentEncoderPosition(m_rightFollower))) / 2.0;
+    return rightMetersTraveled;
   }
 
   public double getLeftSideVelocity() {
-    return (nativeToMeters(-getCurrentEncoderRate(m_leftLeader)) + nativeToMeters(-getCurrentEncoderRate(m_leftFollower))) / 2.0;
+    return (nativeToMeters(-getCurrentEncoderRate(m_leftLeader))
+        + nativeToMeters(-getCurrentEncoderRate(m_leftFollower))) / 2.0;
   }
 
   public double getRightSideVelocity() {
-    return (nativeToMeters(getCurrentEncoderRate(m_rightLeader)) + nativeToMeters(getCurrentEncoderRate(m_rightFollower))) / 2.0;
+    return (nativeToMeters(getCurrentEncoderRate(m_rightLeader))
+        + nativeToMeters(getCurrentEncoderRate(m_rightFollower))) / 2.0;
+  }
+
+  public double getLeftSideDiff() {
+    double leftFront = -getCurrentEncoderPosition(m_leftLeader);
+    double leftBack = -getCurrentEncoderPosition(m_leftFollower);
+
+    double traveledDiff = (nativeToMeters(leftFront - prevLeftFront)
+        + nativeToMeters(leftBack - prevLeftBack)) / 2.0;
+
+    prevLeftFront = leftFront;
+    prevLeftBack = leftBack;
+
+    return traveledDiff;
+  }
+
+  public double getRightSideDiff() {
+    double rightFront = getCurrentEncoderPosition(m_rightLeader);
+    double rightBack = getCurrentEncoderPosition(m_rightFollower);
+
+    double traveledDiff = (nativeToMeters(rightFront - prevRightFront)
+        + nativeToMeters(rightBack - prevRightBack)) / 2.0;
+
+    prevRightFront = rightFront;
+    prevRightBack = rightBack;
+    
+    return traveledDiff;
   }
 
   public void setBalancing(boolean balancing) {
@@ -261,17 +308,21 @@ public class FalconDrivetrain extends SubsystemBase {
     var kGReal = 4.44;
     var kGDiff = -1.09;
     var kGFinal = kGReal + (PoseEstimator.getInstance().getPitch() > 0.0 ? 1.0 : -1.0) * kGDiff;
-    if(!isBalancing) kGFinal *= -1;
-    if(Math.abs(PoseEstimator.getInstance().getPitch()) < 5.0) kGFinal = 0.0;
-    var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond) + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
-    var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond) + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
+    if (!isBalancing)
+      kGFinal *= -1;
+    if (Math.abs(PoseEstimator.getInstance().getPitch()) < 5.0)
+      kGFinal = 0.0;
+    var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond)
+        + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
+    var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond)
+        + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
     double leftPID = m_leftPIDController
         .calculate(getLeftSideVelocity(), speeds.leftMetersPerSecond);
     double rightPID = m_rightPIDController
         .calculate(getRightSideVelocity(), speeds.rightMetersPerSecond);
     m_leftVoltageSetpoint = leftFeedforward + leftPID;
     m_rightVoltageSetpoint = rightFeedforward + rightPID;
-    
+
     RebelUtil.constrain(m_leftVoltageSetpoint, -12, 12);
     RebelUtil.constrain(m_rightVoltageSetpoint, -12, 12);
     m_leftGroup.setVoltage(m_leftVoltageSetpoint);
@@ -305,7 +356,7 @@ public class FalconDrivetrain extends SubsystemBase {
     rightMotorVoltageSupplied.setDouble(m_rightVoltageSetpoint);
 
     gyroAngle.setDouble(getHeading());
-    gyroPitch.setDouble(PoseEstimator.getInstance().getPitch());    
+    gyroPitch.setDouble(PoseEstimator.getInstance().getPitch());
 
     poseString.setString(PoseEstimator.getInstance().getFormattedPose());
   }
@@ -316,7 +367,8 @@ public class FalconDrivetrain extends SubsystemBase {
 
   public void resetOdometry(Pose2d pose) {
     zeroEncoder();
-    if(Robot.isSimulation()) m_differentialDrivetrainSimulator.setPose(pose);
+    if (Robot.isSimulation())
+      m_differentialDrivetrainSimulator.setPose(pose);
   }
 
   public void zeroEncoder() {
@@ -344,6 +396,9 @@ public class FalconDrivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    this.leftMetersTraveled += getLeftSideDiff();
+    this.rightMetersTraveled += getRightSideDiff();
+
     this.updateSmartDashBoard();
     this.updateShuffleboard();
   }
@@ -395,10 +450,14 @@ public class FalconDrivetrain extends SubsystemBase {
     var kGReal = 4.44;
     var kGDiff = -1.09;
     var kGFinal = kGReal + (PoseEstimator.getInstance().getPitch() > 0.0 ? 1.0 : -1.0) * kGDiff;
-    if(!isBalancing) kGFinal *= -1;
-    if(Math.abs(PoseEstimator.getInstance().getPitch()) < 5.0) kGFinal = 0.0;
-    m_leftGroup.setVoltage(leftVoltage + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0)));
-    m_rightGroup.setVoltage(rightVoltage + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0)));
+    if (!isBalancing)
+      kGFinal *= -1;
+    if (Math.abs(PoseEstimator.getInstance().getPitch()) < 5.0)
+      kGFinal = 0.0;
+    m_leftGroup
+        .setVoltage(leftVoltage + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0)));
+    m_rightGroup
+        .setVoltage(rightVoltage + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0)));
   }
 
   public void switchToHighGear() {

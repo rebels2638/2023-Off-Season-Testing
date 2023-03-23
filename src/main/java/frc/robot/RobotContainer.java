@@ -59,6 +59,7 @@ import frc.robot.commands.ElevatorGetFromLoading;
 import frc.robot.commands.ElevatorUpLinSlideOut;
 import frc.robot.commands.LinSlidePIDController;
 import frc.robot.commands.LinSlideToggle;
+import frc.robot.commands.MidScore;
 import frc.robot.commands.Place;
 import frc.robot.commands.TimerCommand;
 import frc.robot.commands.ToPickup;
@@ -132,15 +133,18 @@ public class RobotContainer {
     this.xboxOperator.getBButton().onTrue(new ElevatorUpLinSlideOut());
     this.xboxOperator.getAButton().onTrue(new InstantCommand(() -> this.claw.toggle()));
     this.xboxOperator.getLeftMiddleButton().onTrue(new WristDown(Wrist.getInstance()));
-    this.xboxOperator.getRightMiddleButton().onTrue(new WristStraight(Wrist.getInstance()));
+    this.xboxOperator.getRightMiddleButton().onTrue(new MidScore());
 
     // toggle gear
     this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
     this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
     this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, PoseEstimator.getInstance()));
+    this.xboxDriver.getBButton().onTrue(new SequentialCommandGroup(
+      new Place(),
+      new ElevatorDownLinSlideIn()));
     
     auto.loadPathString("backUp");
-    this.xboxDriver.getBButton().whileTrue(auto.getCommand());
+    this.xboxDriver.getYButton().whileTrue(auto.getCommand());
     
     // this.turret.setDefaultCommand(new TurretController(turret, xboxOperator));
 

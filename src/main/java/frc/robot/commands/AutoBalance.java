@@ -46,7 +46,7 @@ public class AutoBalance extends CommandBase {
 	private final double rki = 0;
 	private final double rkd = 0;
 
-	private double dkp = -1.5;
+	private double dkp = -1.25;
 	private double dki = 0; // d = degrees relitive to ground
 	private double dkd = 0;
 	private double m_headingSetpoint;
