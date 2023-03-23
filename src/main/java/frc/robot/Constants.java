@@ -4,6 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -53,5 +58,21 @@ public final class Constants {
   public static final String[] PATHS = new String[]{ 
     "hPath"
   };
+
+  static class FieldConstants {
+    static final double length = Units.feetToMeters(54);
+    static final double width = Units.feetToMeters(27);
+  }
+
+  public static class VisionConstants {
+    public static final Transform3d robotToCam =
+            new Transform3d(
+                    new Translation3d(0.5, 0.0, 0.5),
+                    new Rotation3d(
+                            0, 0,
+                            0)); // Cam mounted facing forward, half a meter forward of center, half a meter up
+    // from center.
+    public static final String cameraName = "YOUR CAMERA NAME";
+  }
 
 }
