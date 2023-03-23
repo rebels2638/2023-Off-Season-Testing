@@ -181,8 +181,10 @@ public final class AutoRunner extends SubsystemBase {
             e.printStackTrace();
         }
 
-        
+        // FOR NONBALANCE
         m_path = PathPlanner.loadPathGroup(pathName, isReversed, new PathConstraints(1.5, 0.75));
+
+        // FOR BALANCE
         // m_path = PathPlanner.loadPathGroup(pathName, isReversed, new PathConstraints(1.5, 0.75), new PathConstraints(1.5, 0.75), new PathConstraints(1.2, 0.5), new PathConstraints(1.5, 0.75), new PathConstraints(1.5, 0.75));
     }
 
