@@ -9,8 +9,6 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.FalconDrivetrain;
 import frc.robot.subsystems.PoseEstimator;
 
-import javax.sound.sampled.Line;
-
 import com.ctre.phoenix.CANifier.PWMChannel;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SerialPort;
