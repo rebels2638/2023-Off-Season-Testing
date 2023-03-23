@@ -2,6 +2,7 @@ package frc.robot.commands;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
+
 public class AutoAlign extends CommandBase {
     private double tv; 
     private double tx;
@@ -45,7 +46,7 @@ public class AutoAlign extends CommandBase {
         double goalHeightCentimeters = 60.0;
 
         double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
-        double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+        double angleToGoalRadians = angleToGoalDegrees * (Math.PI / 180.0);
 
         //calculate distance
         double distanceFromLimelightToGoalCentimeters = (goalHeightCentimeters - limelightLensHeightCentimeters)/Math.tan(angleToGoalRadians);
