@@ -3,12 +3,12 @@
     {
       "anchorPoint": {
         "x": 1.923577370692544,
-        "y": 4.75
+        "y": 4.725
       },
       "prevControl": null,
       "nextControl": {
         "x": 1.7042503784107264,
-        "y": 4.75
+        "y": 4.725
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -24,16 +24,16 @@
     },
     {
       "anchorPoint": {
-        "x": 1.5347717999287636,
-        "y": 4.75
+        "x": 1.5919490897469664,
+        "y": 4.725
       },
       "prevControl": {
-        "x": 1.6610432635139623,
-        "y": 4.7089719144090125
+        "x": 1.7201947467720542,
+        "y": 4.690636679767328
       },
       "nextControl": {
-        "x": 1.6610432635139623,
-        "y": 4.7089719144090125
+        "x": 1.7201947467720542,
+        "y": 4.690636679767328
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -51,12 +51,12 @@
     },
     {
       "anchorPoint": {
-        "x": 6.463372354293904,
-        "y": 4.75
+        "x": 6.474889640221506,
+        "y": 4.722844138983571
       },
       "prevControl": {
-        "x": 6.146583653452041,
-        "y": 4.75
+        "x": 6.159401925167364,
+        "y": 4.722844138983571
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -69,14 +69,19 @@
           "clawClose",
           "elevatorDownLinSlideIn"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "maxVelocity": null,
-  "maxAcceleration": null,
-  "isReversed": false,
-  "markers": []
+  "markers": [
+    {
+      "position": 1.5545454545454542,
+      "names": [
+        "event",
+        "wristDown"
+      ]
+    }
+  ]
 }

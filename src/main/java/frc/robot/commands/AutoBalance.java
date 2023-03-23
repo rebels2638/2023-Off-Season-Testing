@@ -42,11 +42,11 @@ public class AutoBalance extends CommandBase {
 	private final double pitchErrorMargin = 2 * (Math.PI / 180);
 	private final double pitchVeloErrorMargin = 5 * (Math.PI / 180);
 
-	private final double rkp = 1; // r = rotation
+	private final double rkp = 6; // r = rotation
 	private final double rki = 0;
 	private final double rkd = 0;
 
-	private double dkp = -3;
+	private double dkp = -1.5;
 	private double dki = 0; // d = degrees relitive to ground
 	private double dkd = 0;
 	private double m_headingSetpoint;
@@ -91,8 +91,8 @@ public class AutoBalance extends CommandBase {
 		double currentRot = currentPose.getRotation().getRadians();
 		m_headingSetpoint = 0.0;
 
-		// if (Math.cos(currentRot) < 0.0)
-		// 	{m_headingSetpoint = Math.PI;}
+		if (Math.cos(currentRot) < 0.0)
+			{m_headingSetpoint = Math.PI;}
 
 		rpidController.setSetpoint(m_headingSetpoint);
 		dpidController.setSetpoint(0.0);

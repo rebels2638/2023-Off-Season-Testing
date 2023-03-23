@@ -147,7 +147,10 @@ public class FalconDrivetrain extends SubsystemBase {
 
   public FalconDrivetrain() {
     switchToHighGear();
-    isBalancing = false;
+    isBalancing = true;
+
+    prevLeft = 0;
+    prevRight = 0;
 
     m_leftLeader.setNeutralMode(NeutralMode.Brake);
     m_leftFollower.setNeutralMode(NeutralMode.Brake);
@@ -235,19 +238,19 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   public double getLeftSideMeters() {
-    return nativeToMeters(-getCurrentEncoderPosition(m_leftLeader));
+    return (nativeToMeters(-getCurrentEncoderPosition(m_leftLeader)) + nativeToMeters(-getCurrentEncoderPosition(m_leftFollower))) / 2.0;
   }
 
   public double getRightSideMeters() {
-    return nativeToMeters(getCurrentEncoderPosition(m_rightLeader));
+    return (nativeToMeters(getCurrentEncoderPosition(m_rightLeader)) + nativeToMeters(getCurrentEncoderPosition(m_rightFollower))) / 2.0;
   }
 
   public double getLeftSideVelocity() {
-    return nativeToMeters(-getCurrentEncoderRate(m_leftLeader));
+    return (nativeToMeters(-getCurrentEncoderRate(m_leftLeader)) + nativeToMeters(-getCurrentEncoderRate(m_leftFollower))) / 2.0;
   }
 
   public double getRightSideVelocity() {
-    return nativeToMeters(getCurrentEncoderRate(m_rightLeader));
+    return (nativeToMeters(getCurrentEncoderRate(m_rightLeader)) + nativeToMeters(getCurrentEncoderRate(m_rightFollower))) / 2.0;
   }
 
   public void setBalancing(boolean balancing) {
