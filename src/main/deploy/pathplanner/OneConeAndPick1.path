@@ -51,12 +51,37 @@
     },
     {
       "anchorPoint": {
-        "x": 6.463372354293904,
-        "y": 4.75
+        "x": 4.713829113820852,
+        "y": 4.780021428801773
       },
       "prevControl": {
-        "x": 6.146583653452041,
-        "y": 4.75
+        "x": 3.949063458817201,
+        "y": 4.755743154039753
+      },
+      "nextControl": {
+        "x": 5.43426296553021,
+        "y": 4.802892344729054
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 5.845939452221272,
+        "y": 5.717728981820303
+      },
+      "prevControl": {
+        "x": 5.868810368148554,
+        "y": 4.91724692436546
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -65,10 +90,7 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "clawClose",
-          "elevatorDownLinSlideIn"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0

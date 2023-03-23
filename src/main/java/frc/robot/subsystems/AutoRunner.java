@@ -181,7 +181,9 @@ public final class AutoRunner extends SubsystemBase {
             e.printStackTrace();
         }
 
+        
         m_path = PathPlanner.loadPathGroup(pathName, isReversed, new PathConstraints(1.5, 0.75));
+        // m_path = PathPlanner.loadPathGroup(pathName, isReversed, new PathConstraints(1.5, 0.75), new PathConstraints(1.5, 0.75), new PathConstraints(1.2, 0.5), new PathConstraints(1.5, 0.75), new PathConstraints(1.5, 0.75));
     }
 
     public Command getCommand() {

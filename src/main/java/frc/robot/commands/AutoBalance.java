@@ -9,12 +9,15 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.FalconDrivetrain;
 import frc.robot.subsystems.PoseEstimator;
 
+import javax.sound.sampled.Line;
+
 import com.ctre.phoenix.CANifier.PWMChannel;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -41,6 +44,7 @@ public class AutoBalance extends CommandBase {
 	private final double yawVeloErrorMargin = 5 * (Math.PI / 180);
 	private final double pitchErrorMargin = 2 * (Math.PI / 180);
 	private final double pitchVeloErrorMargin = 5 * (Math.PI / 180);
+	private final double pitchAccelErrorMargin = 0.5 * (Math.PI / 180);
 
 	private final double rkp = 6; // r = rotation
 	private final double rki = 0;
@@ -49,11 +53,17 @@ public class AutoBalance extends CommandBase {
 	private double dkp = -1.25;
 	private double dki = 0; // d = degrees relitive to ground
 	private double dkd = 0;
+
+	private double dk2p = 0;
+	private double dk2i = 0;
+	private double dk2d = -1;
+
 	private double m_headingSetpoint;
 	private boolean bBalanced = false;
 
 	private PIDController rpidController;
 	private PIDController dpidController;
+	private PIDController dpid2Controller;
 
 	/**
 	 * Creates a new ExampleCommand.
@@ -65,8 +75,10 @@ public class AutoBalance extends CommandBase {
 		poseEstimatorSubsystem = pose;
 		rpidController = new PIDController(rkp, rki, rkd);
 		dpidController = new PIDController(dkp, dki, dkd);
+		dpid2Controller = new PIDController(dk2p, dk2i, dk2d);
 		rpidController.enableContinuousInput(-Math.PI, Math.PI);
 		dpidController.enableContinuousInput(-Math.PI, Math.PI);
+		dpid2Controller.enableContinuousInput(-Math.PI, Math.PI);
 
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(drive, pose);
@@ -80,6 +92,7 @@ public class AutoBalance extends CommandBase {
 		SmartDashboard.putNumber("Balance kd", 0);
 		rpidController.setTolerance(yawErrorMargin, yawVeloErrorMargin);
 		dpidController.setTolerance(pitchErrorMargin, pitchVeloErrorMargin);
+		dpid2Controller.setTolerance(pitchVeloErrorMargin, pitchAccelErrorMargin);
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
@@ -96,16 +109,21 @@ public class AutoBalance extends CommandBase {
 
 		rpidController.setSetpoint(m_headingSetpoint);
 		dpidController.setSetpoint(0.0);
+		dpid2Controller.setSetpoint(0.0);
 
 		double rpidVoltage = rpidController.calculate(currentRot);
 		double dpidVoltage = dpidController.calculate(poseEstimatorSubsystem.getPitch() * (Math.PI / 180.0));
+		
+		double veloErr = dpidController.getVelocityError();
+		
+		double dpid2Voltage = dpid2Controller.calculate(veloErr);
 
 		if (!rpidController.atSetpoint()) {
 			// System.out.println("NOTSETPOINT R");
 			m_driveTrain.drive(0, rpidVoltage);
-		} else if (!dpidController.atSetpoint()) {
+		} else if (!dpidController.atSetpoint() || !dpid2Controller.atSetpoint()) {
 			// System.out.println("NOTSETPOINT D");
-			m_driveTrain.drive(dpidVoltage, 0);
+			m_driveTrain.drive(dpidVoltage /*+ dpid2Voltage*/, 0);
 		} else {
 			m_driveTrain.drive(0, 0);
 		}

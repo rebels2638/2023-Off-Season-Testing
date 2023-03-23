@@ -15,6 +15,7 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -48,6 +49,8 @@ public class PoseEstimator extends SubsystemBase {
     private static DifferentialDrivePoseEstimator poseEstimator;
     private AHRS m_gyro = new AHRS(Port.kUSB1);
 	private double pitchOffset = 0.0;
+    
+	private LinearFilter filter = LinearFilter.singlePoleIIR(0.1, 0.02);
     // private double previousPipelineTimestamp = 0;
 
     public PoseEstimator() {
@@ -90,7 +93,8 @@ public class PoseEstimator extends SubsystemBase {
         
         poseEstimator.update(m_gyro.getRotation2d(),
                 driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());
-
+        
+                
         // System.out.println("In pose estimator subsystem");
     }
 
@@ -105,6 +109,7 @@ public class PoseEstimator extends SubsystemBase {
 
     public double getPitch() {
         // return 0.0;
+
         return m_gyro.getPitch() - pitchOffset;
     }
 
