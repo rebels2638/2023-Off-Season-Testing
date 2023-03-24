@@ -95,6 +95,8 @@ public final class AutoRunner extends SubsystemBase {
         PATHS.put("OneConeAndPick3", "OneConeAndPick3");
         PATHS.put("OneCubeAndPick3", "OneCubeAndPick3");
         PATHS.put("OneCubeLowAndPick3", "OneCubeLowAndPick3");
+        PATHS.put("OneCubeAndTaxiOutNoBump2", "OneCubeAndTaxiOutNoBump2");
+        PATHS.put("OneCubeAndTaxiOutBump2", "OneCubeAndTaxiOutBump2");
 
         // IGNORE
         // PATHS.put("OneAndBack3Working", "OneAndBack3Working");
@@ -181,7 +183,7 @@ public final class AutoRunner extends SubsystemBase {
             e.printStackTrace();
         }
 
-        if (pathName == "OneCubeAndBalance2") {
+        if (pathName == "OneCubeAndBalance2" || pathName == "OneConeAndBalance2") {
             // FOR BALANCE
             m_path = PathPlanner.loadPathGroup(pathName, isReversed, new PathConstraints(1.5, 0.75),
                     new PathConstraints(1.5, 0.75), new PathConstraints(1.2, 0.5), new PathConstraints(1.5, 0.75),
