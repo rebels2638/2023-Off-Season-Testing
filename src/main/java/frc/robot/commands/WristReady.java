@@ -36,7 +36,7 @@ public class WristReady extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_armSubsystem.setToVelocityControlMode(false);
+    m_armSubsystem.setToVelocityControlMode(true);
   }
 
   // Returns true when the command should end.

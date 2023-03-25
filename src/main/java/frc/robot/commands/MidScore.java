@@ -12,6 +12,7 @@ import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.Wrist;
 import frc.robot.commands.ElevatorCancel;
+import frc.robot.commands.WristStraight;
 
 public class MidScore extends ParallelCommandGroup {
     public MidScore() {

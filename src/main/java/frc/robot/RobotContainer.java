@@ -137,14 +137,15 @@ public class RobotContainer {
 
     // toggle gear
     this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
-    this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
+    // this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
     this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, PoseEstimator.getInstance()));
     this.xboxDriver.getBButton().onTrue(new SequentialCommandGroup(
       new Place(),
       new ElevatorDownLinSlideIn()));
+    this.xboxDriver.getYButton().onTrue(new InstantCommand(() -> wrist.zeroEncoder()));
     
-    auto.loadPathString("backUp");
-    this.xboxDriver.getYButton().whileTrue(auto.getCommand());
+    // auto.loadPathString("backUp");
+    // this.xboxDriver.getYButton().whileTrue(auto.getCommand());
     
     // this.turret.setDefaultCommand(new TurretController(turret, xboxOperator));
 

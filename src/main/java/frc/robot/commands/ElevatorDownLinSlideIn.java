@@ -21,6 +21,6 @@ public class ElevatorDownLinSlideIn extends SequentialCommandGroup {
                                                 new LinSlideFullyIn(LinearSlide.getInstance(),
                                                                 LinSlidePiston.getInstance()),
                                                 new ElevatorDown(ElevatorPIDNonProfiled.getInstance())),
-                                new InstantCommand(() -> System.out.println("Fsfsfsfs")));
+                                new InstantCommand(() -> System.out.println("")));
         }
 }
