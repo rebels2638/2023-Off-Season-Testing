@@ -30,14 +30,13 @@
 // import edu.wpi.first.wpilibj2.command.Commands;
 // import edu.wpi.first.wpilibj2.command.RamseteCommand;
 // import frc.robot.utils.ConstantsFXDriveTrain.DriveConstants;
+// import java.util.HashMap;
 
 // /** An example command that uses an example subsystem. */
 // public class AutoNotch extends CommandBase {
 //   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 //   private final FalconDrivetrain driveTrain;
 //   private RamseteCommand ramseteCommand;
-//   private Pose2d startPose;
-//   private Pose2d endPose;
 //   RamseteController controller = new RamseteController();
 //   Trajectory goalTrajectory;
 //   private double startTime = Timer.getFPGATimestamp();
@@ -45,6 +44,7 @@
 
 //   // x1, y1, x2, y2,...
 //   private final double[] wayPoints = {1, 2, 1,31, 3123,312, 3,3}; //TODO: these are garbaje! x, y, x, y
+//   private final double[] scoringLocations = {1,2,3,1}; //TODO: these are garbaje! x, y, x, y. each coresponds to the pairs above
 
 //   /**
 //    * Creates a new ExampleCommand.
@@ -112,31 +112,35 @@
 
 //     double bestX = 999999;
 //     double bestY = 999999;
+//     double bestScoreX = 0;
+//     double bestScoreY = 0;
 
 //     for (int i = 0; i < wayPoints.length; i++) {
 //       // x 
 //       if (i % 2 == 0) {
-//         if (Math.abs(wayPoints[i] - startPose.getX()) > Math.abs(bestX - startPose.getX())) {
+//         if ((Math.abs(wayPoints[i] - startPose.getX()) < Math.abs(bestX - startPose.getX())) && (Math.abs(wayPoints[i] - startPose.getY()) < Math.abs(bestY - startPose.getY()))) {
 //           bestX = wayPoints[i];
+//           bestY = wayPoints[i + 1];
+//           bestScoreX = scoringLocations[i];
+//           bestScoreX = scoringLocations[i + 1];
+//         }
+
 //         }
 //       }
-//       else{
-//         if (Math.abs(wayPoints[i] - startPose.getY()) > Math.abs(bestY - startPose.getY())) {
-//           bestY = wayPoints[i];
-//         }
-//       }
-//     }
+    
 
 //     Pose2d endPose = new Pose2d(new Translation2d(bestX, bestY),
-//         new Rotation2d(Math.atan(( bestY - startPose.getY() ) / ( bestX - startPose.getX()) )));
+//         new Rotation2d(Math.atan(( bestScoreY - startPose.getY() ) / ( bestScoreX - startPose.getX()) )));
       
-//     var interiorWaypoints = new ArrayList<Translation2d>();
-    
+//     ArrayList interiorWaypoints = new ArrayList<Translation2d>();
+
 //     TrajectoryConfig config = new TrajectoryConfig(1, 1); // TODO: get the proper accels and max velocetys
 
-//     var trajectory = TrajectoryGenerator.generateTrajectory(startPose, interiorWaypoints, endPose, config);
+//     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(startPose, interiorWaypoints, endPose, config);
 
 //     return trajectory;
 
 //   }
+
+
 // }
