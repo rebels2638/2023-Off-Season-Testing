@@ -13,15 +13,14 @@ import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.Wrist;
 import frc.robot.commands.ElevatorCancel;
 
-public class ElevatorUpLinSlideOut extends SequentialCommandGroup {
+public class ElevatorUpLinSlideoutAuto extends SequentialCommandGroup {
 
-    public ElevatorUpLinSlideOut() {
+    public ElevatorUpLinSlideoutAuto() {
         addCommands(
                 new ParallelCommandGroup(
                     new ParallelRaceGroup(new WristUp(Wrist.getInstance()), new TimerCommand(2)),
                     new ElevatorUp(ElevatorPIDNonProfiled.getInstance())),
                 new ParallelRaceGroup(new LinSlideFullyOut(LinearSlide.getInstance(), LinSlidePiston.getInstance()),new TimerCommand(4)),
-                new returnWristControl(Wrist.getInstance()),
                 new InstantCommand(() -> System.out.println("The wrist is working")));
     }
 }

@@ -84,8 +84,6 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("wristUp", new WristUp(Wrist.getInstance()));
         PATH_COMMANDS.put("autoBalance", new AutoBalance(FalconDrivetrain.getInstance(), PoseEstimator.getInstance()));
 
-        // idk if this should be dynamically loaded, as in using java.io.*
-
         PATHS.put("taxi", "taxi");
         PATHS.put("OneConeAndPick1", "OneConeAndPick1");
         PATHS.put("OneCubeAndPick1", "OneCubeAndPick1");
@@ -185,9 +183,9 @@ public final class AutoRunner extends SubsystemBase {
 
         if (pathName == "OneCubeAndBalance2" || pathName == "OneConeAndBalance2") {
             // FOR BALANCE
-            m_path = PathPlanner.loadPathGroup(pathName, isReversed, new PathConstraints(1.5, 0.75),
-                    new PathConstraints(1.5, 0.75), new PathConstraints(1.2, 0.5), new PathConstraints(1.5, 0.75),
-                    new PathConstraints(1.5, 0.75));
+            m_path = PathPlanner.loadPathGroup(pathName, isReversed, new PathConstraints(1.75, 0.8),
+                    new PathConstraints(1.75, 0.8), new PathConstraints(1.5, 0.65), new PathConstraints(1.5, 0.75),
+                    new PathConstraints(1.75, 0.8));
         } else {
             // FOR NONBALANCE
             m_path = PathPlanner.loadPathGroup(pathName, isReversed, new PathConstraints(1.5, 0.75));

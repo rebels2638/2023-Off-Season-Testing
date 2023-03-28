@@ -12,7 +12,7 @@ public class ElevatorUp extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorPIDNonProfiled m_elevatorSubsystem;
 
-  private final double kHeightUpPosition = 0.73; // meters
+  private final double kHeightUpPosition = 0.728; // meters
 
   public ElevatorUp(ElevatorPIDNonProfiled subsystem) {
     m_elevatorSubsystem = subsystem;

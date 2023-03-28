@@ -16,9 +16,9 @@ import frc.robot.commands.ElevatorCancel;
 public class AutoPlace extends SequentialCommandGroup {
     public AutoPlace() {
         addCommands(
-            new ParallelRaceGroup(new ElevatorUpLinSlideOut(), new TimerCommand(2.5)),
-            new ParallelRaceGroup(new Place(), new TimerCommand(2)),
-            new ParallelRaceGroup(new ElevatorDownLinSlideIn(), new TimerCommand(4)),
-            new InstantCommand(() -> System.out.println("WHEN THE AUTO")));
+            new ParallelRaceGroup(new ElevatorUpLinSlideoutAuto(), new TimerCommand(5)),
+            new ParallelRaceGroup(new Place(), new TimerCommand(5)),
+            new ParallelRaceGroup(new ElevatorDownLinSlideIn(), new TimerCommand(5))
+            );
     }
 }

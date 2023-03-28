@@ -36,18 +36,20 @@ public class AutoBalance extends CommandBase {
 	private final FalconDrivetrain m_driveTrain;
 	// private final SerialPort sPort = new SerialPort(200, Port.kUSB);
 
-	private final PoseEstimator poseEstimatorSubsystem;
-	private final double yawErrorMargin = 5 * (Math.PI / 180);
-	private final double yawVeloErrorMargin = 5 * (Math.PI / 180);
-	private final double pitchErrorMargin = 2 * (Math.PI / 180);
-	private final double pitchVeloErrorMargin = 5 * (Math.PI / 180);
-	private final double pitchAccelErrorMargin = 0.5 * (Math.PI / 180);
+	public static final double RADS = Math.PI/180;
 
-	private final double rkp = 6; // r = rotation
+	private final PoseEstimator poseEstimatorSubsystem;
+	private final double yawErrorMargin = 5 * RADS;
+	private final double yawVeloErrorMargin = 5 * RADS;
+	private final double pitchErrorMargin = 2 * RADS;
+	private final double pitchVeloErrorMargin = 5 * RADS;
+	private final double pitchAccelErrorMargin = 0.5 * RADS;
+
+	private final double rkp = 7; // r = rotation
 	private final double rki = 0;
 	private final double rkd = 0;
 
-	private double dkp = -1.25;
+	private double dkp = -2; // originally -1.25
 	private double dki = 0; // d = degrees relitive to ground
 	private double dkd = 0;
 
@@ -103,6 +105,7 @@ public class AutoBalance extends CommandBase {
 
 		if (Math.cos(currentRot) < 0.0)
 			{m_headingSetpoint = Math.PI;}
+			
 
 		rpidController.setSetpoint(m_headingSetpoint);
 		dpidController.setSetpoint(0.0);

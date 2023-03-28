@@ -40,10 +40,10 @@ public class Wrist extends SubsystemBase {
     public static final double kI = 0;
     public static final double kD = 0.3;
 
-    public static final double kS = 0.10299; // 0.068689;
+    public static final double kS = 0.10299; // 0.068689; !!
     public static final double kV = 0.36865; // 4.3647;
     public static final double kA = 0.019917; // 0.12205;
-    public static final double kG = 0.18409; // 0.051839;
+    public static final double kG = 0.18409; // 0.051839; !!
 
     private final WPI_TalonFX m_wrist = new WPI_TalonFX(5);
     
