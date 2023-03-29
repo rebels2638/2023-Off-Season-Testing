@@ -1,4 +1,4 @@
-// // Copyright (c) FIRST and other WPILib contributors.
+// Copyright (c) FIRST and other WPILib contributors.
 // // Open Source Software; you can modify and/or share it under the terms of
 // // the WPILib BSD license file in the root directory of this project.
 
@@ -128,11 +128,30 @@
 //         }
 //       }
     
-
+    
+//     double endRot = startPose.getRotation().getRadians();
+//     // to the right of the robot and up
+//     if ( bestScoreX - startPose.getX() > 0 && bestScoreY - startPose.getY() > 0)  {
+//         endRot = Math.tan( bestScoreY - startPose.getY() ) / ( bestScoreX - startPose.getX());
+//     }
+//     // to the right of the robot and down+
+//     else if ( bestScoreX - startPose.getX() > 0 && startPose.getY() - bestScoreY - startPose.getY() > 0) {
+//         endRot = -(Math.tan( startPose.getY() - bestScoreY ) / ( bestScoreX - startPose.getX()));
+//     }
+//     // to the left of the robot and up
+//     else if ( startPose.getX() - bestScoreX  > 0 && bestScoreY - startPose.getY() > 0) {
+//         endRot = Math.PI - Math.tan( startPose.getY() - bestScoreY ) / ( startPose.getX() - bestScoreX );
+//     }
+//     // to the left of the robot and down
+//     else if ( startPose.getX() - bestScoreX  > 0 && startPose.getY() - bestScoreY > 0) {
+//         endRot = Math.tan( startPose.getY() - bestScoreY ) / ( startPose.getX() - bestScoreX ) + Math.PI;
+//     }
+    
+    
 //     Pose2d endPose = new Pose2d(new Translation2d(bestX, bestY),
-//         new Rotation2d(Math.atan(( bestScoreY - startPose.getY() ) / ( bestScoreX - startPose.getX()) )));
+//         new Rotation2d( endRot));
       
-//     ArrayList interiorWaypoints = new ArrayList<Translation2d>();
+//     ArrayList<Translation2d> interiorWaypoints = new ArrayList<Translation2d>();
 
 //     TrajectoryConfig config = new TrajectoryConfig(1, 1); // TODO: get the proper accels and max velocetys
 
