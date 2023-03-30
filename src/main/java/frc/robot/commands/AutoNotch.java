@@ -111,7 +111,7 @@ public class AutoNotch extends CommandBase {
 
 
     Pose2d startPose = PoseEstimator.getInstance().getCurrentPose();
-    Translation2d poseFiner = new Translation2d(startPose.getRotation().getCos() * poseFinerDistance + startPose.getX(),
+    Translation2d poseFinder = new Translation2d(startPose.getRotation().getCos() * poseFinerDistance + startPose.getX(),
        (startPose.getRotation().getSin() * poseFinerDistance + startPose.getY()) );
 
     double bestX = 999999;
@@ -122,7 +122,7 @@ public class AutoNotch extends CommandBase {
     for (int i = 0; i < wayPoints.length; i++) {
       // x 
       if (i % 2 == 0) {
-        if ((Math.abs(wayPoints[i] - poseFiner.getX()) < Math.abs(bestX - poseFiner.getX())) && (Math.abs(wayPoints[i] - poseFiner.getY()) < Math.abs(bestY - poseFiner.getY()))) {
+        if ((Math.abs(wayPoints[i] - poseFinder.getX()) < Math.abs(bestX - poseFinder.getX())) && (Math.abs(wayPoints[i] - poseFinder.getY()) < Math.abs(bestY - poseFinder.getY()))) {
           bestX = wayPoints[i];
           bestY = wayPoints[i + 1];
           bestScoreX = scoringLocations[i];
