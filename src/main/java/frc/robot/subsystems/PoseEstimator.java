@@ -94,7 +94,8 @@ public class PoseEstimator extends SubsystemBase {
         double hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0);
         if ( hasTarget !=  0) {
             limelightResult = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
-            currentPose = new Pose2d(limelightResult[0] , limelightResult[1], m_gyro.getRotation2d());
+            limePose = new Pose2d(limelightResult[0] , limelightResult[1], m_gyro.getRotation2d());
+            poseEstimator.addVisionMeasurement​(limePose, Timer.getFPGATimestamp() - (limelightResult[6]/1000.0))
         }
         else { 
             poseEstimator.update(m_gyro.getRotation2d(),
