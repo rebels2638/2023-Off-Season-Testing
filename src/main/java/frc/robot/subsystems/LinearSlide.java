@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -26,18 +27,19 @@ public class LinearSlide extends SubsystemBase {
     private double kG = 0;
     private final GenericEntry linSlideEncoderPosition;
 
-    private double m_setpoint = 0.0;
+    private final PIDController pid = new PIDController(0.65 / 58000.0, 0, 0);
 
     public LinearSlide() {
         this.m_linslide = new WPI_TalonFX(6);
-        m_linslide.setNeutralMode(NeutralMode.Coast); // changed from brake
+        m_linslide.setNeutralMode(NeutralMode.Brake); // changed from brake
 
         tab = Shuffleboard.getTab("Linear Slide");
         inverted = false;
         linSlideEncoderPosition = tab.add("Lin_Encoder_Position", 0.0).getEntry();
         tab.add("Zero Encoder", new InstantCommand(() -> this.zeroEncoder()));
         tab.add("Max Out Encoder", new InstantCommand(() -> this.maxOutEncoder()));
-        m_setpoint = 0.0;
+        setGoal(0);
+        pid.setTolerance(1000);
     }
 
     
@@ -61,19 +63,21 @@ public class LinearSlide extends SubsystemBase {
     @Override
     public void periodic() {
         linSlideEncoderPosition.setDouble(m_linslide.getSensorCollection().getIntegratedSensorPosition());
+
+        double percentOutput = pid.calculate(getCurrentEncoderPosition());
         
-        if (getCurrentEncoderPosition() >= kMaxEncoderLimit && m_setpoint > 0.0) {
-            m_setpoint = 0.0;
-        } else if (getCurrentEncoderPosition() <= kMinEncoderLimit && m_setpoint < 0.0) {
-            m_setpoint = 0.0;
+        if (getCurrentEncoderPosition() >= kMaxEncoderLimit && percentOutput > 0.0) {
+            percentOutput = 0.0;
+        } else if (getCurrentEncoderPosition() <= kMinEncoderLimit && percentOutput < 0.0) {
+            percentOutput = 0.0;
         }
         
-        m_linslide.set(ControlMode.PercentOutput, m_setpoint * (inverted ? -1 : 1));
+        m_linslide.set(ControlMode.PercentOutput, percentOutput * (inverted ? -1 : 1));
 
     }
 
-    public void setPercentOutput(double percent) {
-        m_setpoint = percent;
+    public void setGoal(double encoderGoal) {
+        pid.setSetpoint(encoderGoal);
     }
 
     public void zeroEncoder() {

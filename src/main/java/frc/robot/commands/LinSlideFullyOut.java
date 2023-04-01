@@ -29,13 +29,13 @@ public class LinSlideFullyOut extends CommandBase {
     public void initialize() {
         finished = false;
         m_piston.pull();
-        m_linslide.setPercentOutput(0.65);
+        m_linslide.setGoal(58000);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if(m_linslide.getCurrentEncoderPosition() > 40000) {
+        if(m_linslide.getCurrentEncoderPosition() > 50000) {
             finished = true;
         }
     }
@@ -43,7 +43,6 @@ public class LinSlideFullyOut extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_linslide.setPercentOutput(0.0);
     }
 
     // Returns true when the command should end.

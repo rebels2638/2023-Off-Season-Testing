@@ -85,6 +85,7 @@ public class RobotContainer {
   // The robot's controllers
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
+  private final XboxController xboxTester;
 
   private final Wrist wrist = Wrist.getInstance();
   private final ElevatorPIDNonProfiled elevatorFinal = ElevatorPIDNonProfiled.getInstance();
@@ -112,6 +113,7 @@ public class RobotContainer {
     // Instantiate our controllers with proper ports.
     this.xboxDriver = new XboxController(3);
     this.xboxOperator = new XboxController(2);
+    this.xboxTester = new XboxController(1);
 
     // Controller Throttle Mappings
     // this.drive.setDefaultCommand(new FalconDrive(drive, xboxDriver));
@@ -138,6 +140,9 @@ public class RobotContainer {
     this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
     this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
     this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, PoseEstimator.getInstance()));
+
+    this.xboxTester.getLeftBumper().onTrue(new InstantCommand(() -> this.LinPiston.push()));
+    this.xboxTester.getRightBumper().onTrue(new InstantCommand(() -> this.LinPiston.pull()));
     
     auto.loadPathString("backUp");
     this.xboxDriver.getBButton().whileTrue(auto.getCommand());
