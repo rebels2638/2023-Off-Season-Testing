@@ -178,5 +178,5 @@ public class AutoNotch extends CommandBase {
 
   }
     }
-
+  }
 }
