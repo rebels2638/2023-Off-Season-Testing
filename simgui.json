@@ -40,6 +40,7 @@
       "/Shuffleboard/Linear Slide/Max Out Encoder": "Command",
       "/Shuffleboard/Linear Slide/Zero Encoder": "Command",
       "/Shuffleboard/Turret/Zero Encoder": "Command",
+      "/Shuffleboard/Wrist/Wrist Ready": "Command",
       "/Shuffleboard/Wrist/Zero Encoder": "Command",
       "/SmartDashboard/Field": "Field2d"
     }
