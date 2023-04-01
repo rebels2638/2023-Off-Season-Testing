@@ -423,7 +423,7 @@ public class FalconDrivetrain extends SubsystemBase {
 
   public double getHeading() {
     // return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if
-    return PoseEstimator.getInstance().getAngle();
+    return PoseEstimator.getInstance().getYaw();
     // the GYRO is REVERSED.
   }
 

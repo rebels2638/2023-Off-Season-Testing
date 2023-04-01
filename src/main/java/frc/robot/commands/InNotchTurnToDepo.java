@@ -15,7 +15,7 @@ public class InNotchTurnToDepo extends CommandBase{
         addRequirements(subsys2);
     }
     public void initialize(){
-        double rot = poseEstim.getAngle(); 
+        double rot = poseEstim.getYaw(); 
         double destinRot = (Math.atan(poseEstim.getCurrentPose().getY()/poseEstim.getCurrentPose().getX()));
         drive.drive(0,(leftOright ? - destinRot :  destinRot) + (rot == 0 ? 0 : rot > 0 ? -rot : rot));
         
