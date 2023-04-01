@@ -69,19 +69,19 @@ public class AutoNotch extends CommandBase {
 
     goalTrajectory = generateTrajectory();
     
-    // ramseteCommand =
-    //     new RamseteCommand(
-    //         trajectory,
-    //         PoseEstimator::getCurrentPose,
-    //         new RamseteController(),
-    //         driveTrain.m_feedforward,
-    //         driveTrain.m_kinematics,
-    //         driveTrain::getWheelSpeeds,
-    //         new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD),
-    //         new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD),
-    //         // RamseteCommand passes volts to the callback
-    //         driveTrain::setVoltageFromAuto,
-    //         driveTrain);
+    ramseteCommand =
+        new RamseteCommand(
+            trajectory,
+            PoseEstimator::getCurrentPose,
+            new RamseteController(),
+            driveTrain.m_feedforward,
+            driveTrain.m_kinematics,
+            driveTrain::getWheelSpeeds,
+            new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD),
+            new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD),
+            // RamseteCommand passes volts to the callback
+            driveTrain::setVoltageFromAuto,
+            driveTrain);
 
   }
 
@@ -127,48 +127,48 @@ public class AutoNotch extends CommandBase {
           bestScoreX = scoringLocations[i + 1];
         }
 
-//     double bestX = 999999;
-//     double bestY = 999999;
-//     double bestScoreX = 0;
-//     double bestScoreY = 0;
+    double bestX = 999999;
+    double bestY = 999999;
+    double bestScoreX = 0;
+    double bestScoreY = 0;
 
-//     for (int i = 0; i < wayPoints.length; i++) {
-//       // x 
-//       if (i % 2 == 0) {
-//         if ((Math.abs(wayPoints[i] - startPose.getX()) < Math.abs(bestX - startPose.getX())) && (Math.abs(wayPoints[i] - startPose.getY()) < Math.abs(bestY - startPose.getY()))) {
-//           bestX = wayPoints[i];
-//           bestY = wayPoints[i + 1];
-//           bestScoreX = scoringLocations[i];
-//           bestScoreX = scoringLocations[i + 1];
-//         }
+    for (int i = 0; i < wayPoints.length; i++) {
+      // x 
+      if (i % 2 == 0) {
+        if ((Math.abs(wayPoints[i] - startPose.getX()) < Math.abs(bestX - startPose.getX())) && (Math.abs(wayPoints[i] - startPose.getY()) < Math.abs(bestY - startPose.getY()))) {
+          bestX = wayPoints[i];
+          bestY = wayPoints[i + 1];
+          bestScoreX = scoringLocations[i];
+          bestScoreX = scoringLocations[i + 1];
+        }
 
-//         }
-//       }
+        }
+      }
     
     
-//     double endRot = startPose.getRotation().getRadians();
-//     // to the right of the robot and up
-//     if ( bestScoreX - startPose.getX() > 0 && bestScoreY - startPose.getY() > 0)  {
-//         endRot = Math.tan( bestScoreY - startPose.getY() ) / ( bestScoreX - startPose.getX());
-//     }
-//     // to the right of the robot and down+
-//     else if ( bestScoreX - startPose.getX() > 0 && startPose.getY() - bestScoreY - startPose.getY() > 0) {
-//         endRot = -(Math.tan( startPose.getY() - bestScoreY ) / ( bestScoreX - startPose.getX()));
-//     }
-//     // to the left of the robot and up
-//     else if ( startPose.getX() - bestScoreX  > 0 && bestScoreY - startPose.getY() > 0) {
-//         endRot = Math.PI - Math.tan( startPose.getY() - bestScoreY ) / ( startPose.getX() - bestScoreX );
-//     }
-//     // to the left of the robot and down
-//     else if ( startPose.getX() - bestScoreX  > 0 && startPose.getY() - bestScoreY > 0) {
-//         endRot = Math.tan( startPose.getY() - bestScoreY ) / ( startPose.getX() - bestScoreX ) + Math.PI;
-//     }
+    double endRot = startPose.getRotation().getRadians();
+    // to the right of the robot and up
+    if ( bestScoreX - bestX > 0 && bestScoreY - bestY > 0)  {
+        endRot = Math.atan( bestScoreY - bestY ) / ( bestScoreX - bestX);
+    }
+    // to the right of the robot and down
+    else if ( bestScoreX - bestX > 0 && bestY - bestScoreY  > 0) {
+        endRot = -(Math.atan( bestY - bestScoreY ) / ( bestScoreX - bestX));
+    }
+    // to the left of the robot and up
+    else if ( bestX - bestScoreX  > 0 && bestScoreY - bestY > 0) {
+        endRot = Math.PI - Math.atan( bestY - bestScoreY ) / ( bestX - bestScoreX );
+    }
+    // to the left of the robot and down
+    else if ( bestX - bestScoreX  > 0 && bestY - bestScoreY > 0) {
+        endRot = Math.atan( bestY - bestScoreY ) / ( bestX - bestScoreX ) + Math.PI;
+    }
     
     
-//     Pose2d endPose = new Pose2d(new Translation2d(bestX, bestY),
-//         new Rotation2d( endRot));
+    Pose2d endPose = new Pose2d(new Translation2d(bestX, bestY),
+        new Rotation2d( endRot));
       
-//     ArrayList<Translation2d> interiorWaypoints = new ArrayList<Translation2d>();
+    ArrayList<Translation2d> interiorWaypoints = new ArrayList<Translation2d>();
 
     TrajectoryConfig config = new TrajectoryConfig(1, 1); // TODO: get the proper accels and max velocetys
 
@@ -177,6 +177,6 @@ public class AutoNotch extends CommandBase {
     return trajectory;
 
   }
-
+    }
 
 }
