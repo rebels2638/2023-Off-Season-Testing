@@ -59,7 +59,6 @@ import frc.robot.commands.ElevatorGetFromLoading;
 import frc.robot.commands.ElevatorUpLinSlideOut;
 import frc.robot.commands.LinSlidePIDController;
 import frc.robot.commands.LinSlideToggle;
-import frc.robot.commands.MidScore;
 import frc.robot.commands.Place;
 import frc.robot.commands.TimerCommand;
 import frc.robot.commands.ToPickup;
@@ -115,10 +114,10 @@ public class RobotContainer {
     this.xboxOperator = new XboxController(2);
 
     // Controller Throttle Mappings
-    this.drive.setDefaultCommand(new FalconDrive(drive, xboxDriver));
+    // this.drive.setDefaultCommand(new FalconDrive(drive, xboxDriver));
 
     // Run a linslide in command to start the match
-    (new LinSlideFullyIn(linslide, LinPiston)).schedule();
+    // (new LinSlideFullyIn(linslide, LinPiston)).schedule();
 
     this.elevatorFinal.setDefaultCommand(new ElevatorPIDController(elevatorFinal, xboxOperator));
     this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
@@ -133,19 +132,15 @@ public class RobotContainer {
     this.xboxOperator.getBButton().onTrue(new ElevatorUpLinSlideOut());
     this.xboxOperator.getAButton().onTrue(new InstantCommand(() -> this.claw.toggle()));
     this.xboxOperator.getLeftMiddleButton().onTrue(new WristDown(Wrist.getInstance()));
-    this.xboxOperator.getRightMiddleButton().onTrue(new MidScore());
+    this.xboxOperator.getRightMiddleButton().onTrue(new WristStraight(Wrist.getInstance()));
 
     // toggle gear
     this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
-    // this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
+    this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
     this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, PoseEstimator.getInstance()));
-    this.xboxDriver.getBButton().onTrue(new SequentialCommandGroup(
-      new Place(),
-      new ElevatorDownLinSlideIn()));
-    this.xboxDriver.getYButton().onTrue(new InstantCommand(() -> wrist.zeroEncoder()));
     
-    // auto.loadPathString("backUp");
-    // this.xboxDriver.getYButton().whileTrue(auto.getCommand());
+    auto.loadPathString("backUp");
+    this.xboxDriver.getBButton().whileTrue(auto.getCommand());
     
     // this.turret.setDefaultCommand(new TurretController(turret, xboxOperator));
 
@@ -204,7 +199,7 @@ public class RobotContainer {
   }
 
   public void resetForAuto() {
-    // FalconDrivetrain.getInstance().zeroEncoder();      
+    // FalconDrivetrain.getInstance().zeroEncoder();
     PoseEstimator.getInstance().resetPitchOffset();
     ElevatorPIDNonProfiled.getInstance().zeroEncoder();
     LinearSlide.getInstance().zeroEncoder();

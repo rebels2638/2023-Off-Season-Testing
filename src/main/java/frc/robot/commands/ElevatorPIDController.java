@@ -4,13 +4,13 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.Drivetrain;
+// import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.ElevatorPIDNonProfiled;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+// import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 /** An example command that uses an example subsystem. */
@@ -45,7 +45,7 @@ public class ElevatorPIDController extends CommandBase {
   @Override
   public void execute() {
 
-    double error = 0.0;
+    // double error = 0.0;
     // if (e_controller.getLeftY() < 0.0) {error = -0.1;}
     // else {error = 0.1;}
 

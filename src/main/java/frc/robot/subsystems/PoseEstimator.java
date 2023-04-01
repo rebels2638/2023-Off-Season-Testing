@@ -15,7 +15,6 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -28,6 +27,8 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.AutoRunner;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 // Not finished yet
 
@@ -36,6 +37,8 @@ public class PoseEstimator extends SubsystemBase {
 
     // private PhotonCamera photonCamera = new PhotonCamera("camera");
     private FalconDrivetrain driveTrainSubsytem;
+    private Pose2d currentPose = new Pose2d();
+    private double[] limelightResult;
 
     // private static final List<Pose3d> targetPoses = Collections
     //         .unmodifiableList(List.of(new Pose3d(0, 0, 0, new Rotation3d(0, 0, degreesToRadians(180))),
@@ -49,8 +52,6 @@ public class PoseEstimator extends SubsystemBase {
     private static DifferentialDrivePoseEstimator poseEstimator;
     private AHRS m_gyro = new AHRS(Port.kUSB1);
 	private double pitchOffset = 0.0;
-    
-	private LinearFilter filter = LinearFilter.singlePoleIIR(0.1, 0.02);
     // private double previousPipelineTimestamp = 0;
 
     public PoseEstimator() {
@@ -90,26 +91,33 @@ public class PoseEstimator extends SubsystemBase {
         //         poseEstimator.addVisionMeasurement(visionMeasurment.toPose2d(), resultTimestamp);
         //     }
         // }
-        
-        poseEstimator.update(m_gyro.getRotation2d(),
-                driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());
-        
-                
+        double hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0);
+        if ( hasTarget !=  0) {
+            limelightResult = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose").getDoubleArray(new double[6]);
+            currentPose = new Pose2d(limelightResult[0] , limelightResult[1], m_gyro.getRotation2d());
+        }
+        else { 
+            poseEstimator.update(m_gyro.getRotation2d(),
+                    driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());
+
+            currentPose = poseEstimator.getEstimatedPosition();
+        }
+
         // System.out.println("In pose estimator subsystem");
-    }
+        }
 
     public String getFormattedPose() {
         var pose = getCurrentPose();
         return String.format("(%.2f, %.2f) %.2f degrees", pose.getX(), pose.getY(), pose.getRotation().getDegrees());
+        
     }
 
     public Pose2d getCurrentPose() {
-        return poseEstimator.getEstimatedPosition();
+        return currentPose;
     }
 
     public double getPitch() {
         // return 0.0;
-
         return m_gyro.getPitch() - pitchOffset;
     }
 
@@ -133,6 +141,7 @@ public class PoseEstimator extends SubsystemBase {
         FalconDrivetrain.getInstance().zeroEncoder();
         setYawAdjustment(pose.getRotation().getDegrees() - getAngle());
         poseEstimator.resetPosition(pose.getRotation(), driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters(), pose);
+        currentPose = poseEstimator.getEstimatedPosition();
     }
 
     public void resetHeading() {
