@@ -29,13 +29,16 @@ public class LinSlideFullyOut extends CommandBase {
     public void initialize() {
         finished = false;
         m_piston.pull();
-        m_linslide.setGoal(58000);
+        m_linslide.setPID(false);
+        m_linslide.setVelocitySetpoint(0.5);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if(m_linslide.getCurrentEncoderPosition() > 50000) {
+        if(m_linslide.getCurrentEncoderPosition() > 35000) {
+            m_linslide.setPID(true);
+            m_linslide.setGoal(58245);
             finished = true;
         }
     }
@@ -48,6 +51,6 @@ public class LinSlideFullyOut extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return finished;
+        return finished || m_linslide.atGoal();
     }
 }

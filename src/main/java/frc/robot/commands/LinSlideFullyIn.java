@@ -29,8 +29,9 @@ public class LinSlideFullyIn extends CommandBase {
     public void initialize() {
         // follow position control to goal state
         finished = false;
+        m_linslide.setPID(false);
         m_piston.pull();
-        m_linslide.setGoal(0);
+        m_linslide.setVelocitySetpoint(-0.4);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -46,6 +47,7 @@ public class LinSlideFullyIn extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         m_linslide.zeroEncoder();
+        m_linslide.setVelocitySetpoint(0.0);
     }
 
     // Returns true when the command should end.
