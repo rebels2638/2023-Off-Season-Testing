@@ -53,7 +53,6 @@ import frc.robot.commands.WristStraight;
 import frc.robot.commands.WristTurtle;
 import frc.robot.commands.WristUp;
 import frc.robot.commands.FieldOrientedDrive;
-import frc.robot.commands.InAndDown;
 import frc.robot.commands.ElevatorDownLinSlideIn;
 import frc.robot.commands.ElevatorGetFromLoading;
 import frc.robot.commands.ElevatorUpLinSlideOut;
@@ -85,6 +84,7 @@ public class RobotContainer {
   // The robot's controllers
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
+  private final XboxController xboxTester;
 
   private final Wrist wrist = Wrist.getInstance();
   private final ElevatorPIDNonProfiled elevatorFinal = ElevatorPIDNonProfiled.getInstance();
@@ -112,12 +112,13 @@ public class RobotContainer {
     // Instantiate our controllers with proper ports.
     this.xboxDriver = new XboxController(3);
     this.xboxOperator = new XboxController(2);
+    this.xboxTester = new XboxController(1);
 
     // Controller Throttle Mappings
     this.drive.setDefaultCommand(new FalconDrive(drive, xboxDriver));
 
     // Run a linslide in command to start the match
-    (new LinSlideFullyIn(linslide, LinPiston)).schedule();
+    // (new LinSlideFullyIn(linslide, LinPiston)).schedule();
 
     this.elevatorFinal.setDefaultCommand(new ElevatorPIDController(elevatorFinal, xboxOperator));
     this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
@@ -138,6 +139,9 @@ public class RobotContainer {
     this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
     this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
     this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, PoseEstimator.getInstance()));
+
+    this.xboxTester.getLeftBumper().onTrue(new InstantCommand(() -> this.LinPiston.push()));
+    this.xboxTester.getRightBumper().onTrue(new InstantCommand(() -> this.LinPiston.pull()));
     
     auto.loadPathString("backUp");
     this.xboxDriver.getBButton().whileTrue(auto.getCommand());
@@ -209,10 +213,10 @@ public class RobotContainer {
   public void checkControllers() {
     // TODO: Uncomment this when we ensure deadband is high enough to not interfere with other commands
 
-    // double desiredVeloWrist = RebelUtil.linearDeadband(xboxOperator.getRightY(), 0.15) * Wrist.kMaxSpeed;
-    // if(desiredVeloWrist != 0) wrist.setToVelocityControlMode(true);
+    double desiredVeloWrist = RebelUtil.linearDeadband(xboxOperator.getRightY(), 0.2) * Wrist.kMaxSpeed;
+    if(desiredVeloWrist != 0) wrist.setToVelocityControlMode(true);
     
-    // double desiredVeloElev = RebelUtil.linearDeadband(xboxOperator.getLeftY(), 0.15) * ElevatorPID.kMaxSpeed;
-    // if(desiredVeloElev != 0) elevatorFinal.setToVelocityControlMode(true);
+    double desiredVeloElev = RebelUtil.linearDeadband(xboxOperator.getLeftY(), 0.2) * ElevatorPID.kMaxSpeed;
+    if(desiredVeloElev != 0) elevatorFinal.setToVelocityControlMode(true);
   }
 }

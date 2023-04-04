@@ -24,16 +24,16 @@
     },
     {
       "anchorPoint": {
-        "x": 1.5919490897469664,
-        "y": 0.8
+        "x": 1.5347717999287636,
+        "y": 0.8119175154184826
       },
       "prevControl": {
-        "x": 1.7201947467720542,
-        "y": 0.8343633202326711
+        "x": 1.6610432635139623,
+        "y": 0.8529456010094698
       },
       "nextControl": {
-        "x": 1.7201947467720542,
-        "y": 0.8343633202326711
+        "x": 1.6610432635139623,
+        "y": 0.8529456010094698
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -51,19 +51,16 @@
     },
     {
       "anchorPoint": {
-        "x": 5.559930261184315,
-        "y": 1.1328877040580565
+        "x": 6.463372354293904,
+        "y": 0.8317403396881933
       },
       "prevControl": {
-        "x": 5.559930261184315,
-        "y": 0.5592736766868893
+        "x": 6.166132275203209,
+        "y": 0.8233529733821224
       },
-      "nextControl": {
-        "x": 5.559930261184315,
-        "y": 0.5592736766868893
-      },
+      "nextControl": null,
       "holonomicAngle": 0,
-      "isReversal": true,
+      "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
@@ -73,33 +70,11 @@
         "waitBehavior": "none",
         "waitTime": 0
       }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.463372354293904,
-        "y": 0.8317403396881933
-      },
-      "prevControl": {
-        "x": 6.147884639239762,
-        "y": 0.8030596383196352
-      },
-      "nextControl": null,
-      "holonomicAngle": 0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [
-          "clawClose",
-          "elevatorDownLinSlideIn"
-        ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
     }
   ],
+  "maxVelocity": null,
+  "maxAcceleration": null,
+  "isReversed": false,
   "markers": [
     {
       "position": 1.6909090909090898,

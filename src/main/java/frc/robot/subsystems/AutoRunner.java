@@ -88,8 +88,6 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("wristUp", new WristUp(Wrist.getInstance()));
         PATH_COMMANDS.put("autoBalance", new AutoBalance(FalconDrivetrain.getInstance(), PoseEstimator.getInstance()));
 
-        // idk if this should be dynamically loaded, as in using java.io.*
-
         PATHS.put("taxi", "taxi");
         PATHS.put("OneConeAndPick1", "OneConeAndPick1");
         PATHS.put("OneCubeAndPick1", "OneCubeAndPick1");
@@ -99,6 +97,8 @@ public final class AutoRunner extends SubsystemBase {
         PATHS.put("OneConeAndPick3", "OneConeAndPick3");
         PATHS.put("OneCubeAndPick3", "OneCubeAndPick3");
         PATHS.put("OneCubeLowAndPick3", "OneCubeLowAndPick3");
+        PATHS.put("OneCubeAndTaxiOutNoBump2", "OneCubeAndTaxiOutNoBump2");
+        PATHS.put("OneCubeAndTaxiOutBump2", "OneCubeAndTaxiOutBump2");
 
         // IGNORE
         // PATHS.put("OneAndBack3Working", "OneAndBack3Working");

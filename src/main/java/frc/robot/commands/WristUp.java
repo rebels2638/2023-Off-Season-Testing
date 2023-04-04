@@ -15,7 +15,9 @@ public class WristUp extends CommandBase {
   
   private final double goalAngle = Math.PI / 3; // radians
 
-  public WristUp(Wrist subsystem) {
+  public 
+  
+  WristUp(Wrist subsystem) {
     m_armSubsystem = subsystem;
     
     addRequirements(subsystem);
@@ -36,12 +38,14 @@ public class WristUp extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_armSubsystem.setToVelocityControlMode(false);
+    System.out.println("end called");
+    m_armSubsystem.setToVelocityControlMode(true);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    System.out.println("edan moment");
     return m_armSubsystem.atGoal() || m_armSubsystem.m_velocityControlEnabled;
   }
 }

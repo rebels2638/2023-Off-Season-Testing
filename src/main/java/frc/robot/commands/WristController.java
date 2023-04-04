@@ -40,8 +40,11 @@ public class WristController extends CommandBase {
   public void execute() {
     // if(m_wrist.getCurrentEncoderPosition() <= kUpperLimit && m_wrist.getCurrentEncoderPosition() >= kLowerLimit){
     double desiredVelo = e_controller.getRightY() * Wrist.kMaxSpeed;
-    if(desiredVelo != 0) m_wrist.setToVelocityControlMode(true);
-    m_wrist.setVelocitySetpoint(desiredVelo);
+    if(desiredVelo != 0) 
+    {
+      m_wrist.setToVelocityControlMode(true);
+    }
+      m_wrist.setVelocitySetpoint(desiredVelo);
     // m_wrist.setToVelocityControlMode(true);
     //}
   }

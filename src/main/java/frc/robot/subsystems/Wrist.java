@@ -40,10 +40,10 @@ public class Wrist extends SubsystemBase {
     public static final double kI = 0;
     public static final double kD = 0.3;
 
-    public static final double kS = 0.10299; // 0.068689;
+    public static final double kS = 0.10299; // 0.068689; !!
     public static final double kV = 0.36865; // 4.3647;
     public static final double kA = 0.019917; // 0.12205;
-    public static final double kG = 0.18409; // 0.051839;
+    public static final double kG = 0.18409; // 0.051839; !!
 
     private final WPI_TalonFX m_wrist = new WPI_TalonFX(5);
     
@@ -61,12 +61,13 @@ public class Wrist extends SubsystemBase {
     private double m_lastVelocity = 0;
     private double m_lastTime = Timer.getFPGATimestamp();
 
-    private final double kUpperLimit = Math.PI * (4.0/7.0);//110000.0;
-    private final double kLowerLimit = -Math.PI / 4.0;
+    private final double kUpperLimit = 9999;//110000.0;
+    private final double kLowerLimit = -9999;
 
     // 4*pi/7 pi/2 7pi/14, 8pi/14, perhaps change to 6pi/14
 
     private final ShuffleboardTab tab;
+    private boolean disabled = true;
 
 
     private final GenericEntry wristEncoderPosition;
@@ -80,6 +81,7 @@ public class Wrist extends SubsystemBase {
     private final GenericEntry voltageSetpoint;
 
     public Wrist() {
+        disabled = true;
         TalonFXConfiguration falconConfig = new TalonFXConfiguration();
 
         falconConfig.slot0.kP = 0;
@@ -192,10 +194,12 @@ public class Wrist extends SubsystemBase {
 
     public void zeroEncoder() {
         m_wrist.getSensorCollection().setIntegratedSensorPosition(0, 30);
+        disabled = false;
     }
 
     public void turtleEncoder() {
         m_wrist.getSensorCollection().setIntegratedSensorPosition(136529, 30);
+        disabled = false;
     }
 
     public void updateShuffleboard() {
@@ -215,6 +219,8 @@ public class Wrist extends SubsystemBase {
      */
     @Override
     public void periodic() {
+        if(!m_wrist.isAlive()) System.out.println("Wrist Motor Not Alive");
+
         double positionPID = m_controller.calculate(getCurrentAngle());
         double velocityPID = m_velocitySetpoint * 4;
         double pid = (m_velocityControlEnabled ? velocityPID : positionPID);
@@ -232,7 +238,7 @@ public class Wrist extends SubsystemBase {
         m_voltageSetpoint = voltage;
         RebelUtil.constrain(m_voltageSetpoint, -4, 4);
 
-        m_wrist.setVoltage(voltage);
+        if(!(disabled && !m_velocityControlEnabled)) m_wrist.setVoltage(voltage);
 
         updateShuffleboard();
 

@@ -3,12 +3,12 @@
     {
       "anchorPoint": {
         "x": 1.923577370692544,
-        "y": 4.725
+        "y": 4.72
       },
       "prevControl": null,
       "nextControl": {
         "x": 1.7042503784107264,
-        "y": 4.725
+        "y": 4.72
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -25,15 +25,15 @@
     {
       "anchorPoint": {
         "x": 1.5919490897469664,
-        "y": 4.725
+        "y": 4.72
       },
       "prevControl": {
         "x": 1.721817427780284,
-        "y": 4.752604367402162
+        "y": 4.747604367402162
       },
       "nextControl": {
         "x": 1.721817427780284,
-        "y": 4.752604367402162
+        "y": 4.747604367402162
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -51,19 +51,16 @@
     },
     {
       "anchorPoint": {
-        "x": 5.557612395224791,
-        "y": 4.45655970423052
+        "x": 6.337664144657818,
+        "y": 4.7457150549108515
       },
       "prevControl": {
-        "x": 5.748747213049982,
-        "y": 4.780018626703921
+        "x": 5.868810368148554,
+        "y": 4.734279596947212
       },
-      "nextControl": {
-        "x": 5.748747213049982,
-        "y": 4.780018626703921
-      },
+      "nextControl": null,
       "holonomicAngle": 0,
-      "isReversal": true,
+      "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
@@ -73,40 +70,10 @@
         "waitBehavior": "none",
         "waitTime": 0
       }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.469178449468011,
-        "y": 4.750613270115429
-      },
-      "prevControl": {
-        "x": 5.969287387463664,
-        "y": 4.853532018175148
-      },
-      "nextControl": null,
-      "holonomicAngle": 0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [
-          "clawClose",
-          "elevatorDownLinSlideIn"
-        ],
-        "executionBehavior": "sequential",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
     }
   ],
-  "markers": [
-    {
-      "position": 1.6636363636363631,
-      "names": [
-        "event",
-        "wristDown"
-      ]
-    }
-  ]
+  "maxVelocity": null,
+  "maxAcceleration": null,
+  "isReversed": false,
+  "markers": []
 }

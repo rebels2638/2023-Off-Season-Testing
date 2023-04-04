@@ -19,6 +19,6 @@ public class ElevatorGetFromLoading extends SequentialCommandGroup {
                                 new ParallelCommandGroup(
                                                 new ElevatorUp(ElevatorPIDNonProfiled.getInstance()),
                                                 new InstantCommand(() -> Claw.getInstance().push())),
-                                new WristStraight(Wrist.getInstance()));
+                                new WristLoading(Wrist.getInstance()));
         }
 }

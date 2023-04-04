@@ -9,7 +9,7 @@ public class LinSlidePiston extends SubsystemBase {
     private static LinSlidePiston instance = null;
 
     private final DoubleSolenoid solenoid;
-    private boolean state; // push is true, and pull is false
+    public boolean state; // push is true, and pull is false
 
     public LinSlidePiston() {
         this.solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 6, 7);

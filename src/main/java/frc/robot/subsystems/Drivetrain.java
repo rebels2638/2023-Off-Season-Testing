@@ -22,6 +22,22 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
+// import org.photonvision.EstimatedRobotPose;
+// import frc.robot.commands.PoseEstimation;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import java.util.Optional;
+// import org.photonvision.*;
 
 /** Represents a differential drive style drivetrain. */
 public class Drivetrain extends SubsystemBase {
@@ -59,12 +75,20 @@ public class Drivetrain extends SubsystemBase {
   private final SimpleMotorFeedforward m_feedforwardLeft = new SimpleMotorFeedforward(1, 3);
   private final SimpleMotorFeedforward m_feedforwardRight = new SimpleMotorFeedforward(1, 3);
 
+  // public PoseEstimation pcw;
+
+  private final DifferentialDrivePoseEstimator m_poseEstimator =
+  new DifferentialDrivePoseEstimator(
+          m_kinematics, m_gyro.getRotation2d(), 0.0, 0.0, new Pose2d());
+
+
   /**
    * Constructs a differential drive object. Sets the encoder distance per pulse and resets the
    * gyro.
    */
   public Drivetrain() {
     m_gyro.reset();
+    // pcw = new PoseEstimation();
  
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
@@ -121,6 +145,10 @@ public class Drivetrain extends SubsystemBase {
   public void updateOdometry() {
     m_odometry.update(
         m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+
+        // Optional<EstimatedRobotPose> result =
+        // pcw.getEstimatedGlobalPose(m_poseEstimator.getEstimatedPosition());
+
   }
 
   public Rotation2d getRotation2d() {

@@ -141,8 +141,9 @@ public final class ConstantsFXDriveTrain {
         public static final double VOLTAGE_COMP_SATURATION = 12.0;
         public static final boolean VOLTAGE_COMP_ENABLED = true;
 
-        public static final double WHEEL_DIAMETER = 0.1524;
-        public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;// or .479?
+        public static final double WHEEL_DIAMETER_STANDARD = 0.1524;
+        public static final double WHEEL_DIAMETER_OMNI = 0.1524;
+        public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_STANDARD * Math.PI;// or .479?
 
         /**
          * Motor CPR / gear reduction = effective CPR

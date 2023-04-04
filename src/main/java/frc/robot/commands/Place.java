@@ -13,12 +13,12 @@ import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.Wrist;
 import frc.robot.commands.ElevatorCancel;
 
-public class Place extends ParallelCommandGroup {
+public class Place extends SequentialCommandGroup {
     public Place() {
         addCommands(
-                new WristStraight(Wrist.getInstance()),
-                new SequentialCommandGroup(
-                        new TimerCommand(0.4),
-                        new InstantCommand(() -> Claw.getInstance().push())));
+                    new WristStraight(Wrist.getInstance()),
+                    new InstantCommand(() -> Claw.getInstance().push()),
+                    new TimerCommand(0.5)
+                    );
     }
 }
