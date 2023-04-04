@@ -64,6 +64,7 @@ import frc.robot.commands.ToPickup;
 import frc.robot.commands.LinSlideFullyIn;
 import frc.robot.commands.LinSlideFullyOut;
 import frc.robot.subsystems.LinSlidePID;
+import frc.robot.commands.AutoNotch;
 
 import frc.robot.utils.ConstantsArmElevator.ElevatorConstants;
 import frc.robot.utils.ConstantsArmElevator.ArmConstants;
@@ -138,7 +139,7 @@ public class RobotContainer {
     // toggle gear
     this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
     this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
-    this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, PoseEstimator.getInstance()));
+    this.xboxDriver.getYButton().whileTrue(new AutoNotch(drive));
 
     this.xboxTester.getLeftBumper().onTrue(new InstantCommand(() -> this.LinPiston.push()));
     this.xboxTester.getRightBumper().onTrue(new InstantCommand(() -> this.LinPiston.pull()));
