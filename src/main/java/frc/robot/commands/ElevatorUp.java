@@ -12,7 +12,7 @@ public class ElevatorUp extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorPIDNonProfiled m_elevatorSubsystem;
 
-  private final double kHeightUpPosition = 0.714; // meters
+  private final double kHeightUpPosition = 0.7; // meters
 
   public ElevatorUp(ElevatorPIDNonProfiled subsystem) {
     m_elevatorSubsystem = subsystem;
@@ -36,7 +36,7 @@ public class ElevatorUp extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_elevatorSubsystem.setToVelocityControlMode(true);
+    // m_elevatorSubsystem.setToVelocityControlMode(true);
   }
 
   // Returns true when the command should end.

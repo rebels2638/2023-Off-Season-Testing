@@ -42,7 +42,8 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     private final WPI_TalonFX m_motor1 = new WPI_TalonFX(0);
     private final WPI_TalonFX m_motor2 = new WPI_TalonFX(3);
 
-    private final PIDController m_controller = new PIDController(12, 5, 0);
+    private final PIDController m_controller = new PIDController(12, 2
+    , 0.1);
     private final PIDController m_velocityController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
 
@@ -177,6 +178,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         elevatorAcceleration.setDouble(getCurrentAcceleration());
         voltageSupplied.setDouble(m_motor1.getMotorOutputVoltage());
         voltageSetpoint.setDouble(m_voltageSetpoint);
+        elevatorPositionSetpoint.setDouble(m_controller.getSetpoint());
     }
 
     /*
@@ -190,6 +192,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         double pid = m_velocityControlEnabled ? velocityPID : positionPID;
         double feedforward = ElevatorConstants.kG + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * ElevatorConstants.kS;
         double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
+        System.out.println(m_velocityControlEnabled + " " + voltage);
         //System.out.println("VOLTAGE " + voltage);
         if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
             voltage = ElevatorConstants.kG;

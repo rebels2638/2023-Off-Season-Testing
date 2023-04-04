@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.photonvision.PhotonCamera;
 
@@ -40,15 +41,62 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 public class PoseEstimator extends SubsystemBase {
     private static PoseEstimator instance = null;
 
-    private PhotonCamera photonCamera = new PhotonCamera("camera");
+    private PhotonCamera photonCamera = new PhotonCamera("Arducam_OV9281_USB_Camera");
     private FalconDrivetrain driveTrainSubsytem;
     private Pose2d currentPose = new Pose2d();
     private double[] botPose;
 
-    private static final List<Pose3d> targetPoses = Collections
-    .unmodifiableList(List.of(new Pose3d(0, 0, 0, new Rotation3d(0, 0,
-    degreesToRadians(180))),
-    (new Pose3d(0, 0, 0, new Rotation3d(0, 0, degreesToRadians(180))))));
+    public static final Map<Integer, Pose3d> targetPoses =
+      Map.of(
+          1,
+          new Pose3d(
+              Units.inchesToMeters(610.77),
+              Units.inchesToMeters(42.19),
+              Units.inchesToMeters(18.22),
+              new Rotation3d(0.0, 0.0, Math.PI)),
+          2,
+          new Pose3d(
+              Units.inchesToMeters(610.77),
+              Units.inchesToMeters(108.19),
+              Units.inchesToMeters(18.22),
+              new Rotation3d(0.0, 0.0, Math.PI)),
+          3,
+          new Pose3d(
+              Units.inchesToMeters(610.77),
+              Units.inchesToMeters(174.19), // FIRST's diagram has a typo (it says 147.19)
+              Units.inchesToMeters(18.22),
+              new Rotation3d(0.0, 0.0, Math.PI)),
+          4,
+          new Pose3d(
+              Units.inchesToMeters(636.96),
+              Units.inchesToMeters(265.74),
+              Units.inchesToMeters(27.38),
+              new Rotation3d(0.0, 0.0, Math.PI)),
+          5,
+          new Pose3d(
+              Units.inchesToMeters(14.25),
+              Units.inchesToMeters(265.74),
+              Units.inchesToMeters(27.38),
+              new Rotation3d()),
+          6,
+          new Pose3d(
+              Units.inchesToMeters(40.45),
+              Units.inchesToMeters(174.19), // FIRST's diagram has a typo (it says 147.19)
+              Units.inchesToMeters(18.22),
+              new Rotation3d()),
+          7,
+          new Pose3d(
+              Units.inchesToMeters(40.45),
+              Units.inchesToMeters(108.19),
+              Units.inchesToMeters(18.22),
+              new Rotation3d()),
+          8,
+          new Pose3d(
+              Units.inchesToMeters(40.45),
+              Units.inchesToMeters(42.19),
+              Units.inchesToMeters(18.22),
+              new Rotation3d()));
+
 
     // private static final Vector<N7> stateStDevs = VecBuilder.fill(0.05, 0.05,
     // Units.degreesToRadians(5), 0.05, 0.05,

@@ -115,7 +115,7 @@ public class RobotContainer {
     this.xboxTester = new XboxController(1);
 
     // Controller Throttle Mappings
-    // this.drive.setDefaultCommand(new FalconDrive(drive, xboxDriver));
+    this.drive.setDefaultCommand(new FalconDrive(drive, xboxDriver));
 
     // Run a linslide in command to start the match
     // (new LinSlideFullyIn(linslide, LinPiston)).schedule();
@@ -213,10 +213,10 @@ public class RobotContainer {
   public void checkControllers() {
     // TODO: Uncomment this when we ensure deadband is high enough to not interfere with other commands
 
-    // double desiredVeloWrist = RebelUtil.linearDeadband(xboxOperator.getRightY(), 0.15) * Wrist.kMaxSpeed;
-    // if(desiredVeloWrist != 0) wrist.setToVelocityControlMode(true);
+    double desiredVeloWrist = RebelUtil.linearDeadband(xboxOperator.getRightY(), 0.2) * Wrist.kMaxSpeed;
+    if(desiredVeloWrist != 0) wrist.setToVelocityControlMode(true);
     
-    // double desiredVeloElev = RebelUtil.linearDeadband(xboxOperator.getLeftY(), 0.15) * ElevatorPID.kMaxSpeed;
-    // if(desiredVeloElev != 0) elevatorFinal.setToVelocityControlMode(true);
+    double desiredVeloElev = RebelUtil.linearDeadband(xboxOperator.getLeftY(), 0.2) * ElevatorPID.kMaxSpeed;
+    if(desiredVeloElev != 0) elevatorFinal.setToVelocityControlMode(true);
   }
 }

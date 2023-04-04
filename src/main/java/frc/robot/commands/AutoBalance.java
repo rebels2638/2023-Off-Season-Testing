@@ -49,7 +49,7 @@ public class AutoBalance extends CommandBase {
 	private final double rki = 0;
 	private final double rkd = 0;
 
-	private double dkp = -2; // originally -1.25
+	private double dkp = -1; // originally -1.25
 	private double dki = 0; // d = degrees relitive to ground
 	private double dkd = 0;
 
@@ -58,7 +58,7 @@ public class AutoBalance extends CommandBase {
 	private double dk2d = -1;
 
 	private double m_headingSetpoint;
-	private boolean bBalanced = false;
+	// private boolean bBalanced = false;
 
 	private PIDController rpidController;
 	private PIDController dpidController;
@@ -119,10 +119,8 @@ public class AutoBalance extends CommandBase {
 		double dpid2Voltage = dpid2Controller.calculate(veloErr);
 
 		if (!rpidController.atSetpoint()) {
-			// System.out.println("NOTSETPOINT R");
 			m_driveTrain.drive(0, rpidVoltage);
-		} else if (!dpidController.atSetpoint() || !dpid2Controller.atSetpoint()) {
-			// System.out.println("NOTSETPOINT D");
+		} else if (!dpidController.atSetpoint()) {
 			m_driveTrain.drive(dpidVoltage /*+ dpid2Voltage*/, 0);
 		} else {
 			m_driveTrain.drive(0, 0);
