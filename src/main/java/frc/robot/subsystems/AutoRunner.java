@@ -44,7 +44,9 @@ import frc.robot.utils.AutoConstants;
 import frc.robot.utils.ConstantsFXDriveTrain.DriveConstants;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -53,6 +55,8 @@ import java.util.List;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.pathplanner.lib.*;
@@ -164,6 +168,7 @@ public final class AutoRunner extends SubsystemBase {
 
     public void loadPathString(String pathName) {
         boolean isReversed = false;
+        List<PathConstraints> constraints = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(
                 new FileReader(
                         new File(Filesystem.getDeployDirectory(), "pathplanner/" + pathName + ".path")))) {
@@ -177,11 +182,26 @@ public final class AutoRunner extends SubsystemBase {
             JSONObject json = (JSONObject) new JSONParser().parse(fileContent);
 
             isReversed = (boolean) json.get("isReversed");
+
+            JSONArray jsonWaypoints = (JSONArray) json.get("waypoints");
+
+            for (int i = 0; i < jsonWaypoints.size() - 1; i++) {
+                JSONObject waypoint1 = (JSONObject) jsonWaypoints.get(i);
+                JSONObject waypoint2 = (JSONObject) jsonWaypoints.get(i + 1);
+                double constraint1 = (double) waypoint1.get("velOverride");
+                double constraint2 = (double) waypoint2.get("velOverride");
+                if(constraint1 != -1.0 && constraint2 != 1.0) {
+                    constraints.add(new PathConstraints(Math.max(constraint1, constraint2), 0.75));
+                } else {
+                    constraints.add(new PathConstraints(1.5, 0.75));
+                }
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        m_path = PathPlanner.loadPathGroup(pathName, isReversed, new PathConstraints(1.5, 0.75));
+        m_path = PathPlanner.loadPathGroup(pathName, isReversed, constraints.get(0), constraints.subList(1, constraints.size()).toArray(PathConstraints[]::new));
     }
 
     public Command getCommand() {
