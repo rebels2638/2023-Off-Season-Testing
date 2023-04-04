@@ -143,22 +143,22 @@ public class PoseEstimator extends SubsystemBase {
             poseEstimator.addVisionMeasurement(limePose, Timer.getFPGATimestamp() - (botPose[6] / 1000.0));
         }
 
-        // Add apriltag through photonlib
-        var pipelineResult = photonCamera.getLatestResult();
-        var resultTimestamp = pipelineResult.getTimestampSeconds();
-        if (resultTimestamp != previousPipelineTimestamp && pipelineResult.hasTargets()) {
-            previousPipelineTimestamp = resultTimestamp;
-            var target = pipelineResult.getBestTarget();
-            var fiducialId = target.getFiducialId();
-            if (target.getPoseAmbiguity() <= .2 && fiducialId >= 0 && fiducialId < targetPoses.size()) {
-                var targetPose = targetPoses.get(fiducialId);
-                Transform3d camToTarget = target.getBestCameraToTarget();
-                Pose3d camPose = targetPose.transformBy(camToTarget.inverse());
+        // // Add apriltag through photonlib
+        // var pipelineResult = photonCamera.getLatestResult();
+        // var resultTimestamp = pipelineResult.getTimestampSeconds();
+        // if (resultTimestamp != previousPipelineTimestamp && pipelineResult.hasTargets()) {
+        //     previousPipelineTimestamp = resultTimestamp;
+        //     var target = pipelineResult.getBestTarget();
+        //     var fiducialId = target.getFiducialId();
+        //     if (target.getPoseAmbiguity() <= .2 && fiducialId >= 0 && fiducialId < targetPoses.size()) {
+        //         var targetPose = targetPoses.get(fiducialId);
+        //         Transform3d camToTarget = target.getBestCameraToTarget();
+        //         Pose3d camPose = targetPose.transformBy(camToTarget.inverse());
 
-                Pose3d visionMeasurment = camPose.transformBy(camToTarget);
-                poseEstimator.addVisionMeasurement(visionMeasurment.toPose2d(), resultTimestamp);
-            }
-        }
+        //         Pose3d visionMeasurment = camPose.transformBy(camToTarget);
+        //         poseEstimator.addVisionMeasurement(visionMeasurment.toPose2d(), resultTimestamp);
+        //     }
+        // }
 
         poseEstimator.update(m_gyro.getRotation2d(),
                 driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());

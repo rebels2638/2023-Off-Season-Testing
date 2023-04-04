@@ -67,11 +67,11 @@ public class AutoNotch extends CommandBase {
     // the gains are initialized to 2.0 and 0.7.
     
 
-    goalTrajectory = generateTrajectory();
+    Trajectory goalTrajectory = generateTrajectory();
     
     // ramseteCommand =
     //     new RamseteCommand(
-    //         trajectory,
+    //         goalTrajectory,
     //         PoseEstimator::getCurrentPose,
     //         new RamseteController(),
     //         driveTrain.m_feedforward,
@@ -82,6 +82,7 @@ public class AutoNotch extends CommandBase {
     //         // RamseteCommand passes volts to the callback
     //         driveTrain::setVoltageFromAuto,
     //         driveTrain);
+    
 
   }
 
@@ -163,5 +164,3 @@ public class AutoNotch extends CommandBase {
 
   }
     }
-  }
-}
