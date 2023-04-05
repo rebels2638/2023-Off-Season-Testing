@@ -188,8 +188,8 @@ public final class AutoRunner extends SubsystemBase {
             for (int i = 0; i < jsonWaypoints.size() - 1; i++) {
                 JSONObject waypoint1 = (JSONObject) jsonWaypoints.get(i);
                 JSONObject waypoint2 = (JSONObject) jsonWaypoints.get(i + 1);
-                double constraint1 = (double) waypoint1.get("velOverride");
-                double constraint2 = (double) waypoint2.get("velOverride");
+                double constraint1 = (double) (waypoint1.get("velOverride") == null ? -1.0 : waypoint1.get("velOverride"));
+                double constraint2 =  (double) (waypoint2.get("velOverride") == null ? -1.0 : waypoint2.get("velOverride"));
                 if(constraint1 != -1.0 && constraint2 != 1.0) {
                     constraints.add(new PathConstraints(Math.max(constraint1, constraint2), 0.75));
                 } else {

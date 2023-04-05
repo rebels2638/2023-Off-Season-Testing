@@ -57,7 +57,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     private double m_lastVelocity = 0;
     private double m_lastTime = Timer.getFPGATimestamp();
 
-    private static double kUpperLimit = 0.843;
+    private static double kUpperLimit = 0.75;
     private static double kLowerLimit = -0.3;
 
     private final ShuffleboardTab tab;
@@ -87,7 +87,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         setGoal(0);
         setVelocitySetpoint(0);
         resetHeightAccumulator();
-        m_controller.setTolerance(0.03, 0.1);
+        m_controller.setTolerance(0.01, 0.1);
         
         tab = Shuffleboard.getTab("Elevator");
         elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
@@ -200,6 +200,8 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
             voltage = 0.0;
         } else if(LinearSlide.getInstance().getCurrentEncoderPosition() > 15000) {
+            voltage = ElevatorConstants.kG;
+        } else if(Math.abs(getCurrentHeight() - m_controller.getSetpoint()) < 0.006) {
             voltage = ElevatorConstants.kG;
         }
 

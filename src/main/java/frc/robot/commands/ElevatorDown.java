@@ -35,8 +35,8 @@ public class ElevatorDown extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    FalconDrivetrain.getInstance().setBalancing(true);
-    // m_elevatorSubsystem.setToVelocityControlMode(true);
+    // FalconDrivetrain.getInstance().setBalancing(true);
+    m_elevatorSubsystem.setToVelocityControlMode(true);
   }
 
   // Returns true when the command should end.

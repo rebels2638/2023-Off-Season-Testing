@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.sql.Driver;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.numbers.N5;
 import edu.wpi.first.math.numbers.N7;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -135,9 +137,9 @@ public class PoseEstimator extends SubsystemBase {
     public void periodic() {
         double hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tid").getDouble(0.0);
         if (hasTarget != -1.0) {
-            botPose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose")
+            botPose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpi" + (DriverStation.getAlliance() == DriverStation.Alliance.Blue ? "blue" : "red"))
                     .getDoubleArray(new double[6]);
-            Pose2d limePose = new Pose2d(new Translation2d(botPose[0] + 4.01, botPose[1] + 8.27), new Rotation2d(botPose[5]));
+            Pose2d limePose = new Pose2d(new Translation2d(botPose[0], botPose[1]), new Rotation2d(Units.degreesToRadians(botPose[6])));
 
             // scale accuracy by distance to apriltag? (actually maybe not since our regular odom is screwed anyways)
             poseEstimator.addVisionMeasurement(limePose, Timer.getFPGATimestamp() - (botPose[6] / 1000.0));

@@ -217,7 +217,7 @@ public class RobotContainer {
     double desiredVeloWrist = RebelUtil.linearDeadband(xboxOperator.getRightY(), 0.2) * Wrist.kMaxSpeed;
     if(desiredVeloWrist != 0) wrist.setToVelocityControlMode(true);
     
-    double desiredVeloElev = RebelUtil.linearDeadband(xboxOperator.getLeftY(), 0.2) * ElevatorPID.kMaxSpeed;
-    if(desiredVeloElev != 0) elevatorFinal.setToVelocityControlMode(true);
+    // double desiredVeloElev = RebelUtil.linearDeadband(xboxOperator.getLeftY(), 0.2) * ElevatorPID.kMaxSpeed;
+    // if(desiredVeloElev != 0) elevatorFinal.setToVelocityControlMode(true);
   }
 }
