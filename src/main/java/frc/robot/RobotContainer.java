@@ -59,6 +59,7 @@ import frc.robot.commands.ElevatorGetFromLoading;
 import frc.robot.commands.ElevatorUpLinSlideOut;
 import frc.robot.commands.LinSlidePIDController;
 import frc.robot.commands.LinSlideToggle;
+import frc.robot.commands.MidScore;
 import frc.robot.commands.Place;
 import frc.robot.commands.TimerCommand;
 import frc.robot.commands.ToPickup;
@@ -135,17 +136,21 @@ public class RobotContainer {
     this.xboxOperator.getBButton().onTrue(new ElevatorUpLinSlideOut());
     this.xboxOperator.getAButton().onTrue(new InstantCommand(() -> this.claw.toggle()));
     this.xboxOperator.getLeftMiddleButton().onTrue(new WristDown(Wrist.getInstance()));
-    this.xboxOperator.getRightMiddleButton().onTrue(new WristStraight(Wrist.getInstance()));
+    this.xboxOperator.getRightMiddleButton().onTrue(new MidScore());
 
     // toggle gear
     this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
     this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
     this.xboxDriver.getYButton().whileTrue(new AutoNotch(drive));
+    this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, PoseEstimator.getInstance()));
+    this.xboxDriver.getBButton().onTrue(new SequentialCommandGroup(
+      new Place(),
+      new ElevatorDownLinSlideIn()));
+    this.xboxDriver.getXButton().whileTrue(new AutoAlign(drive, PoseEstimator.getInstance()));
+    this.xboxDriver.getLeftMiddleButton().onTrue(new InstantCommand(() -> wrist.zeroEncoder()));
 
-    this.xboxTester.getLeftBumper().onTrue(new InstantCommand(() -> this.LinPiston.push()));
-    this.xboxTester.getRightBumper().onTrue(new InstantCommand(() -> this.LinPiston.pull()));
-    
-    this.xboxDriver.getBButton().whileTrue(new AutoAlign(drive, PoseEstimator.getInstance()));
+    // this.xboxTester.getLeftBumper().onTrue(new InstantCommand(() -> this.LinPiston.push()));
+    // this.xboxTester.getRightBumper().onTrue(new InstantCommand(() -> this.LinPiston.pull()));
     
     // this.turret.setDefaultCommand(new TurretController(turret, xboxOperator));
 
