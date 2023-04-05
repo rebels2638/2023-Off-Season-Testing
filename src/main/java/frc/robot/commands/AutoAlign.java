@@ -3,6 +3,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.FalconDrivetrain;
+import frc.robot.subsystems.PoseEstimator;
 
 
 public class AutoAlign extends CommandBase {
@@ -15,13 +16,15 @@ public class AutoAlign extends CommandBase {
     private PIDController dpid = new PIDController(2, 0, 0.05);
 
     private FalconDrivetrain m_drive;
+    private PoseEstimator m_estimator;
 
-    public AutoAlign(FalconDrivetrain drive) {
+    public AutoAlign(FalconDrivetrain drive, PoseEstimator estimator) {
         tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0); // any valid targets (0, 1)
         tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0); // horizontal offset (degrees)
         ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0); // vertical offset (degrees)
         ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0); // target area
         m_drive = drive;
+        m_estimator = estimator;
     }
 
     @Override
@@ -29,7 +32,7 @@ public class AutoAlign extends CommandBase {
         rpid.setSetpoint(0);
 
         // NOT ACCURATE
-        dpid.setSetpoint(1.2);
+        dpid.setSetpoint(1.21);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -57,7 +60,7 @@ public class AutoAlign extends CommandBase {
         double targetOffsetAngle_Vertical = ty;
 
         // how many degrees back is your limelight rotated from perfectly vertical?
-        double limelightMountAngleDegrees = -10.0;
+        double limelightMountAngleDegrees = -10.0 + m_estimator.getPitch();
 
         // distance from the center of the Limelight lens to the floor
         

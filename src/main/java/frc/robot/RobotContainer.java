@@ -145,7 +145,7 @@ public class RobotContainer {
     this.xboxTester.getLeftBumper().onTrue(new InstantCommand(() -> this.LinPiston.push()));
     this.xboxTester.getRightBumper().onTrue(new InstantCommand(() -> this.LinPiston.pull()));
     
-    this.xboxDriver.getBButton().whileTrue(new AutoAlign(drive));
+    this.xboxDriver.getBButton().whileTrue(new AutoAlign(drive, PoseEstimator.getInstance()));
     
     // this.turret.setDefaultCommand(new TurretController(turret, xboxOperator));
 
