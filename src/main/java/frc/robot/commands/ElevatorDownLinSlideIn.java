@@ -18,6 +18,6 @@ public class ElevatorDownLinSlideIn extends ParallelCommandGroup {
                                 new WristTurtle(Wrist.getInstance()),
                                 new LinSlideFullyIn(LinearSlide.getInstance(),
                                                 LinSlidePiston.getInstance()),
-                                new ElevatorDown(ElevatorPIDNonProfiled.getInstance()));
+                                new ElevatorDown(/*ElevatorPIDNonProfiled.getInstance()*/ ElevatorPID.getInstance()));
         }
 }

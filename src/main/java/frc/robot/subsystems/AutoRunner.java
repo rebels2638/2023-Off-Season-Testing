@@ -77,8 +77,8 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("clawOpen", new Place());
         PATH_COMMANDS.put("clawClose", new InstantCommand(Claw.getInstance()::pull));
         PATH_COMMANDS.put("resetDTEncoders", new InstantCommand(FalconDrivetrain.getInstance()::zeroEncoder));
-        PATH_COMMANDS.put("elevatorFullUp", new ElevatorUp(ElevatorPIDNonProfiled.getInstance()));
-        PATH_COMMANDS.put("elevatorFullDown", new ElevatorDown(ElevatorPIDNonProfiled.getInstance()));
+        PATH_COMMANDS.put("elevatorFullUp", new ElevatorUp(/*ElevatorPIDNonProfiled.getInstance()*/ ElevatorPID.getInstance()));
+        PATH_COMMANDS.put("elevatorFullDown", new ElevatorDown(/*ElevatorPIDNonProfiled.getInstance()*/ ElevatorPID.getInstance()));
         PATH_COMMANDS.put("elevatorUpLinSlideOut", new ElevatorUpLinSlideOut());
         PATH_COMMANDS.put("elevatorDownLinSlideIn", new ElevatorDownLinSlideIn());
         PATH_COMMANDS.put("resetGyro", new InstantCommand(PoseEstimator.getInstance()::resetHeading));
