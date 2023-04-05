@@ -28,6 +28,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.numbers.N5;
 import edu.wpi.first.math.numbers.N7;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -135,7 +136,7 @@ public class PoseEstimator extends SubsystemBase {
     public void periodic() {
         double hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tid").getDouble(0.0);
         if (hasTarget != -1.0) {
-            if ( DriverStation.getAlliance() = DriverStation.Alliance.Blue ){
+            if ( DriverStation.getAlliance() == DriverStation.Alliance.Blue ){
                 botPose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpiblue")
                     .getDoubleArray(new double[6]);
             }
@@ -144,7 +145,7 @@ public class PoseEstimator extends SubsystemBase {
                     .getDoubleArray(new double[6]);
             }
             
-            Pose2d limePose = new Pose2d(new Translation2d(botPose[0], botPose[1]), new Rotation2d(botPose[5]));
+            Pose2d limePose = new Pose2d(new Translation2d(botPose[0], botPose[1]), m_gyro.getRotation2d());
             // Pose2d limePose = new Pose2d(new Translation2d(botPose[0] + 4.01, botPose[1] + 8.27), new Rotation2d(botPose[5]));
 
             // scale accuracy by distance to apriltag? (actually maybe not since our regular odom is screwed anyways)
