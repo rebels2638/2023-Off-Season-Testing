@@ -26,8 +26,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 public class ElevatorPID extends SubsystemBase {
     private static ElevatorPID instance = null;
 
-    public static final double kMaxSpeed = 0.5; // meters per second
-    public static final double kMaxAcceleration = 0.1; // meters per second squared
+    public static final double kMaxSpeed = 1.57268; // meters per second
+    public static final double kMaxAcceleration = 22.1216; // meters per second squared
 
     private static final double kWheelRadius = 0.018191; // meters
     private static final int kEncoderResolution = 2048; 
@@ -42,7 +42,7 @@ public class ElevatorPID extends SubsystemBase {
     private final WPI_TalonFX m_motor1 = new WPI_TalonFX(0);
     private final WPI_TalonFX m_motor2 = new WPI_TalonFX(3);
 
-    private final ProfiledPIDController m_controller = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
+    private final ProfiledPIDController m_controller = new ProfiledPIDController(12, 0, 0, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
     private final PIDController m_velocityController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
 
@@ -57,7 +57,7 @@ public class ElevatorPID extends SubsystemBase {
     private double m_lastTime = Timer.getFPGATimestamp();
 
     private static double kUpperLimit = 0.843;
-    private static double kLowerLimit = 0;
+    private static double kLowerLimit = -0.3;
 
     private final ShuffleboardTab tab;
 
@@ -78,14 +78,15 @@ public class ElevatorPID extends SubsystemBase {
         // reset elevator
         m_motor1.setNeutralMode(NeutralMode.Brake);
         m_motor2.setNeutralMode(NeutralMode.Brake);
+        zeroEncoder();
 
         m_motor1.set(ControlMode.PercentOutput, 0);
         m_motor2.set(ControlMode.PercentOutput, 0);
         setToVelocityControlMode(true);
+        setGoal(0);
         setVelocitySetpoint(0);
-        setGoal(new TrapezoidProfile.State(0, 0));
         resetHeightAccumulator();
-        m_controller.setTolerance(0.03, 0.03);
+        m_controller.setTolerance(0.03, 0.1);
         
         tab = Shuffleboard.getTab("Elevator");
         elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
@@ -99,7 +100,8 @@ public class ElevatorPID extends SubsystemBase {
         voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
 
         tab.add("Zero Encoder",
-                new InstantCommand(() -> zeroEncoder()));
+                new InstantCommand(() -> this.zeroEncoder()));
+        zeroEncoder();
     }
 
     public static ElevatorPID getInstance() {
@@ -121,8 +123,8 @@ public class ElevatorPID extends SubsystemBase {
         return encoderUnits * kRotationsPerNativeUnit * kMetersPerRotation;
     }
 
-    public void setGoal(TrapezoidProfile.State goalState) {
-        m_controller.setGoal(goalState);
+    public void setGoal(double height) {
+        m_controller.setGoal(height);
     }
 
     public boolean atGoal() {
@@ -196,31 +198,23 @@ public class ElevatorPID extends SubsystemBase {
     */
     @Override
     public void periodic() {
-        double i = 0;
-        if(getVelocitySetpoint() < 0){
-            i = 0.825 * 2;
-        }
-        else{
-            i = 0;
-        }
-
         double feedforward = m_feedforward.calculate(getVelocitySetpoint(), getAccelerationSetpoint());
         double positionPID = m_controller.calculate(getCurrentHeight());
         double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
         double pid = m_velocityControlEnabled ? velocityPID : positionPID;
         double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
-        if (getCurrentHeight() >= kUpperLimit && voltage > 0.0) {
-            voltage = 0.0;
+        if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
+            voltage = ElevatorConstants.kG;
+
         } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
             voltage = 0.0;
+        } else if(LinearSlide.getInstance().getCurrentEncoderPosition() > 15000) {
+            voltage = ElevatorConstants.kG;
         }
 
         m_voltageSetpoint = voltage;
-        // System.out.println("Elevator : " + voltage);
-        feedforward = RebelUtil.constrain(feedforward,-2.4, 2.4);
-        m_motor1.setVoltage(feedforward - i);
-        m_motor2.setVoltage(feedforward - i);
-        System.out.println(feedforward - i);
+        m_motor1.setVoltage(m_voltageSetpoint);
+        m_motor2.setVoltage(m_voltageSetpoint);
 
         updateShuffleboard();
 

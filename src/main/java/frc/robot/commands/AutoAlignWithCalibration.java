@@ -6,33 +6,29 @@ import frc.robot.subsystems.FalconDrivetrain;
 import frc.robot.subsystems.PoseEstimator;
 
 
-public class AutoAlign extends CommandBase {
+public class AutoAlignWithCalibration extends CommandBase {
     private double tv; 
     private double tx;
     private double ty;
     private double ta;
 
-    private PIDController rpid = new PIDController(7, 0, 0.05);
+    private PIDController rpid = new PIDController(5, 0, 0.05);
     private PIDController dpid = new PIDController(2, 0, 0.05);
 
     private FalconDrivetrain m_drive;
-    private PoseEstimator m_estimator;
 
-    public AutoAlign(FalconDrivetrain drive, PoseEstimator estimator) {
+    public AutoAlignWithCalibration(FalconDrivetrain drive) {
         tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0); // any valid targets (0, 1)
         tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0); // horizontal offset (degrees)
         ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0); // vertical offset (degrees)
         ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0); // target area
         m_drive = drive;
-        m_estimator = estimator;
     }
 
     @Override
     public void initialize() {
         rpid.setSetpoint(0);
-
-        // NOT ACCURATE
-        dpid.setSetpoint(1.21);
+        dpid.setSetpoint(0);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -44,39 +40,8 @@ public class AutoAlign extends CommandBase {
         ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0); // target area
 
         // Negate these values because we control the robot, not the target (essentially put the offsets in the reference frame of the target)
-        if(tv == 1.0) m_drive.drive(dpid.calculate(-distanceMeters()), rpid.calculate(-angleOffset()));
+        if(tv == 1.0) m_drive.drive(dpid.calculate(tx), rpid.calculate(-ty));
         else m_drive.drive(0.0, 0.0);
-    }
-
-    public double angleOffset() {
-        double angleFromArmToLimelightForward = 0.031898724;
-
-        // We negate the value because counterclockwise is negative for limelight
-        // Also add an offset to make sure we are tracking the arm forward vector not the limelight forward vector
-        return (-tx * (Math.PI / 180.0) + angleFromArmToLimelightForward); 
-    }
-
-    public double distanceMeters() {
-        double targetOffsetAngle_Vertical = ty;
-
-        // how many degrees back is your limelight rotated from perfectly vertical?
-        double limelightMountAngleDegrees = -10.0 + m_estimator.getPitch();
-
-        // distance from the center of the Limelight lens to the floor
-        
-        // NOT ACCURATE
-        double limelightLensHeightCentimeters = 130;
-
-        // distance from the target to the floor
-        double goalHeightCentimeters = 111.28375;
-
-        double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
-        double angleToGoalRadians = angleToGoalDegrees * (Math.PI / 180.0);
-
-        //calculate distance
-        double distanceFromLimelightToGoalCentimeters = (goalHeightCentimeters - limelightLensHeightCentimeters)/Math.tan(angleToGoalRadians);
-        
-        return distanceFromLimelightToGoalCentimeters * 0.01;
     }
 
     // Called once the command ends or is interrupted.

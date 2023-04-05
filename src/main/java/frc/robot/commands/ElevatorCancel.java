@@ -25,6 +25,7 @@ public class ElevatorCancel extends CommandBase {
   public void initialize() {
     // follow position control to goal state
     m_elevatorSubsystem.setToVelocityControlMode(true);
+    m_elevatorSubsystem.setVelocitySetpoint(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

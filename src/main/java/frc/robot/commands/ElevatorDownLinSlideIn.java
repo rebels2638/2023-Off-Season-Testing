@@ -12,15 +12,12 @@ import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.Wrist;
 import frc.robot.commands.ElevatorCancel;
 
-public class ElevatorDownLinSlideIn extends SequentialCommandGroup {
+public class ElevatorDownLinSlideIn extends ParallelCommandGroup {
         public ElevatorDownLinSlideIn() {
                 addCommands(
                                 new WristTurtle(Wrist.getInstance()),
-                                new InstantCommand(() -> System.out.println("WRIST IN")),
-                                new ParallelCommandGroup(
-                                                new LinSlideFullyIn(LinearSlide.getInstance(),
-                                                                LinSlidePiston.getInstance()),
-                                                new ElevatorDown(ElevatorPIDNonProfiled.getInstance())),
-                                new InstantCommand(() -> System.out.println("")));
+                                new LinSlideFullyIn(LinearSlide.getInstance(),
+                                                LinSlidePiston.getInstance()),
+                                new ElevatorDown(ElevatorPIDNonProfiled.getInstance()));
         }
 }
