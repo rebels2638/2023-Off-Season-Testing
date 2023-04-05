@@ -135,9 +135,17 @@ public class PoseEstimator extends SubsystemBase {
     public void periodic() {
         double hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tid").getDouble(0.0);
         if (hasTarget != -1.0) {
-            botPose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose")
+            if ( DriverStation.getAlliance() = DriverStation.Alliance.Blue ){
+                botPose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpiblue")
                     .getDoubleArray(new double[6]);
-            Pose2d limePose = new Pose2d(new Translation2d(botPose[0] + 4.01, botPose[1] + 8.27), new Rotation2d(botPose[5]));
+            }
+            else {
+                botPose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpired")
+                    .getDoubleArray(new double[6]);
+            }
+            
+            Pose2d limePose = new Pose2d(new Translation2d(botPose[0], botPose[1]), new Rotation2d(botPose[5]));
+            // Pose2d limePose = new Pose2d(new Translation2d(botPose[0] + 4.01, botPose[1] + 8.27), new Rotation2d(botPose[5]));
 
             // scale accuracy by distance to apriltag? (actually maybe not since our regular odom is screwed anyways)
             poseEstimator.addVisionMeasurement(limePose, Timer.getFPGATimestamp() - (botPose[6] / 1000.0));
