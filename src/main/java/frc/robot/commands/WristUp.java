@@ -40,6 +40,7 @@ public class WristUp extends CommandBase {
   public void end(boolean interrupted) {
     System.out.println("end called");
     m_armSubsystem.setToVelocityControlMode(true);
+    m_armSubsystem.setVelocitySetpoint(0.0);
   }
 
   // Returns true when the command should end.

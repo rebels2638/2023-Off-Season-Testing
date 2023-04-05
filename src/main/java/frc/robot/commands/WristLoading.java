@@ -38,6 +38,7 @@ public class WristLoading extends CommandBase {
   public void end(boolean interrupted) {
     System.out.println("");
     m_armSubsystem.setToVelocityControlMode(true);
+    m_armSubsystem.setVelocitySetpoint(0.0);
   }
 
   // Returns true when the command should end.

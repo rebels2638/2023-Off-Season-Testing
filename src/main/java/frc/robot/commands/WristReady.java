@@ -37,6 +37,7 @@ public class WristReady extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_armSubsystem.setToVelocityControlMode(true);
+    m_armSubsystem.setVelocitySetpoint(0.0);
   }
 
   // Returns true when the command should end.
