@@ -36,8 +36,8 @@ public class ElevatorMid extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_elevatorSubsystem.setToVelocityControlMode(true);
-    m_elevatorSubsystem.setVelocitySetpoint(0);
+    // m_elevatorSubsystem.setToVelocityControlMode(true);
+    // m_elevatorSubsystem.setVelocitySetpoint(0);
   }
 
   // Returns true when the command should end.
