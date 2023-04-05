@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import frc.robot.commands.ElevatorCancel;
+import frc.robot.commands.AutoAlign;
 // import frc.robot.commands.ArmPositionSet;
 // import frc.robot.commands.ArmUp;
 import frc.robot.commands.AutoBalance;
@@ -144,8 +145,7 @@ public class RobotContainer {
     this.xboxTester.getLeftBumper().onTrue(new InstantCommand(() -> this.LinPiston.push()));
     this.xboxTester.getRightBumper().onTrue(new InstantCommand(() -> this.LinPiston.pull()));
     
-    auto.loadPathString("backUp");
-    this.xboxDriver.getBButton().whileTrue(auto.getCommand());
+    this.xboxDriver.getBButton().whileTrue(new AutoAlign(drive));
     
     // this.turret.setDefaultCommand(new TurretController(turret, xboxOperator));
 
