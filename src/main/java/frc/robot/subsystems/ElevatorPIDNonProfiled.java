@@ -139,7 +139,6 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     public void setToVelocityControlMode(boolean on) {
         m_velocityControlEnabled = on;
         resetHeightAccumulator();
-        this.setVelocitySetpoint(0);
     }
 
     public void resetHeightAccumulator() {
