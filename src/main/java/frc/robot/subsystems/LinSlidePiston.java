@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LinSlidePiston extends SubsystemBase {
-
     private static LinSlidePiston instance = null;
 
     private final DoubleSolenoid solenoid;
@@ -17,7 +16,6 @@ public class LinSlidePiston extends SubsystemBase {
         state = true;
     }
 
-    // Singleton class, call getInstance to access instead of the constructor.
     public static LinSlidePiston getInstance() {
         if (instance == null) {
             instance = new LinSlidePiston();
@@ -26,7 +24,6 @@ public class LinSlidePiston extends SubsystemBase {
     }
 
     public void push() {
-        //System.out.println("here");
         solenoid.set(DoubleSolenoid.Value.kReverse);
         state = true;
     }

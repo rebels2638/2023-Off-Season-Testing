@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.RebelUtil;
 import frc.robot.Robot;
-import frc.robot.commands.WristReady;
+import frc.robot.commands.wrist.WristReady;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -219,15 +219,13 @@ public class Wrist extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        if(!m_wrist.isAlive()) System.out.println("Wrist Motor Not Alive");
-
         double positionPID = m_controller.calculate(getCurrentAngle());
         double velocityPID = m_velocitySetpoint * 4;
         double pid = (m_velocityControlEnabled ? velocityPID : positionPID);
-        // double feedforward = kG + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * kS;
+        double feedforward = kG + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * kS;
         // double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
 
-        double voltage = RebelUtil.constrain(pid, -12.0, 12.0);
+        double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
         // System.out.println(getCurrentAngle() + " " + kUpperLimit + " " + voltage);
         if (getCurrentAngle() >= kUpperLimit && voltage > 0.0) {
             voltage = 0.0;
@@ -236,7 +234,7 @@ public class Wrist extends SubsystemBase {
         }
         // System.out.println(getCurrentAngle());
         m_voltageSetpoint = voltage;
-        RebelUtil.constrain(m_voltageSetpoint, -4, 4);
+        RebelUtil.constrain(m_voltageSetpoint, -12, 12);
 
         if(!(disabled && !m_velocityControlEnabled)) m_wrist.setVoltage(voltage);
 

@@ -22,9 +22,9 @@ public class LinearSlide extends SubsystemBase {
     private static LinearSlide instance = null;
     private static final double kMaxEncoderLimit = 10000000;
     private static final double kMinEncoderLimit = -10000000;
+    private double kS = 0.07;
 
     private ShuffleboardTab tab;
-    private double kG = 0;
     private final GenericEntry linSlideEncoderPosition;
 
     private final PIDController pid = new PIDController(1.8 * (0.65 / 58000.0), 0, (0.65 / 58000.0) * (0.05));
@@ -73,10 +73,9 @@ public class LinearSlide extends SubsystemBase {
     public void periodic() {
         linSlideEncoderPosition.setDouble(m_linslide.getSensorCollection().getIntegratedSensorPosition());
 
-        double pidPercentOutput = pid.calculate(getCurrentEncoderPosition());
-        double percentOutput = inPID ? (pid.atSetpoint() ? 0.0 : pidPercentOutput) : m_velocitySetpoint;
-        double kS = 0.07;
-        percentOutput += (percentOutput == 0 ? 0 : percentOutput < 0 ? -1 : 1) * kS;
+        double pidVoltage = inPID ? (pid.atSetpoint() ? 0.0 : pid.calculate(getCurrentEncoderPosition())) : m_velocitySetpoint;
+        double feedforward = (pidVoltage == 0 ? 0 : pidVoltage < 0 ? -1 : 1) * kS;
+        double percentOutput = feedforward + pidVoltage;
         
         if (getCurrentEncoderPosition() >= kMaxEncoderLimit && percentOutput > 0.0) {
             percentOutput = 0.0;
@@ -85,10 +84,9 @@ public class LinearSlide extends SubsystemBase {
         } else if (LinSlidePiston.getInstance().state) {
             percentOutput = 0.0;
         }
-        RebelUtil.constrain(percentOutput, -1.0, 1.0);
-        // System.out.println("POOP " + percentOutput);
-        m_linslide.set(ControlMode.PercentOutput, percentOutput * (inverted ? -1 : 1));
 
+        RebelUtil.constrain(percentOutput, -1.0, 1.0);
+        m_linslide.set(ControlMode.PercentOutput, percentOutput * (inverted ? -1 : 1));
     }
 
     public void setVelocitySetpoint(double setpoint) {
@@ -98,6 +96,7 @@ public class LinearSlide extends SubsystemBase {
     public void setGoal(double encoderGoal) {
         pid.setSetpoint(encoderGoal);
     }
+    
     public boolean atGoal(){
         return inPID ? pid.atSetpoint() : false;
     }

@@ -4,71 +4,34 @@
 
 package frc.robot;
 
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
-import frc.robot.commands.ElevatorCancel;
-import frc.robot.commands.AutoAlign;
-// import frc.robot.commands.ArmPositionSet;
-// import frc.robot.commands.ArmUp;
-import frc.robot.commands.AutoBalance;
-// import frc.robot.subsystems.ArmPID;
-// import frc.robot.commands.ArmPIDController;
-import frc.robot.commands.ElevatorDown;
-import frc.robot.commands.ElevatorPIDController;
-import frc.robot.commands.ElevatorUp;
-import frc.robot.commands.FalconDrive;
 import frc.robot.subsystems.Claw;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.ElevatorPIDNonProfiled;
 import frc.robot.subsystems.FalconDrivetrain;
-import frc.robot.subsystems.LinSlidePID;
 import frc.robot.subsystems.LinSlidePiston;
-import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.AutoRunner;
-import frc.robot.commands.TurretController;
 import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.PoseEstimator;
-// import frc.robot.subsystems.PoseEstimator;
-import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Wrist;
-import frc.robot.commands.WristController;
-import frc.robot.commands.WristDown;
-import frc.robot.commands.WristStraight;
-import frc.robot.commands.WristTurtle;
-import frc.robot.commands.WristUp;
-import frc.robot.commands.FieldOrientedDrive;
-import frc.robot.commands.ElevatorDownLinSlideIn;
-import frc.robot.commands.ElevatorGetFromLoading;
-import frc.robot.commands.ElevatorUpLinSlideOut;
-import frc.robot.commands.LinSlidePIDController;
-import frc.robot.commands.LinSlideToggle;
-import frc.robot.commands.MidScore;
-import frc.robot.commands.Place;
-import frc.robot.commands.TimerCommand;
-import frc.robot.commands.ToPickup;
-import frc.robot.commands.LinSlideFullyIn;
-import frc.robot.commands.LinSlideFullyOut;
-import frc.robot.subsystems.LinSlidePID;
-import frc.robot.commands.AutoNotch;
-
-import frc.robot.utils.ConstantsArmElevator.ElevatorConstants;
-import frc.robot.utils.ConstantsArmElevator.ArmConstants;
+import frc.robot.commands.auto.AutoAlign;
+import frc.robot.commands.auto.AutoBalance;
+import frc.robot.commands.auto.AutoNotch;
+import frc.robot.commands.drivetrain.FalconDrive;
+import frc.robot.commands.elevator.ElevatorPIDController;
+import frc.robot.commands.linslide.LinSlideToggle;
+import frc.robot.commands.presets.HighScore;
+import frc.robot.commands.presets.LoadingStationPickup;
+import frc.robot.commands.presets.MidScore;
+import frc.robot.commands.presets.Place;
+import frc.robot.commands.presets.TurtleMode;
+import frc.robot.commands.wrist.WristController;
+import frc.robot.commands.wrist.WristDown;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -80,115 +43,56 @@ import frc.robot.utils.ConstantsArmElevator.ArmConstants;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // ---------- Robot Subsystems ---------- \\
-
   public static RobotContainer instance = null;
+
   // The robot's controllers
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
   private final XboxController xboxTester;
-
+  
+  // Robot Subsystems
   private final Wrist wrist = Wrist.getInstance();
-  // private final ElevatorPID elevatorFinal = ElevatorPID.getInstance();
-  private final ElevatorPIDNonProfiled elevatorFinal = ElevatorPIDNonProfiled.getInstance();
-  // private final Turret turret = Turret.getInstance();
-  private final LinearSlide linslide = LinearSlide.getInstance();
-  private final LinSlidePiston LinPiston = LinSlidePiston.getInstance();
+  // private final ElevatorPID elevator = ElevatorPID.getInstance();
+  private final ElevatorPIDNonProfiled elevator = ElevatorPIDNonProfiled.getInstance();
+  private final LinearSlide linSlide = LinearSlide.getInstance();
+  private final LinSlidePiston linPiston = LinSlidePiston.getInstance();
   private final Claw claw = Claw.getInstance();
   private final FalconDrivetrain drive = FalconDrivetrain.getInstance();
   private final AutoRunner auto = AutoRunner.getInstance();
-  // private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
-
-  // private final Drivetrain drive = new Drivetrain();
-  // private final Arm arm = Arm.getInstance();
-  // private final LinSlidePID linslidePID = new LinSlidePID();
-  // private final ArmPID armPID = new ArmPID();
-  // private final ElevatorPID elevatorPID = ElevatorPID.getInstance();
-  // DO NOT RUN ELEVATOR WITHOUT ZEROING ENCODERS AT GROUND POSITION YOU WILL
-  // BREAK IT IF YOU DONT DO THIS
-  // private final Elevator elevator = new Elevator();
-
-  // Create a Sendable Chooser, which allows us to select between Commands (in
-  // this case, auto commands)
 
   public RobotContainer() {
     // Instantiate our controllers with proper ports.
-    this.xboxDriver = new XboxController(3);
-    this.xboxOperator = new XboxController(2);
     this.xboxTester = new XboxController(1);
+    this.xboxOperator = new XboxController(2);
+    this.xboxDriver = new XboxController(3);
 
     // Controller Throttle Mappings
     this.drive.setDefaultCommand(new FalconDrive(drive, xboxDriver));
-
-    // Run a linslide in command to start the match
-    // (new LinSlideFullyIn(linslide, LinPiston)).schedule();
-
-    this.elevatorFinal.setDefaultCommand(new ElevatorPIDController(elevatorFinal, xboxOperator));
-    // this.elevatorFinal.setDefaultCommand(new ElevatorPIDController(elevatorFinal, xboxOperator));
+    this.elevator.setDefaultCommand(new ElevatorPIDController(elevator, xboxOperator));
     this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
-    this.xboxOperator.getRightBumper().onTrue(new SequentialCommandGroup(
-        new Place(),
-        new ElevatorDownLinSlideIn()));
-    this.xboxOperator.getLeftBumper().onTrue(new LinSlideToggle(linslide, LinPiston));
 
-    // presets
-    this.xboxOperator.getYButton().onTrue(new ElevatorGetFromLoading());
-    this.xboxOperator.getXButton().onTrue(new ElevatorDownLinSlideIn());
-    this.xboxOperator.getBButton().onTrue(new ElevatorUpLinSlideOut());
-    this.xboxOperator.getAButton().onTrue(new InstantCommand(() -> this.claw.toggle()));
-    this.xboxOperator.getLeftMiddleButton().onTrue(new WristDown(Wrist.getInstance()));
-    this.xboxOperator.getRightMiddleButton().onTrue(new MidScore());
-
-    // toggle gear
+    // Driver presets
     this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
     this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
     this.xboxDriver.getYButton().whileTrue(new AutoNotch(drive));
     this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, PoseEstimator.getInstance()));
     this.xboxDriver.getBButton().onTrue(new SequentialCommandGroup(
       new Place(),
-      new ElevatorDownLinSlideIn()));
+      new TurtleMode()));
     this.xboxDriver.getXButton().whileTrue(new AutoAlign(drive, PoseEstimator.getInstance()));
     this.xboxDriver.getLeftMiddleButton().onTrue(new InstantCommand(() -> wrist.zeroEncoder()));
 
-    // this.xboxTester.getLeftBumper().onTrue(new InstantCommand(() -> this.LinPiston.push()));
-    // this.xboxTester.getRightBumper().onTrue(new InstantCommand(() -> this.LinPiston.pull()));
-    
-    // this.turret.setDefaultCommand(new TurretController(turret, xboxOperator));
-
-    // this.xboxOperator.getUpDpad().onTrue(new InstantCommand(() ->
-    // this.turret.setGoal(0)));
-    // this.xboxOperator.getLeftDpad().onTrue(new InstantCommand(() ->
-    // this.turret.setGoal(-0.0526))); // around 3 deg, 3/57 rad
-    // this.xboxOperator.getRightDpad().onTrue(new InstantCommand(() ->
-    // this.turret.setGoal(0.0526))); // around 3 deg, 3/57 rad
-
-    // MAKE SURE TO REBOOT RIO TO FIX MEMORY ISSUES
-    // System.gc();
-    // Runtime.getRuntime().freeMemory();
-
-    // this.arm.setDefaultCommand(new ArmController(arm, xboxOperator));
-    // this.armPID.setDefaultCommand(new ArmPIDController(armPID, xboxOperator));
-    // this.elevatorPID.setDefaultCommand(new ElevatorPIDController(elevatorPID,
-    // xboxOperator));
-
-    // this.linslide.setDefaultCommand(new LinearSlideController(linslide,
-    // xboxOperator)); // rightX
-    // this.linslidePID.setDefaultCommand(new LinSlidePIDController(linslidePID,
-    // xboxOperator));
-
-    // this.xboxOperator.getRightBumper().onTrue(new InstantCommand(() ->
-    // this.LinPiston.pull()));
-    // this.xboxOperator.getLeftBumper().onTrue(new InstantCommand(() ->
-    // this.LinPiston.push()));
-
-    // this.xboxDriver.getBButton().whileTrue(new InstantCommand( () -> new
-    // AutoBalance(this.drive, )));
-
-    // this.xboxOperator.getYButton().onTrue(new ElevatorUp(elevatorFinal));
-    // this.xboxOperator.getXButton().onTrue(new ElevatorDown(elevatorFinal));
-
-    Shuffleboard.getTab("Encoders").add("Zero Encoder", new InstantCommand(() -> wrist.zeroEncoder()));
-    Shuffleboard.getTab("Drive").add("Zero Heading", new InstantCommand(PoseEstimator.getInstance()::resetHeading));
+    // Operator presets
+    this.xboxOperator.getYButton().onTrue(new LoadingStationPickup());
+    this.xboxOperator.getXButton().onTrue(new TurtleMode());
+    this.xboxOperator.getBButton().onTrue(new HighScore());
+    this.xboxOperator.getAButton().onTrue(new InstantCommand(() -> this.claw.toggle()));
+    this.xboxOperator.getLeftMiddleButton().onTrue(new WristDown(Wrist.getInstance()));
+    this.xboxOperator.getRightMiddleButton().onTrue(new MidScore());
+    this.xboxOperator.getRightBumper().onTrue(new SequentialCommandGroup(
+        new Place(),
+        new TurtleMode()));
+    this.xboxOperator.getLeftBumper().onTrue(new LinSlideToggle(linSlide, linPiston));
   }
 
   public static RobotContainer getInstance() {
@@ -203,28 +107,25 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-
   public Command getAutonomousCommand() {
     auto.loadPath();
     return auto.getCommand();
   }
 
+  // Reset encoders for auto
   public void resetForAuto() {
-    // FalconDrivetrain.getInstance().zeroEncoder();
     PoseEstimator.getInstance().resetPitchOffset();
     ElevatorPIDNonProfiled.getInstance().zeroEncoder();
-    // ElevatorPID.getInstance().zeroEncoder();
     LinearSlide.getInstance().zeroEncoder();
     Wrist.getInstance().turtleEncoder();
   }
 
+  // Override commands and switch to manual control
   public void checkControllers() {
-    // TODO: Uncomment this when we ensure deadband is high enough to not interfere with other commands
-
     double desiredVeloWrist = RebelUtil.linearDeadband(xboxOperator.getRightY(), 0.2) * Wrist.kMaxSpeed;
     if(desiredVeloWrist != 0) wrist.setToVelocityControlMode(true);
     
-    // double desiredVeloElev = RebelUtil.linearDeadband(xboxOperator.getLeftY(), 0.2) * ElevatorPID.kMaxSpeed;
-    // if(desiredVeloElev != 0) elevatorFinal.setToVelocityControlMode(true);
+    double desiredVeloElev = RebelUtil.linearDeadband(xboxOperator.getLeftY(), 0.2) * ElevatorPID.kMaxSpeed;
+    if(desiredVeloElev != 0) elevator.setToVelocityControlMode(true);
   }
 }

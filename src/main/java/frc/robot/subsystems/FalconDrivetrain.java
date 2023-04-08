@@ -4,8 +4,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -14,23 +12,15 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.AnalogGyro;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-//import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-//import edu.wpi.first.wpilibj.motorcontrol.Encoder;
-//import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -39,23 +29,21 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import frc.robot.utils.ConstantsFXDriveTrain;
 import frc.robot.utils.ConstantsFXDriveTrain.DriveConstants;
 import frc.robot.utils.ConstantsFXDriveTrain.GearboxConstants;
 import frc.lib.RebelUtil;
-import frc.robot.Constants;
 import frc.robot.Robot;
 
 public class FalconDrivetrain extends SubsystemBase {
-  public static final double kMaxSpeed = Constants.DrivetrainConstants.kMaxSpeed; // meters per second
-  public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second in radians
-  // public static final double kMaxAngularSpeedDegrees = 360;
-
   private static FalconDrivetrain instance = null;
+
+  public static double kMaxSpeed = ConstantsFXDriveTrain.DriveConstants.HIGH_GEAR_MAX_SPEED; // meters per second
+  public static final double kMaxAngularSpeed = ConstantsFXDriveTrain.DriveConstants.MAX_ANGULAR_VELOCITY; // one rotation per second in radians
+
   private static final double kTrackWidth = DriveConstants.TRACK_WIDTH_METERS; // meters
   private static final double kWheelRadiusStandard = GearboxConstants.WHEEL_DIAMETER_STANDARD / 2; // meters
   private static final double kWheelRadiusOmni = GearboxConstants.WHEEL_DIAMETER_OMNI / 2; // meters
@@ -306,15 +294,14 @@ public class FalconDrivetrain extends SubsystemBase {
     var kG = inHighGear ? kGHigh.getDouble(0.0) : kGLow.getDouble(0.0);
     var kGReal = 4.44;
     var kGDiff = -1.09;
-    var kGFinal = kGReal + (PoseEstimator.getInstance().getPitch() > 0.0 ? 1.0 : -1.0) * kGDiff;
-    if (!isBalancing)
+    var kGFinal = kGReal + (getPitch() > 0.0 ? 1.0 : -1.0) * kGDiff;
+    if (!isBalancing || Math.abs(getPitch()) > 17)
       kGFinal *= -1;
-    if (Math.abs(PoseEstimator.getInstance().getPitch()) < 5.0)
-      kGFinal = 0.0;
+
     var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond)
-        + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
+        + kGFinal * Math.sin(getPitch() * (Math.PI / 180.0));
     var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond)
-        + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0));
+        + kGFinal * Math.sin(getPitch() * (Math.PI / 180.0));
     double leftPID = m_leftPIDController
         .calculate(getLeftSideVelocity(), speeds.leftMetersPerSecond);
     double rightPID = m_rightPIDController
@@ -355,7 +342,7 @@ public class FalconDrivetrain extends SubsystemBase {
     rightMotorVoltageSupplied.setDouble(m_rightVoltageSetpoint);
 
     gyroAngle.setDouble(getHeading());
-    gyroPitch.setDouble(PoseEstimator.getInstance().getPitch());
+    gyroPitch.setDouble(getPitch());
 
     poseString.setString(PoseEstimator.getInstance().getFormattedPose());
   }
@@ -416,47 +403,33 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   public void zeroHeading() {
-    // m_gyro.reset();
     PoseEstimator.getInstance().resetHeading();
   }
 
   public double getHeading() {
-    // return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if
     return PoseEstimator.getInstance().getYaw();
-    // the GYRO is REVERSED.
   }
 
   public double getPitch() {
-    // return Math.IEEEremainder(m_gyro.getAngle(), 360) * 1; // Multiply by -1 if
     return PoseEstimator.getInstance().getPitch();
-    // the GYRO is REVERSED.
   }
 
   public Rotation2d getRotation2d() {
-    // return m_gyro.getRotation2d();
     return PoseEstimator.getInstance().getCurrentPose().getRotation();
   }
-
-  /*
-   * public void tankDriveVolts(double leftVolts, double rightVolts) {
-   * m_leftLeader.setVoltage(leftVolts);
-   * m_rightLeader.setVoltage(rightVolts);
-   * m_drive.feed();
-   * }
-   */
 
   public void setVoltageFromAuto(double leftVoltage, double rightVoltage) {
     var kGReal = 4.44;
     var kGDiff = -1.09;
-    var kGFinal = kGReal + (PoseEstimator.getInstance().getPitch() > 0.0 ? 1.0 : -1.0) * kGDiff;
-    if (!isBalancing)
+    var kGFinal = kGReal + (getPitch() > 0.0 ? 1.0 : -1.0) * kGDiff;
+    if (!isBalancing || Math.abs(getPitch()) > 17)
       kGFinal *= -1;
-    if (Math.abs(PoseEstimator.getInstance().getPitch()) < 5.0)
+    if (Math.abs(getPitch()) < 5.0)
       kGFinal = 0.0;
     m_leftGroup
-        .setVoltage(leftVoltage + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0)));
+        .setVoltage(leftVoltage + kGFinal * Math.sin(getPitch() * (Math.PI / 180.0)));
     m_rightGroup
-        .setVoltage(rightVoltage + kGFinal * Math.sin(PoseEstimator.getInstance().getPitch() * (Math.PI / 180.0)));
+        .setVoltage(rightVoltage + kGFinal * Math.sin(getPitch() * (Math.PI / 180.0)));
   }
 
   public void switchToHighGear() {
@@ -464,6 +437,7 @@ public class FalconDrivetrain extends SubsystemBase {
     m_rightSolenoid.set(true);
     inHighGear = true;
     recalcConversionFactors();
+    kMaxSpeed = ConstantsFXDriveTrain.DriveConstants.HIGH_GEAR_MAX_SPEED;
     m_feedforward = m_feedforwardHigh;
   }
 
@@ -472,6 +446,7 @@ public class FalconDrivetrain extends SubsystemBase {
     m_rightSolenoid.set(false);
     inHighGear = false;
     recalcConversionFactors();
+    kMaxSpeed = ConstantsFXDriveTrain.DriveConstants.LOW_GEAR_MAX_SPEED;
     m_feedforward = m_feedforwardLow;
   }
 }

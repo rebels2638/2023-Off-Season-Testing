@@ -67,11 +67,11 @@ public final class ConstantsFXDriveTrain {
                 TRACK_WIDTH_METERS);
 
         // Max speeds in m/s
-        public static final double LOW_GEAR_MAX_SPEED = 2.5;
-        public static final double HIGH_GEAR_MAX_SPEED = 0.5;
+        public static final double LOW_GEAR_MAX_SPEED = 1.5;
+        public static final double HIGH_GEAR_MAX_SPEED = 3;
 
         // Max angular velocity in degrees per second
-        public static final double MAX_ANGULAR_VELOCITY = 360;
+        public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
 
         // Curvature drive
         public static final double QUICK_STOP_THRESHOLD = 0.2;

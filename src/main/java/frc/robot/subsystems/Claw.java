@@ -1,18 +1,7 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj.Solenoid;
-
-import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
-
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Claw extends SubsystemBase {
@@ -23,7 +12,7 @@ public class Claw extends SubsystemBase {
     private boolean state; // push is true, and pull is false
 
     public Claw() { 
-        this.solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH,0, 1);//0 and 1
+        this.solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH,0, 1);
         this.pull();
         state = true;
     }
@@ -47,7 +36,6 @@ public class Claw extends SubsystemBase {
     }
 
     public void toggle() {
-        // System.out.println("ITS ON: " + state);
         if (state) {
             pull();
         } else {
