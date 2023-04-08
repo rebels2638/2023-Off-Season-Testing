@@ -86,7 +86,7 @@ public class LinearSlide extends SubsystemBase {
             percentOutput = 0.0;
         }
         RebelUtil.constrain(percentOutput, -1.0, 1.0);
-        System.out.println("POOP " + percentOutput);
+        // System.out.println("POOP " + percentOutput);
         m_linslide.set(ControlMode.PercentOutput, percentOutput * (inverted ? -1 : 1));
 
     }

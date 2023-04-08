@@ -19,9 +19,10 @@ public class ElevatorUpLinSlideOut extends SequentialCommandGroup {
         addCommands(
                 new ParallelCommandGroup(
                     new ParallelRaceGroup(new WristUp(Wrist.getInstance()), new TimerCommand(2)),
-                    new ElevatorUp(/*ElevatorPIDNonProfiled.getInstance()*/ ElevatorPID.getInstance())),
+                    new ParallelRaceGroup(new ElevatorUp(ElevatorPIDNonProfiled.getInstance()), new TimerCommand(2.5))),
                 new ParallelRaceGroup(new LinSlideFullyOut(LinearSlide.getInstance(), LinSlidePiston.getInstance()),new TimerCommand(4)),
                 new returnWristControl(Wrist.getInstance()),
-                new InstantCommand(() -> System.out.println("The wrist is working")));
+                new InstantCommand(() -> System.out.println("")),
+                new ElevatorCancel(ElevatorPIDNonProfiled.getInstance()));
     }
 }

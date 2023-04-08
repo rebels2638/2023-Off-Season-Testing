@@ -14,10 +14,12 @@ import frc.robot.subsystems.Wrist;
 import frc.robot.commands.ElevatorCancel;
 import frc.robot.commands.WristStraight;
 
-public class MidScore extends ParallelCommandGroup {
+public class MidScore extends SequentialCommandGroup {
     public MidScore() {
         addCommands(
+            new ParallelCommandGroup(
                 new WristUp(Wrist.getInstance()),
-                new ElevatorMid(ElevatorPIDNonProfiled.getInstance()));
+                new ElevatorMid(ElevatorPIDNonProfiled.getInstance() /*ElevatorPID.getInstance()*/)),
+                new ElevatorCancel(ElevatorPIDNonProfiled.getInstance()));
     }
 }

@@ -36,9 +36,9 @@ public class WristUp extends CommandBase {
   public void execute() {}
 
   // Called once the command ends or is interrupted.
-  @Override
+  @Override 
   public void end(boolean interrupted) {
-    System.out.println("end called");
+    // System.out.println("end called");
     m_armSubsystem.setToVelocityControlMode(true);
     m_armSubsystem.setVelocitySetpoint(0.0);
   }
@@ -46,7 +46,7 @@ public class WristUp extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    System.out.println("edan moment");
+    // System.out.println("edan moment");
     return m_armSubsystem.atGoal() || m_armSubsystem.m_velocityControlEnabled;
   }
 }

@@ -26,6 +26,6 @@ public class ToPickup extends ParallelCommandGroup {
                                                 new SequentialCommandGroup(
                                                         new TimerCommand(0.5),
                                                         new ParallelCommandGroup(new InstantCommand(() -> Claw.getInstance().push()),
-                                                                new ElevatorDown(/*ElevatorPIDNonProfiled.getInstance()*/ ElevatorPID.getInstance())))));
+                                                                new ElevatorDown(ElevatorPIDNonProfiled.getInstance() /*ElevatorPID.getInstance()*/)))));
         }
 }

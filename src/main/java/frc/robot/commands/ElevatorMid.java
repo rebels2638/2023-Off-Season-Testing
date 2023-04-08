@@ -10,11 +10,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 /** An example command that uses an example subsystem. */
 public class ElevatorMid extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  // private final ElevatorPID m_elevatorSubsystem;
   private final ElevatorPIDNonProfiled m_elevatorSubsystem;
 
-  private final double kHeightMidPosition = 0.43; // meters
+  private final double kHeightMidPosition = 0.42; // meters
 
-  public ElevatorMid(ElevatorPIDNonProfiled subsystem) {
+  public ElevatorMid(ElevatorPIDNonProfiled subsystem /*ElevatorPID subsystem*/) {
     m_elevatorSubsystem = subsystem;
     
     addRequirements(subsystem);
@@ -36,8 +37,8 @@ public class ElevatorMid extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // m_elevatorSubsystem.setToVelocityControlMode(true);
-    // m_elevatorSubsystem.setVelocitySetpoint(0);
+    //m_elevatorSubsystem.setToVelocityControlMode(true);
+    //m_elevatorSubsystem.setVelocitySetpoint(0);
   }
 
   // Returns true when the command should end.

@@ -10,12 +10,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 /** An example command that uses an example subsystem. */
 public class ElevatorUp extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  // private final ElevatorPIDNonProfiled m_elevatorSubsystem;
-  private final ElevatorPID m_elevatorSubsystem;
+  private final ElevatorPIDNonProfiled m_elevatorSubsystem;
+  // private final ElevatorPID m_elevatorSubsystem;
 
-  private final double kHeightUpPosition = 0.69; // meters
-
-  public ElevatorUp(/*ElevatorPIDNonProfiled subsystem*/ ElevatorPID subsystem) {
+  private final double kHeightUpPosition = 0.715; // meters
+  public ElevatorUp(ElevatorPIDNonProfiled subsystem /*ElevatorPID subsystem*/) {
     m_elevatorSubsystem = subsystem;
     
     addRequirements(subsystem);

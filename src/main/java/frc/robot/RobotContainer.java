@@ -89,8 +89,8 @@ public class RobotContainer {
   private final XboxController xboxTester;
 
   private final Wrist wrist = Wrist.getInstance();
-  private final ElevatorPID elevatorFinal = ElevatorPID.getInstance();
-  // private final ElevatorPIDNonProfiled elevatorFinal = ElevatorPIDNonProfiled.getInstance();
+  // private final ElevatorPID elevatorFinal = ElevatorPID.getInstance();
+  private final ElevatorPIDNonProfiled elevatorFinal = ElevatorPIDNonProfiled.getInstance();
   // private final Turret turret = Turret.getInstance();
   private final LinearSlide linslide = LinearSlide.getInstance();
   private final LinSlidePiston LinPiston = LinSlidePiston.getInstance();
@@ -212,8 +212,8 @@ public class RobotContainer {
   public void resetForAuto() {
     // FalconDrivetrain.getInstance().zeroEncoder();
     PoseEstimator.getInstance().resetPitchOffset();
-    // ElevatorPIDNonProfiled.getInstance().zeroEncoder();
-    ElevatorPID.getInstance().zeroEncoder();
+    ElevatorPIDNonProfiled.getInstance().zeroEncoder();
+    // ElevatorPID.getInstance().zeroEncoder();
     LinearSlide.getInstance().zeroEncoder();
     Wrist.getInstance().turtleEncoder();
   }

@@ -26,8 +26,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 public class ElevatorPIDNonProfiled extends SubsystemBase {
     private static ElevatorPIDNonProfiled instance = null;
 
-    public static final double kMaxSpeed = 0.5; // meters per second
-    public static final double kMaxAcceleration = 0.1; // meters per second squared
+    public static final double kMaxSpeed = 1.5; // meters per second
+    public static final double kMaxAcceleration = 1.7; // meters per second squared
 
     private static final double kWheelRadius = 0.018191; // meters
     private static final int kEncoderResolution = 2048; 
@@ -42,8 +42,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     private final WPI_TalonFX m_motor1 = new WPI_TalonFX(0);
     private final WPI_TalonFX m_motor2 = new WPI_TalonFX(3);
 
-    private final PIDController m_controller = new PIDController(12, 0
-    , 0);
+    private final PIDController m_controller = new PIDController(12, 0, 0);
     private final ProfiledPIDController m_profiledController = new ProfiledPIDController(12, 0, 0, new TrapezoidProfile.Constraints(1.57268, 22.1216));
     private final PIDController m_velocityController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
     private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
@@ -59,10 +58,13 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     private double m_lastTime = Timer.getFPGATimestamp();
 
     private static double kUpperLimit = 0.75;
-    private static double kLowerLimit = -0.3;
+    private static double kLowerLimit = -0.2;
 
     private final ShuffleboardTab tab;
-
+    /**
+     * Commented out because it kept causing duplicacy issues during runtime 
+     * (it's just duplicate entries)
+     */
     private final GenericEntry elevatorEncoderPosition;
     private final GenericEntry elevatorPosition;
     private final GenericEntry elevatorVelocity;
@@ -88,7 +90,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         setGoal(0);
         setVelocitySetpoint(0);
         resetHeightAccumulator();
-        m_controller.setTolerance(0.01, 0.1);
+        m_controller.setTolerance(0.03, 0.1);
         
         tab = Shuffleboard.getTab("Elevator");
         elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
@@ -180,6 +182,14 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         voltageSetpoint.setDouble(m_voltageSetpoint);
         elevatorPositionSetpoint.setDouble(m_controller.getSetpoint());
     }
+    // public boolean isWithinTreshold(double height, double tolerance){
+    //     if(Math.abs(getCurrentHeight() - height) < tolerance){
+    //         return true;
+    //     }
+    //     else{
+    //     return false;
+    //     }
+    // }
 
     /*
     * Compute voltages using feedforward and pid
@@ -192,7 +202,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         double pid = m_velocityControlEnabled ? velocityPID : positionPID;
         double feedforward = ElevatorConstants.kG + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * ElevatorConstants.kS;
         double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
-        System.out.println(m_velocityControlEnabled + " " + voltage);
+        // System.out.println(m_velocityControlEnabled + " " + voltage);
         //System.out.println("VOLTAGE " + voltage);
         if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
             voltage = ElevatorConstants.kG;
@@ -200,10 +210,10 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
             voltage = 0.0;
         } else if(LinearSlide.getInstance().getCurrentEncoderPosition() > 15000) {
-            voltage = ElevatorConstants.kG;
-        } else if(Math.abs(getCurrentHeight() - m_controller.getSetpoint()) < 0.006) {
-            voltage = ElevatorConstants.kG;
-        }
+            voltage = ElevatorConstants.kG;}
+        // } else if(Math.abs(getCurrentHeight() - m_controller.getSetpoint()) < 0.006) {
+            // voltage = ElevatorConstants.kG;
+        // }
 
         // System.out.println("Elevator : " + voltage);
         m_voltageSetpoint = RebelUtil.constrain(voltage,-12, 12);

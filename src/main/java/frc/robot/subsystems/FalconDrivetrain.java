@@ -146,8 +146,7 @@ public class FalconDrivetrain extends SubsystemBase {
       GearboxConstants.VELOCITY_GAIN_LOW, GearboxConstants.ACCEL_GAIN_LOW);
   public SimpleMotorFeedforward m_feedforward = inHighGear ? m_feedforwardHigh : m_feedforwardLow;
   /*
-   * =============================================================================
-   * ================
+   * 
    */
   private final Field2d m_fieldSim = new Field2d();
   private static final double KVlinear = 0.5;
