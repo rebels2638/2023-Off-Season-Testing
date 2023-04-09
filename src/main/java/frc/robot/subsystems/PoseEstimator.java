@@ -4,12 +4,19 @@
 
 package frc.robot.subsystems;
 
+import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,6 +24,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -29,11 +37,14 @@ public class PoseEstimator extends SubsystemBase {
     private static PoseEstimator instance = null;
 
     private PhotonCamera photonCamera = new PhotonCamera("Arducam_OV9281_USB_Camera");
+    private AprilTagFieldLayout aprilTagFieldLayout;
+    private Transform3d robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));
     private FalconDrivetrain driveTrainSubsytem;
     private Pose2d currentPose = new Pose2d();
     private double[] botPose;
 
     private static DifferentialDrivePoseEstimator poseEstimator;
+    private PhotonPoseEstimator photonPoseEstimator;
     private AHRS m_gyro = new AHRS(Port.kUSB1);
     private double pitchOffset = 0.0;
     private double previousPipelineTimestamp = 0;
@@ -47,7 +58,14 @@ public class PoseEstimator extends SubsystemBase {
                 VecBuilder.fill(0.02, 0.02, Units.degreesToRadians(5)), // State measurement standard deviations.
                                                                         // Left encoder, right encoder, gyro.
                 VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(10))); // Vision measurement standard deviations.
-                                                                        // X, Y, and theta.
+                                                                        // X, Y, and theta
+        try {
+            aprilTagFieldLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP, photonCamera, robotToCam);
+        photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);                     
     }
 
     public static PoseEstimator getInstance() {
@@ -59,6 +77,9 @@ public class PoseEstimator extends SubsystemBase {
 
     @Override
     public void periodic() {
+        poseEstimator.update(m_gyro.getRotation2d(),
+                driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());
+
         // Limelight vision pose estimates
         double hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tid").getDouble(0.0);
         if (hasTarget != -1.0) {
@@ -77,25 +98,13 @@ public class PoseEstimator extends SubsystemBase {
             poseEstimator.addVisionMeasurement(limePose, Timer.getFPGATimestamp() - (latency / 1000.0));
         }
 
-        // // Add apriltag pose estimates through photonlib
-        var pipelineResult = photonCamera.getLatestResult();
-        var resultTimestamp = pipelineResult.getTimestampSeconds();
-        if (resultTimestamp != previousPipelineTimestamp && pipelineResult.hasTargets()) {
-            previousPipelineTimestamp = resultTimestamp;
-            var target = pipelineResult.getBestTarget();
-            var fiducialId = target.getFiducialId();
-            if (target.getPoseAmbiguity() <= .2 && fiducialId >= 0 && fiducialId < PoseMap.apriltagPoses.size()) {
-                var targetPose = PoseMap.apriltagPoses.get(fiducialId);
-                Transform3d camToTarget = target.getBestCameraToTarget();
-                Pose3d camPose = targetPose.transformBy(camToTarget.inverse());
-
-                Pose3d visionMeasurment = camPose.transformBy(camToTarget);
-                poseEstimator.addVisionMeasurement(visionMeasurment.toPose2d(), resultTimestamp);
-            }
+        // Add apriltag pose estimates through photonlib
+        photonPoseEstimator.setReferencePose(poseEstimator.getEstimatedPosition());
+        Optional<EstimatedRobotPose> result = photonPoseEstimator.update();
+        if(result.isPresent()) {
+            EstimatedRobotPose photonPose = result.get();
+            poseEstimator.addVisionMeasurement(photonPose.estimatedPose.toPose2d(), photonPose.timestampSeconds);
         }
-
-         poseEstimator.update(m_gyro.getRotation2d(),
-                 driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());
 
         currentPose = poseEstimator.getEstimatedPosition();
     }
@@ -103,7 +112,6 @@ public class PoseEstimator extends SubsystemBase {
     public String getFormattedPose() {
         var pose = getCurrentPose();
         return String.format("(%.2f, %.2f) %.2f degrees", pose.getX(), pose.getY(), pose.getRotation().getDegrees());
-
     }
 
     public Pose2d getCurrentPose() {
