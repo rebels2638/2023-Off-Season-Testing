@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 public class ElevatorPIDController extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorPIDNonProfiled m_elevatorPID;
-  // private final ElevatorPID m_elevatorPID;
   private final XboxController e_controller; // e_controller is elevator's controller
   
   DigitalInput toplimitSwitch = new DigitalInput(2);
@@ -38,23 +37,16 @@ public class ElevatorPIDController extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // m_elevatorPID.setToVelocityControlMode(true);
+    m_elevatorPID.setToVelocityControlMode(true);
+    m_elevatorPID.resetHeightAccumulator();
   }
   
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    // double error = 0.0;
-    // if (e_controller.getLeftY() < 0.0) {error = -0.1;}
-    // else {error = 0.1;}
-
     double desiredVelo = RebelUtil.linearDeadband(e_controller.getLeftY(), 0.05) * ElevatorPID.kMaxSpeed;
-    
-    if(desiredVelo != 0) m_elevatorPID.setToVelocityControlMode(true);
     m_elevatorPID.setVelocitySetpoint(desiredVelo);
-    //System.out.println("Controller: "+e_controller.getLeftY());
   }   
 
   // Called once the command ends or is interrupted.

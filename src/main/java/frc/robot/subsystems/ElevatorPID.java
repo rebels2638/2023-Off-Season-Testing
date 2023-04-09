@@ -137,7 +137,6 @@ public class ElevatorPID extends SubsystemBase {
 
     public void setToVelocityControlMode(boolean on) {
         m_velocityControlEnabled = on;
-        resetHeightAccumulator();
     }
 
     public void resetHeightAccumulator() {

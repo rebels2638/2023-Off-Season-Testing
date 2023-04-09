@@ -59,6 +59,7 @@ public class RobotContainer {
   private final Claw claw = Claw.getInstance();
   private final FalconDrivetrain drive = FalconDrivetrain.getInstance();
   private final AutoRunner auto = AutoRunner.getInstance();
+  private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
 
   public RobotContainer() {
     // Instantiate our controllers with proper ports.
@@ -75,11 +76,11 @@ public class RobotContainer {
     this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
     this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
     this.xboxDriver.getYButton().whileTrue(new AutoNotch(drive));
-    this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, PoseEstimator.getInstance()));
+    this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, poseEstimator));
     this.xboxDriver.getBButton().onTrue(new SequentialCommandGroup(
       new Place(),
       new TurtleMode()));
-    this.xboxDriver.getXButton().whileTrue(new AutoAlign(drive, PoseEstimator.getInstance()));
+    this.xboxDriver.getXButton().whileTrue(new AutoAlign(drive, poseEstimator));
     this.xboxDriver.getLeftMiddleButton().onTrue(new InstantCommand(() -> wrist.zeroEncoder()));
 
     // Operator presets
@@ -114,10 +115,10 @@ public class RobotContainer {
 
   // Reset encoders for auto
   public void resetForAuto() {
-    PoseEstimator.getInstance().resetPitchOffset();
-    ElevatorPIDNonProfiled.getInstance().zeroEncoder();
-    LinearSlide.getInstance().zeroEncoder();
-    Wrist.getInstance().turtleEncoder();
+    poseEstimator.resetPitchOffset();
+    elevator.zeroEncoder();
+    linSlide.zeroEncoder();
+    wrist.turtleEncoder();
   }
 
   // Override commands and switch to manual control

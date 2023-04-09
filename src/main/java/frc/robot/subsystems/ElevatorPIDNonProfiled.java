@@ -141,7 +141,6 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
 
     public void setToVelocityControlMode(boolean on) {
         m_velocityControlEnabled = on;
-        resetHeightAccumulator();
     }
 
     public void resetHeightAccumulator() {
@@ -182,14 +181,6 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         voltageSetpoint.setDouble(m_voltageSetpoint);
         elevatorPositionSetpoint.setDouble(m_controller.getSetpoint());
     }
-    // public boolean isWithinTreshold(double height, double tolerance){
-    //     if(Math.abs(getCurrentHeight() - height) < tolerance){
-    //         return true;
-    //     }
-    //     else{
-    //     return false;
-    //     }
-    // }
 
     /*
     * Compute voltages using feedforward and pid
