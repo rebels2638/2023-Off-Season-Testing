@@ -86,7 +86,7 @@ public class ElevatorPID extends SubsystemBase {
         setGoal(0);
         setVelocitySetpoint(0);
         resetHeightAccumulator();
-        m_controller.setTolerance(0.03, 0.1);
+        m_controller.setTolerance(0.07, 0.1);
         
         // tab = Shuffleboard.getTab("Elevator");
         // elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
