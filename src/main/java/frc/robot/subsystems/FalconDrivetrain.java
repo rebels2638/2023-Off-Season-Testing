@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,10 +20,12 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
@@ -73,7 +76,7 @@ public class FalconDrivetrain extends SubsystemBase {
   private final Solenoid m_leftSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 14);
   private final Solenoid m_rightSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 15);
 
-  // private final Gyro m_gyro = new AHRS(Port.kUSB);
+  // private final AnalogGyro m_gyro = new AnalogGyro(1);
 
   private final PIDController m_leftPIDController = new PIDController(DriveConstants.kP, DriveConstants.kI,
       DriveConstants.kD);
@@ -135,14 +138,14 @@ public class FalconDrivetrain extends SubsystemBase {
    * 
    */
   private final Field2d m_fieldSim = new Field2d();
-  private static final double KVlinear = 0.5;
-  private static final double KAlinear = 0.5;
-  private static final double KVAngular = 0.5;
-  private static final double KAAngular = 0.5;
+  private static final double KVlinear = GearboxConstants.VELOCITY_GAIN_HIGH;
+  private static final double KAlinear = GearboxConstants.ACCEL_GAIN_HIGH;
+  private static final double KVAngular = GearboxConstants.VELOCITY_GAIN_HIGH;
+  private static final double KAAngular = GearboxConstants.ACCEL_GAIN_HIGH;
   private final LinearSystem<N2, N2, N2> m_drivetrainSystem = LinearSystemId.identifyDrivetrainSystem(KVlinear,
       KAlinear, KVAngular, KAAngular);
   private DifferentialDrivetrainSim m_differentialDrivetrainSimulator;
-  private Gyro m_gyroSim;
+  private AnalogGyroSim m_gyroSim;
   private EncoderSim m_leftEncoderSim;
   private EncoderSim m_rightEncoderSim;
 
@@ -167,6 +170,8 @@ public class FalconDrivetrain extends SubsystemBase {
     zeroEncoder();
     m_leftEncoder.reset();
     m_rightEncoder.reset();
+    m_leftEncoder.setDistancePerPulse(nativeToMeters(1));
+    m_rightEncoder.setDistancePerPulse(nativeToMeters(1));
 
     tab = Shuffleboard.getTab("Drive");
     kGLow = tab.add("kG Low", 0.0).getEntry();
@@ -194,10 +199,10 @@ public class FalconDrivetrain extends SubsystemBase {
       // TODO: EDIT VALUES TO BE ACCURATE
       m_differentialDrivetrainSimulator = new DifferentialDrivetrainSim(m_drivetrainSystem,
           DCMotor.getCIM(4),
-          26.667, kTrackWidth,
+          getGearingRatio(), kTrackWidth,
           kWheelRadiusStandard,
-          null);
-      // m_gyroSim = m_gyro;
+          VecBuilder.fill(0.0, 0.0, 0.001, 0.1, 0.1, 0.005, 0.005));
+      m_gyroSim = new AnalogGyroSim(Navx.getInstance().m_gyro);
       m_leftEncoderSim = new EncoderSim(m_leftEncoder);
       m_rightEncoderSim = new EncoderSim(m_rightEncoder);
     }
@@ -239,11 +244,13 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   public double getLeftSideMeters() {
-    return leftMetersTraveled;
+    if(Robot.isSimulation()) return m_leftEncoder.getDistance();
+    else return leftMetersTraveled;
   }
 
   public double getRightSideMeters() {
-    return rightMetersTraveled;
+    if(Robot.isSimulation()) return m_rightEncoder.getDistance();
+    else return rightMetersTraveled;
   }
 
   public double getLeftSideVelocity() {
@@ -318,7 +325,9 @@ public class FalconDrivetrain extends SubsystemBase {
     if (Robot.isSimulation())
       SmartDashboard.putNumber("CurrentDrawnAmps", m_differentialDrivetrainSimulator.getCurrentDrawAmps());
 
-    m_fieldSim.setRobotPose(getPose());
+    if(Robot.isSimulation()) m_fieldSim.setRobotPose(m_differentialDrivetrainSimulator.getPose());
+    else m_fieldSim.setRobotPose(getPose());
+
     SmartDashboard.putData("Field", m_fieldSim);
     SmartDashboard.putNumber("leftGroup Diff", nativeToMeters(getCurrentEncoderRate(m_leftLeader)));
     SmartDashboard.putNumber("rightGroup Diff", nativeToMeters(-getCurrentEncoderRate(m_rightLeader)));
@@ -397,11 +406,11 @@ public class FalconDrivetrain extends SubsystemBase {
     m_leftEncoderSim.setRate(m_differentialDrivetrainSimulator.getLeftVelocityMetersPerSecond());
     m_rightEncoderSim.setDistance(m_differentialDrivetrainSimulator.getRightPositionMeters());
     m_rightEncoderSim.setRate(m_differentialDrivetrainSimulator.getRightVelocityMetersPerSecond());
-    // m_gyroSim.setAngle(-m_differentialDrivetrainSimulator.getHeading().getDegrees());
+    m_gyroSim.setAngle(-m_differentialDrivetrainSimulator.getHeading().getDegrees());
   }
 
   public void zeroHeading() {
-    PoseEstimator.getInstance().resetHeading();
+    Navx.getInstance().resetHeading();
   }
 
   public double getHeading() {
@@ -409,7 +418,7 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   public double getPitch() {
-    return PoseEstimator.getInstance().getPitch();
+    return Navx.getInstance().getPitch();
   }
 
   public Rotation2d getRotation2d() {
