@@ -124,6 +124,10 @@ public class PoseEstimator extends SubsystemBase {
         return m_gyro.getAngle();
     }
 
+    public double getGyroAngleUnmodified() {
+        return m_gyro.getAngle() - m_gyro.getAngleAdjustment();
+    }
+
     public double getYaw() {
         return currentPose.getRotation().getRadians();
     }
@@ -141,6 +145,8 @@ public class PoseEstimator extends SubsystemBase {
     }
 
     public void resetPose(Pose2d pose) {
+        resetPitchOffset();
+        setYawAdjustment(pose.getRotation().getDegrees() - getGyroAngleUnmodified());
         poseEstimator.resetPosition(pose.getRotation(), driveTrainSubsytem.getLeftSideMeters(),
                 driveTrainSubsytem.getRightSideMeters(), pose);
         currentPose = poseEstimator.getEstimatedPosition();

@@ -120,9 +120,8 @@ public class RobotContainer {
   // Reset encoders for auto
   public void resetForAuto(Pose2d pose) {
     drive.zeroEncoder();
-    poseEstimator.resetPitchOffset();
-    poseEstimator.setYawAdjustment(pose.getRotation().getDegrees() - poseEstimator.getGyroAngle());
     limelight.setMode(LimelightConstants.APRILTAG_PIPELINE);
+    poseEstimator.resetPose(pose);
     elevator.zeroEncoder();
     linSlide.zeroEncoder();
     wrist.turtleEncoder();

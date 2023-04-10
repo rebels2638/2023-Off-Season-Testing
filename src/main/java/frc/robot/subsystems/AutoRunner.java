@@ -147,8 +147,7 @@ public final class AutoRunner extends SubsystemBase {
         PATHS.forEach((pathName, pathFile) -> pathChooser.addOption(pathName, pathFile));
 
         Shuffleboard.getTab("Auto").add("Path", pathChooser);
-        Shuffleboard.getTab("Auto").add("Load Path", new InstantCommand(() -> loadPath()));
-
+        Shuffleboard.getTab("Auto").add("Prepare Auto", new InstantCommand(() -> prepareForAuto()));
     }
 
     public static AutoRunner getInstance() {
@@ -161,11 +160,15 @@ public final class AutoRunner extends SubsystemBase {
     @Override
     public void periodic() {
         // Automatically update the paths before auto starts (this reduces wait time at the start of auto)
-        if(!DriverStation.isTeleop() && !DriverStation.isAutonomous() && lastPath != pathChooser.getSelected()) {
-            lastPath = pathChooser.getSelected();
-            loadPath();
-            RobotContainer.getInstance().resetForAuto(getPath().get(0).getInitialPose());
+        if(lastPath != pathChooser.getSelected()) {
+            prepareForAuto();
         }
+    }
+
+    public void prepareForAuto() {
+        lastPath = pathChooser.getSelected();
+        loadPath();
+        RobotContainer.getInstance().resetForAuto(getPath().get(0).getInitialPose());
     }
 
     public List<PathPlannerTrajectory> getPath() {
