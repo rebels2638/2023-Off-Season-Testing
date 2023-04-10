@@ -41,7 +41,7 @@ public class AutoConstants {
         public static final double CAM_TO_ARM_YAW = Math.atan2(CAM_TO_ARM_POSE.getY(), CAM_TO_ARM_POSE.getX());
         public static final double CAM_TO_ARM_DIST = CAM_TO_ARM_POSE.getTranslation().getNorm();
 
-        public static final int DRIVER_PIPELINE = 1;
+        public static final int DRIVER_PIPELINE = 0;
         public static final int APRILTAG_PIPELINE = 1;
         public static final int REFLECTIVETAPE_PIPELINE = 2;
         public static final int CONE_PIPELINE = 3;
