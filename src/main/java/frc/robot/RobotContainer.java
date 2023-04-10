@@ -14,6 +14,7 @@ import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.ElevatorPID;
 import frc.robot.subsystems.ElevatorPIDNonProfiled;
 import frc.robot.subsystems.FalconDrivetrain;
+import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.AutoRunner;
 import frc.robot.subsystems.LinearSlide;
@@ -60,6 +61,7 @@ public class RobotContainer {
   private final FalconDrivetrain drive = FalconDrivetrain.getInstance();
   private final AutoRunner auto = AutoRunner.getInstance();
   private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
+  private final Limelight limelight = Limelight.getInstance();
 
   public RobotContainer() {
     // Instantiate our controllers with proper ports.
@@ -68,7 +70,7 @@ public class RobotContainer {
     this.xboxDriver = new XboxController(3);
 
     // Controller Throttle Mappings
-    this.drive.setDefaultCommand(new FalconDrive(drive, xboxDriver));
+    this.drive.setDefaultCommand(new FalconDrive(drive, limelight, xboxDriver));
     this.elevator.setDefaultCommand(new ElevatorPIDController(elevator, xboxOperator));
     this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
 
@@ -80,7 +82,7 @@ public class RobotContainer {
     this.xboxDriver.getBButton().onTrue(new SequentialCommandGroup(
       new Place(),
       new TurtleMode()));
-    this.xboxDriver.getXButton().whileTrue(new AutoAlign(drive, poseEstimator));
+    this.xboxDriver.getXButton().whileTrue(new AutoAlign(drive, limelight, poseEstimator));
     this.xboxDriver.getLeftMiddleButton().onTrue(new InstantCommand(() -> wrist.zeroEncoder()));
 
     // Operator presets

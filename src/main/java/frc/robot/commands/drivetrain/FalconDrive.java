@@ -6,6 +6,8 @@ package frc.robot.commands.drivetrain;
 
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.FalconDrivetrain;
+import frc.robot.subsystems.Limelight;
+import frc.robot.utils.AutoConstants.LimelightConstants;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -17,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class FalconDrive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final FalconDrivetrain m_driveSubsystem;
+  private final Limelight m_limelight;
   private final XboxController xboxDriver;
   private final double MAX_FORWARD_SPEED = 5;
   private final double MAX_TURN_SPEED = 5;
@@ -29,9 +32,10 @@ public class FalconDrive extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public FalconDrive(FalconDrivetrain driveSubsystem, XboxController controller) {
+  public FalconDrive(FalconDrivetrain driveSubsystem, Limelight limelight, XboxController controller) {
     xboxDriver = controller;
     m_driveSubsystem = driveSubsystem;
+    m_limelight = limelight;
     rateLimiter = new SlewRateLimiter(MAX_FORWARD_ACCEL, MAX_BACKWARD_ACCEL, 0);
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_driveSubsystem);
@@ -39,7 +43,9 @@ public class FalconDrive extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_limelight.setMode(LimelightConstants.DRIVER_PIPELINE);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -54,7 +60,9 @@ public class FalconDrive extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_limelight.setMode(LimelightConstants.DEFAULT_PIPELINE);
+  }
 
   // Returns true when the command should end.
   @Override

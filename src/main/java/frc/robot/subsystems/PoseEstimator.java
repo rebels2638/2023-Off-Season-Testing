@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.utils.PoseMap;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class PoseEstimator extends SubsystemBase {
@@ -72,22 +71,22 @@ public class PoseEstimator extends SubsystemBase {
                 driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());
 
         // Limelight vision pose estimates
-        double hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tid").getDouble(0.0);
-        if (hasTarget != -1.0) {
-            if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
-                botPose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpiblue")
-                    .getDoubleArray(new double[6]);
-            } else {
-                botPose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpired")
-                    .getDoubleArray(new double[6]);
-            }
+        // double hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tid").getDouble(0.0);
+        // if (hasTarget != -1.0) {
+        //     if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
+        //         botPose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpiblue")
+        //             .getDoubleArray(new double[6]);
+        //     } else {
+        //         botPose = NetworkTableInstance.getDefault().getTable("limelight").getEntry("botpose_wpired")
+        //             .getDoubleArray(new double[6]);
+        //     }
             
-            Pose2d limePose = new Pose2d(new Translation2d(botPose[0], botPose[1]), m_gyro.getRotation2d());
+        //     Pose2d limePose = new Pose2d(new Translation2d(botPose[0], botPose[1]), m_gyro.getRotation2d());
 
-            double latency = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tl").getDouble(0.0) +
-                NetworkTableInstance.getDefault().getTable("limelight").getEntry("cl").getDouble(0.0);
-            poseEstimator.addVisionMeasurement(limePose, Timer.getFPGATimestamp() - (latency / 1000.0));
-        }
+        //     double latency = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tl").getDouble(0.0) +
+        //         NetworkTableInstance.getDefault().getTable("limelight").getEntry("cl").getDouble(0.0);
+        //     poseEstimator.addVisionMeasurement(limePose, Timer.getFPGATimestamp() - (latency / 1000.0));
+        // }
 
         // Add apriltag pose estimates through photonlib
         currentPose = poseEstimator.getEstimatedPosition();
