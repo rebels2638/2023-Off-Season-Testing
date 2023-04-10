@@ -22,6 +22,8 @@ public class Limelight extends SubsystemBase {
     private PhotonCamera photonCamera = new PhotonCamera("Arducam_OV9281_USB_Camera");
     private PhotonPoseEstimator photonPoseEstimator;
 
+    private int mode = 0;
+
     /** Vision processing for Limelight using Photonlib. */
     public Limelight() {
         photonPoseEstimator = new PhotonPoseEstimator(LimelightConstants.aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP, photonCamera, LimelightConstants.ROBOT_TO_CAM_TRANSFORM);
@@ -60,7 +62,7 @@ public class Limelight extends SubsystemBase {
         photonCamera.setLED(on ? VisionLEDMode.kOn : VisionLEDMode.kOff);
     }
 
-    private void setWarningLED() {
+    public void setWarningLED() {
         photonCamera.setLED(VisionLEDMode.kBlink);
     }
 
@@ -73,15 +75,19 @@ public class Limelight extends SubsystemBase {
     }
 
     public void setMode(int pipelineID) {
+        mode = pipelineID;
         setPipeline(pipelineID);
         setDriverMode(pipelineID == LimelightConstants.DRIVER_PIPELINE);
         setLED(pipelineID == LimelightConstants.REFLECTIVETAPE_PIPELINE);
     }
 
+    public int getMode() {
+        return mode;
+    }
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        System.out.println(LimelightConstants.CAM_TO_ARM_DIST);
     }
 
     @Override
