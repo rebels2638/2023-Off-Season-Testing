@@ -55,6 +55,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.file.Path;
+import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -117,6 +118,7 @@ public final class AutoRunner extends SubsystemBase {
     private Command m_autoCommand;
 
     private final SendableChooser<String> pathChooser = new SendableChooser<String>();
+    private String lastPath;
 
     private PoseEstimator m_poseEstimator;
 
@@ -154,6 +156,16 @@ public final class AutoRunner extends SubsystemBase {
             instance = new AutoRunner();
         }
         return instance;
+    }
+
+    @Override
+    public void periodic() {
+        // Automatically update the paths before auto starts (this reduces wait time at the start of auto)
+        if(!DriverStation.isTeleop() && !DriverStation.isAutonomous() && lastPath != pathChooser.getSelected()) {
+            lastPath = pathChooser.getSelected();
+            loadPath();
+            RobotContainer.getInstance().resetForAuto(getPath().get(0).getInitialPose());
+        }
     }
 
     public List<PathPlannerTrajectory> getPath() {

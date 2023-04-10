@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -20,6 +21,7 @@ import frc.robot.subsystems.AutoRunner;
 import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Wrist;
+import frc.robot.utils.AutoConstants.LimelightConstants;
 import frc.robot.commands.auto.AutoAlign;
 import frc.robot.commands.auto.AutoBalance;
 import frc.robot.commands.auto.AutoNotch;
@@ -116,8 +118,11 @@ public class RobotContainer {
   }
 
   // Reset encoders for auto
-  public void resetForAuto() {
+  public void resetForAuto(Pose2d pose) {
+    drive.zeroEncoder();
     poseEstimator.resetPitchOffset();
+    poseEstimator.setYawAdjustment(pose.getRotation().getDegrees() - poseEstimator.getGyroAngle());
+    limelight.setMode(LimelightConstants.APRILTAG_PIPELINE);
     elevator.zeroEncoder();
     linSlide.zeroEncoder();
     wrist.turtleEncoder();
