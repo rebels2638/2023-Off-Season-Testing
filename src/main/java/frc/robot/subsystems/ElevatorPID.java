@@ -27,24 +27,27 @@ public class ElevatorPID extends SubsystemBase {
     private static ElevatorPID instance = null;
 
     public static final double kMaxSpeed = 1.5; // meters per second //TODO: Test out these values
-    public static final double kMaxAcceleration = 2.2; // meters per second squared //TODO: Test out these values and adjust accordingly. Try not to use TutrleMode after going up.
+    public static final double kMaxAcceleration = 2.2; // meters per second squared //TODO: Test out these values and
+                                                       // adjust accordingly. Try not to use TutrleMode after going up.
 
     private static final double kWheelRadius = 0.018191; // meters
-    private static final int kEncoderResolution = 2048; 
+    private static final int kEncoderResolution = 2048;
     private static final int kGearingRatio = 6;
 
     private static final double kNativeUnitsPerRotation = kEncoderResolution * kGearingRatio;
     private static final double kRotationsPerNativeUnit = 1 / kNativeUnitsPerRotation;
-    private static  final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
+    private static final double kMetersPerRotation = 2 * Math.PI * kWheelRadius;
     private static final double kRotationsPerMeter = 1 / kMetersPerRotation;
 
-    
     private final WPI_TalonFX m_motor1 = new WPI_TalonFX(0);
     private final WPI_TalonFX m_motor2 = new WPI_TalonFX(3);
 
-    private final ProfiledPIDController m_controller = new ProfiledPIDController(5.0, 0, 0, new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
-    private final PIDController m_velocityController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
-    private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
+    private final ProfiledPIDController m_controller = new ProfiledPIDController(5.0, 0, 0,
+            new TrapezoidProfile.Constraints(kMaxSpeed, kMaxAcceleration));
+    private final PIDController m_velocityController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI,
+            ElevatorConstants.kD);
+    private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(ElevatorConstants.kS,
+            ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
 
     public boolean m_velocityControlEnabled = true;
 
@@ -56,8 +59,10 @@ public class ElevatorPID extends SubsystemBase {
     private double m_lastVelocity = 0;
     private double m_lastTime = Timer.getFPGATimestamp();
 
-    private static double kUpperLimit = 0.71; //it's a bit low
-    private static double kLowerLimit = -0.02; //To help with correction, we have no real limit for the bottom half
+    public boolean nearGrid = false;
+
+    private static double kUpperLimit = 0.71; // it's a bit low
+    private static double kLowerLimit = -0.02; // To help with correction, we have no real limit for the bottom half
 
     // private final ShuffleboardTab tab;
 
@@ -87,7 +92,7 @@ public class ElevatorPID extends SubsystemBase {
         setVelocitySetpoint(0);
         resetHeightAccumulator();
         m_controller.setTolerance(0.07, 0.1);
-        
+
         // tab = Shuffleboard.getTab("Elevator");
         // elevatorEncoderPosition = tab.add("Encoder Position", 0.0).getEntry();
         // elevatorPosition = tab.add("Height", 0.0).getEntry();
@@ -95,12 +100,13 @@ public class ElevatorPID extends SubsystemBase {
         // elevatorAcceleration = tab.add("Acceleration", 0.0).getEntry();
         // elevatorPositionSetpoint = tab.add("Height Setpoint", 0.0).getEntry();
         // elevatorVelocitySetpoint = tab.add("Velocity Setpoint", 0.0).getEntry();
-        // elevatorAccelerationSetpoint = tab.add("Acceleration Setpoint", 0.0).getEntry();
+        // elevatorAccelerationSetpoint = tab.add("Acceleration Setpoint",
+        // 0.0).getEntry();
         // voltageSupplied = tab.add("Motor Voltage", 0.0).getEntry();
         // voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
 
         // tab.add("Zero Encoder",
-        //         new InstantCommand(() -> this.zeroEncoder()));
+        // new InstantCommand(() -> this.zeroEncoder()));
         zeroEncoder();
     }
 
@@ -112,14 +118,15 @@ public class ElevatorPID extends SubsystemBase {
     }
 
     /*
-    * Convert from TalonFX elevator position in meters to native units and vice versa
-    */
+     * Convert from TalonFX elevator position in meters to native units and vice
+     * versa
+     */
     public double heightToNative(double heightUnits) {
         return heightUnits * kRotationsPerMeter * kNativeUnitsPerRotation;
     }
 
     public double nativeToHeight(double encoderUnits) {
-        
+
         return encoderUnits * kRotationsPerNativeUnit * kMetersPerRotation;
     }
 
@@ -148,7 +155,8 @@ public class ElevatorPID extends SubsystemBase {
     }
 
     public double getCurrentEncoderRate() {
-        return m_motor1.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per 100ms
+        return m_motor1.getSensorCollection().getIntegratedSensorVelocity() * 10; // motor velocity is in ticks per
+                                                                                  // 100ms
     }
 
     public double getCurrentHeight() {
@@ -193,28 +201,31 @@ public class ElevatorPID extends SubsystemBase {
     }
 
     /*
-    * Compute voltages using feedforward and pid
-    */
+     * Compute voltages using feedforward and pid
+     */
     @Override
     public void periodic() {
-        double feedforward = m_feedforward.calculate(getVelocitySetpoint(), getAccelerationSetpoint());
-        double positionPID = m_controller.calculate(getCurrentHeight());
-        double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
-        double pid = m_velocityControlEnabled ? velocityPID : positionPID;
-        double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
-        //Flat limit; if you are having problems you might want to check if the height is accurate.
-        if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
-            voltage = ElevatorConstants.kG;
-        //Flat limit; if you are having problems you might want to check if the height is accurate.
-        } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
-            voltage = 0.0;
-        } else if(LinearSlide.getInstance().getCurrentEncoderPosition() > 15000) {
-            voltage = ElevatorConstants.kG;
-        } else if(Math.abs(getCurrentHeight() - m_controller.getSetpoint().position) < 0.006){
-            voltage = ElevatorConstants.kG;
-        }
+        if (!(nearGrid && LinearSlide.getInstance().getCurrentEncoderPosition() > 15000)) {
+            double feedforward = m_feedforward.calculate(getVelocitySetpoint(), getAccelerationSetpoint());
+            double positionPID = m_controller.calculate(getCurrentHeight());
+            double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
+            double pid = m_velocityControlEnabled ? velocityPID : positionPID;
+            double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
+            // Flat limit; if you are having problems you might want to check if the height
+            // is accurate.
+            if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
+                voltage = ElevatorConstants.kG;
+                // Flat limit; if you are having problems you might want to check if the height
+                // is accurate.
+            } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
+                voltage = 0.0;
+            } else if (Math.abs(getCurrentHeight() - m_controller.getSetpoint().position) < 0.006) {
+                voltage = ElevatorConstants.kG;
+            }
 
-        m_voltageSetpoint = voltage;
+            m_voltageSetpoint = voltage;
+        } else m_voltageSetpoint = ElevatorConstants.kG;
+        
         m_motor1.setVoltage(m_voltageSetpoint);
         m_motor2.setVoltage(m_voltageSetpoint);
 
