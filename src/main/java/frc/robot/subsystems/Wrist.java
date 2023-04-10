@@ -222,7 +222,7 @@ public class Wrist extends SubsystemBase {
         double positionPID = m_controller.calculate(getCurrentAngle());
         double velocityPID = m_velocitySetpoint * 4;
         double pid = (m_velocityControlEnabled ? velocityPID : positionPID);
-        double feedforward = kG + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * kS;
+        double feedforward = kG * Math.cos(getCurrentAngle()) + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * kS;
         // double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
 
         double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
@@ -236,6 +236,7 @@ public class Wrist extends SubsystemBase {
         m_voltageSetpoint = voltage;
         RebelUtil.constrain(m_voltageSetpoint, -12, 12);
 
+        // Don't supply voltage if we haven't reset wrist yet
         if(!(disabled && !m_velocityControlEnabled)) m_wrist.setVoltage(voltage);
 
         updateShuffleboard();
