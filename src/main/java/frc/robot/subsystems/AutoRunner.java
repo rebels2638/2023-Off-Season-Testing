@@ -148,7 +148,7 @@ public final class AutoRunner extends SubsystemBase {
         PATHS.forEach((pathName, pathFile) -> pathChooser.addOption(pathName, pathFile));
 
         Shuffleboard.getTab("Auto").add("Path", pathChooser);
-        Shuffleboard.getTab("Auto").add("Prepare Auto", new InstantCommand(() -> prepareForAuto()));
+        Shuffleboard.getTab("Auto").add("Prepare Auto", new InstantCommand(() -> prepareForAuto()).ignoringDisable(true));
     }
 
     public static AutoRunner getInstance() {
