@@ -59,8 +59,6 @@ public class ElevatorPID extends SubsystemBase {
     private double m_lastVelocity = 0;
     private double m_lastTime = Timer.getFPGATimestamp();
 
-    public boolean nearGrid = false;
-
     private static double kUpperLimit = 0.71; // it's a bit low
     private static double kLowerLimit = -0.02; // To help with correction, we have no real limit for the bottom half
 
@@ -205,27 +203,25 @@ public class ElevatorPID extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        if (!(nearGrid && LinearSlide.getInstance().getCurrentEncoderPosition() > 15000)) {
-            double feedforward = m_feedforward.calculate(getVelocitySetpoint(), getAccelerationSetpoint());
-            double positionPID = m_controller.calculate(getCurrentHeight());
-            double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
-            double pid = m_velocityControlEnabled ? velocityPID : positionPID;
-            double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
+        double feedforward = m_feedforward.calculate(getVelocitySetpoint(), getAccelerationSetpoint());
+        double positionPID = m_controller.calculate(getCurrentHeight());
+        double velocityPID = m_velocityController.calculate(getCurrentVelocity(), getVelocitySetpoint());
+        double pid = m_velocityControlEnabled ? velocityPID : positionPID;
+        double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
+        // Flat limit; if you are having problems you might want to check if the height
+        // is accurate.
+        if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
+            voltage = ElevatorConstants.kG;
             // Flat limit; if you are having problems you might want to check if the height
             // is accurate.
-            if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
-                voltage = ElevatorConstants.kG;
-                // Flat limit; if you are having problems you might want to check if the height
-                // is accurate.
-            } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
-                voltage = 0.0;
-            } else if (Math.abs(getCurrentHeight() - m_controller.getSetpoint().position) < 0.006) {
-                voltage = ElevatorConstants.kG;
-            }
+        } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
+            voltage = 0.0;
+        } else if (Math.abs(getCurrentHeight() - m_controller.getSetpoint().position) < 0.006) {
+            voltage = ElevatorConstants.kG;
+        }
 
-            m_voltageSetpoint = voltage;
-        } else m_voltageSetpoint = ElevatorConstants.kG;
-        
+        m_voltageSetpoint = voltage;
+
         m_motor1.setVoltage(m_voltageSetpoint);
         m_motor2.setVoltage(m_voltageSetpoint);
 
@@ -240,5 +236,9 @@ public class ElevatorPID extends SubsystemBase {
     public void breakMotor() {
         m_motor1.stopMotor();
         m_motor2.stopMotor();
+    }
+
+    public boolean sufficientlyUp() {
+        return getCurrentHeight() > 0.6;
     }
 }

@@ -196,27 +196,27 @@ public final class AutoRunner extends SubsystemBase {
             
             JSONObject json = (JSONObject) new JSONParser().parse(fileContent);
 
-            isReversed = (boolean) json.get("isReversed");
+            isReversed = (boolean) (json.get("isReversed") == null ? false : json.get("isReversed"));
 
             JSONArray jsonWaypoints = (JSONArray) json.get("waypoints");
 
-            // for (int i = 0; i < jsonWaypoints.size() - 1; i++) {
-            //     JSONObject waypoint1 = (JSONObject) jsonWaypoints.get(i);
-            //     JSONObject waypoint2 = (JSONObject) jsonWaypoints.get(i + 1);
-            //     double constraint1 = (double) (waypoint1.get("velOverride") == null ? -1.0 : waypoint1.get("velOverride"));
-            //     double constraint2 =  (double) (waypoint2.get("velOverride") == null ? -1.0 : waypoint2.get("velOverride"));
-            //     if(constraint1 != -1.0 && constraint2 != 1.0) {
-            //         constraints.add(new PathConstraints(Math.max(constraint1, constraint2), 0.75));
-            //     } else {
-            //         constraints.add(new PathConstraints(1.5, 0.75));
-            //     }
-            // }
+            for (int i = 0; i < jsonWaypoints.size() - 1; i++) {
+                JSONObject waypoint1 = (JSONObject) jsonWaypoints.get(i);
+                JSONObject waypoint2 = (JSONObject) jsonWaypoints.get(i + 1);
+                double constraint1 = (double) (waypoint1.get("velOverride") == null ? -1.0 : waypoint1.get("velOverride"));
+                double constraint2 =  (double) (waypoint2.get("velOverride") == null ? -1.0 : waypoint2.get("velOverride"));
+                if(constraint1 != -1.0 && constraint2 != 1.0) {
+                    constraints.add(new PathConstraints(Math.max(constraint1, constraint2), 0.75));
+                } else {
+                    constraints.add(new PathConstraints(1.75, 0.8));
+                }
+            }
             
         } catch (Exception e) {
             e.printStackTrace();
         }
-        m_path = PathPlanner.loadPathGroup(pathName, isReversed, new PathConstraints(1.75, 0.8));
-        // m_path = PathPlanner.loadPathGroup(pathName, isReversed, constraints.get(0), constraints.subList(1, constraints.size()).toArray(PathConstraints[]::new));
+        // m_path = PathPlanner.loadPathGroup(pathName, isReversed, new PathConstraints(1.75, 0.8));
+        m_path = PathPlanner.loadPathGroup(pathName, isReversed, constraints.get(0), constraints.subList(1, constraints.size()).toArray(PathConstraints[]::new));
     }
 
     public Command getCommand() {

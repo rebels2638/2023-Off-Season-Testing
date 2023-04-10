@@ -30,7 +30,6 @@ public class LinearSlide extends SubsystemBase {
     private final PIDController pid = new PIDController(1.8 * (0.65 / 58000.0), 0, (0.65 / 58000.0) * (0.05));
 
     private boolean inPID = false;
-    public boolean nearGrid = false;
     public double m_velocitySetpoint = 0.0;
 
     public LinearSlide() {
@@ -73,21 +72,17 @@ public class LinearSlide extends SubsystemBase {
     public void periodic() {
         linSlideEncoderPosition.setDouble(m_linslide.getSensorCollection().getIntegratedSensorPosition());
 
-        double percentOutput = 0.0;
-        if (!(nearGrid && ElevatorPIDNonProfiled.getInstance().getCurrentHeight() < 0.6)) {
+        double pidVoltage = inPID ? (pid.atSetpoint() ? 0.0 : pid.calculate(getCurrentEncoderPosition()))
+                : m_velocitySetpoint;
+        double feedforward = (pidVoltage == 0 ? 0 : pidVoltage < 0 ? -1 : 1) * kS;
+        double percentOutput = feedforward + pidVoltage;
 
-            double pidVoltage = inPID ? (pid.atSetpoint() ? 0.0 : pid.calculate(getCurrentEncoderPosition()))
-                    : m_velocitySetpoint;
-            double feedforward = (pidVoltage == 0 ? 0 : pidVoltage < 0 ? -1 : 1) * kS;
-            percentOutput = feedforward + pidVoltage;
-
-            if (getCurrentEncoderPosition() >= kMaxEncoderLimit && percentOutput > 0.0) {
-                percentOutput = 0.0;
-            } else if (getCurrentEncoderPosition() <= kMinEncoderLimit && percentOutput < 0.0) {
-                percentOutput = 0.0;
-            } else if (LinSlidePiston.getInstance().state) {
-                percentOutput = 0.0;
-            }
+        if (getCurrentEncoderPosition() >= kMaxEncoderLimit && percentOutput > 0.0) {
+            percentOutput = 0.0;
+        } else if (getCurrentEncoderPosition() <= kMinEncoderLimit && percentOutput < 0.0) {
+            percentOutput = 0.0;
+        } else if (LinSlidePiston.getInstance().state) {
+            percentOutput = 0.0;
         }
 
         RebelUtil.constrain(percentOutput, -1.0, 1.0);
@@ -112,5 +107,9 @@ public class LinearSlide extends SubsystemBase {
 
     public void maxOutEncoder() {
         m_linslide.setSelectedSensorPosition(56000);
+    }
+
+    public boolean sufficientlyIn() {
+        return getCurrentEncoderPosition() < 15000;
     }
 }

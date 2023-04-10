@@ -77,8 +77,6 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     private final GenericEntry voltageSupplied;
     private final GenericEntry voltageSetpoint;
 
-    public boolean nearGrid = false;
-
     public ElevatorPIDNonProfiled() {
         m_motor1.setInverted(false); // they changed the motor
         m_motor2.setInverted(false);
@@ -193,29 +191,27 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        if (!(nearGrid && LinearSlide.getInstance().getCurrentEncoderPosition() > 15000)) {
-            // double m_error = m_controller.getSetpoint() - getCurrentHeight();
-            double velocityPID = m_velocitySetpoint * 5;
-            double positionPID = m_controller.calculate(getCurrentHeight());
-            double pid = m_velocityControlEnabled ? velocityPID : positionPID;
-            double feedforward = ElevatorConstants.kG + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * ElevatorConstants.kS;
-            double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
-            // System.out.println(m_velocityControlEnabled + " " + voltage);
-            // System.out.println("VOLTAGE " + voltage);
-            if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
-                voltage = ElevatorConstants.kG;
+        // double m_error = m_controller.getSetpoint() - getCurrentHeight();
+        double velocityPID = m_velocitySetpoint * 5;
+        double positionPID = m_controller.calculate(getCurrentHeight());
+        double pid = m_velocityControlEnabled ? velocityPID : positionPID;
+        double feedforward = ElevatorConstants.kG + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * ElevatorConstants.kS;
+        double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
+        // System.out.println(m_velocityControlEnabled + " " + voltage);
+        // System.out.println("VOLTAGE " + voltage);
+        if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
+            voltage = ElevatorConstants.kG;
 
-            } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
-                voltage = 0.0;
-            }
-            // } else if(Math.abs(getCurrentHeight() - m_controller.getSetpoint()) < 0.006)
-            // {
-            // voltage = ElevatorConstants.kG;
-            // }
+        } else if (getCurrentHeight() <= kLowerLimit && voltage < 0.0) {
+            voltage = 0.0;
+        }
+        // } else if(Math.abs(getCurrentHeight() - m_controller.getSetpoint()) < 0.006)
+        // {
+        // voltage = ElevatorConstants.kG;
+        // }
 
-            // System.out.println("Elevator : " + voltage);
-            m_voltageSetpoint = RebelUtil.constrain(voltage, -12, 12);
-        } else m_voltageSetpoint = ElevatorConstants.kG;
+        // System.out.println("Elevator : " + voltage);
+        m_voltageSetpoint = RebelUtil.constrain(voltage, -12, 12);
 
         m_motor1.setVoltage(m_voltageSetpoint);
         m_motor2.setVoltage(m_voltageSetpoint);
@@ -228,5 +224,9 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     public void breakMotor() {
         m_motor1.stopMotor();
         m_motor2.stopMotor();
+    }
+
+    public boolean sufficientlyUp() {
+        return getCurrentHeight() > 0.6;
     }
 }
