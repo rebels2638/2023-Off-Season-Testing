@@ -4,7 +4,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.RebelUtil;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
+import frc.robot.utils.ConstantsArmElevator;
 import frc.robot.utils.ConstantsArmElevator.ElevatorConstants;
+import frc.robot.utils.ConstantsFXDriveTrain.GearboxConstants;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -12,15 +15,36 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.simulation.PWMSim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.NumericalIntegration;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 
 /** Elevator subsystem with feed-forward and PID for position */
 public class ElevatorPIDNonProfiled extends SubsystemBase {
@@ -76,6 +100,25 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     private final GenericEntry elevatorAccelerationSetpoint;
     private final GenericEntry voltageSupplied;
     private final GenericEntry voltageSetpoint;
+    
+    private final DCMotor m_gearbox = DCMotor.getCIM(2);
+    private final double m_gearing = kGearingRatio;
+    private final double m_drumradius = 0.14;
+    private final double m_minHeight = 0.24;
+    private final double m_maxHeight = 1.12;
+    private final boolean m_simulateGravity = true;
+    private final double mass = 30; //KG
+
+    private final double height = 20;//These are not accurate
+    private final double width = 40;//These are not accurate
+
+    private final ElevatorSim m_elevatorSim = new ElevatorSim(m_gearbox, m_gearing, mass, m_drumradius, m_minHeight, m_maxHeight, m_simulateGravity); //Add another param for StdDev for measurements
+    private Encoder m_encoder = new Encoder(0, 3); //Fake encoder
+    private final EncoderSim m_encoderSim = new EncoderSim(m_encoder);
+    private final TalonFXSimCollection m_motorSim = m_motor1.getSimCollection();
+    private final Mechanism2d mech2d = new Mechanism2d(width, height);
+    private final MechanismRoot2d m_mech2dRoot = mech2d.getRoot("Elevator Root", 10, 0); //Creates a root at (x,y) of mech2d, or if it exists, returns the existing root.
+    private final MechanismLigament2d m_elevatorMech2d = m_mech2dRoot.append(new MechanismLigament2d("Elevator", m_elevatorSim.getPositionMeters(), 90));//Adds vertical component to the root
 
     public ElevatorPIDNonProfiled() {
         m_motor1.setInverted(false); // they changed the motor
@@ -105,9 +148,17 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         voltageSupplied = tab.add("Motor Voltage", 0.0).getEntry();
         voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
 
+        if(RobotBase.isSimulation()){
+            m_encoder.setDistancePerPulse(kRotationsPerNativeUnit);
+            
+            SmartDashboard.putData("Elevator_Sim", mech2d);
+        }
+
         tab.add("Zero Encoder",
                 new InstantCommand(() -> this.zeroEncoder()));
         zeroEncoder();
+
+
     }
 
     public static ElevatorPIDNonProfiled getInstance() {
@@ -219,6 +270,15 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         updateShuffleboard();
         m_lastVelocity = getCurrentVelocity();
         m_lastTime = Timer.getFPGATimestamp();
+    }
+    public void simulationPeriodic(){
+        m_elevatorSim.setInput(getCurrentVelocity(), RobotController.getBatteryVoltage()); //Check this
+
+        m_elevatorSim.update(0.020); //20ms
+
+        m_encoderSim.setDistance(m_elevatorSim.getPositionMeters());
+
+        RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps()));
     }
 
     public void breakMotor() {
