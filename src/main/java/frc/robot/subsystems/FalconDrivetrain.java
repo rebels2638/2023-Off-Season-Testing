@@ -245,13 +245,17 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   public double getLeftSideMeters() {
-    if(Robot.isSimulation()) return m_leftEncoder.getDistance();
-    else return leftMetersTraveled;
+    if (Robot.isSimulation())
+      return m_leftEncoder.getDistance();
+    else
+      return leftMetersTraveled;
   }
 
   public double getRightSideMeters() {
-    if(Robot.isSimulation()) return m_rightEncoder.getDistance();
-    else return rightMetersTraveled;
+    if (Robot.isSimulation())
+      return m_rightEncoder.getDistance();
+    else
+      return rightMetersTraveled;
   }
 
   public double getLeftSideVelocity() {
@@ -286,7 +290,7 @@ public class FalconDrivetrain extends SubsystemBase {
 
     prevRightFront = rightFront;
     prevRightBack = rightBack;
-    
+
     return traveledDiff;
   }
 
@@ -326,7 +330,8 @@ public class FalconDrivetrain extends SubsystemBase {
     if (Robot.isSimulation())
       SmartDashboard.putNumber("CurrentDrawnAmps", m_differentialDrivetrainSimulator.getCurrentDrawAmps());
 
-    if(Robot.isSimulation()) m_fieldSim.setRobotPose(getSimulatedPose());
+    if (Robot.isSimulation())
+      m_fieldSim.setRobotPose(getSimulatedPose());
     m_fieldPose.setRobotPose(getPose());
 
     SmartDashboard.putData("Estimated Field Pose", m_fieldPose);
@@ -390,7 +395,8 @@ public class FalconDrivetrain extends SubsystemBase {
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
+    if (Robot.isSimulation()) return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
+    else return new DifferentialDriveWheelSpeeds(getLeftSideVelocity(), getRightSideVelocity());
   }
 
   @Override
