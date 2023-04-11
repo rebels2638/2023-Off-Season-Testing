@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.ElevatorPIDNonProfiled;
+import frc.robot.subsystems.FalconDrivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -20,9 +22,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-  
+  private ElevatorPIDNonProfiled m_elevator;
 
-  
+  private FalconDrivetrain m_Drivetrain;
   private RobotContainer m_robotContainer;
 
   private Timer time;
@@ -115,5 +117,8 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    m_elevator.simulationPeriodic();
+    m_Drivetrain.simulationPeriodic();
+  }
 }
