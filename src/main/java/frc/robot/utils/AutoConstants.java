@@ -32,11 +32,14 @@ public class AutoConstants {
     public static final double CONE_TARGET_HEIGHT = 1.1128375;
 
     public static final class LimelightConstants {
+        public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
         public static AprilTagFieldLayout aprilTagFieldLayout;
         public static final Transform3d ROBOT_TO_CAM_TRANSFORM = new Transform3d(new Translation3d(0.0, 0.0, 1.3),
                 new Rotation3d(0, -10, 0));
         public static final Transform3d ROBOT_TO_CAM_TRANSFORM_UNTILTED = new Transform3d(ROBOT_TO_CAM_TRANSFORM.getTranslation(),
                 new Rotation3d());
+        public static final double ROBOT_TO_CAM_HEIGHT = ROBOT_TO_CAM_TRANSFORM.getTranslation().getZ();
+        public static final double ROBOT_TO_CAM_PITCH = ROBOT_TO_CAM_TRANSFORM.getRotation().getY();
         public static final Pose2d CAM_TO_ARM_POSE = ROBOT_TO_ARM_POSE.transformBy(ROBOT_TO_CAM_TRANSFORM_UNTILTED).toPose2d();
         public static final double CAM_TO_ARM_YAW = Math.atan2(CAM_TO_ARM_POSE.getY(), CAM_TO_ARM_POSE.getX());
         public static final double CAM_TO_ARM_DIST = CAM_TO_ARM_POSE.getTranslation().getNorm();
@@ -49,7 +52,7 @@ public class AutoConstants {
 
         public static final int DEFAULT_PIPELINE = APRILTAG_PIPELINE;
 
-        LimelightConstants() {
+        static {
             try {
                 aprilTagFieldLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
             } catch (IOException e) {

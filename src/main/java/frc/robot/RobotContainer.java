@@ -19,6 +19,7 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.AutoRunner;
 import frc.robot.subsystems.LinearSlide;
+import frc.robot.subsystems.Navx;
 import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Wrist;
 import frc.robot.utils.AutoConstants.LimelightConstants;
@@ -62,6 +63,7 @@ public class RobotContainer {
   private final Claw claw = Claw.getInstance();
   private final FalconDrivetrain drive = FalconDrivetrain.getInstance();
   private final AutoRunner auto = AutoRunner.getInstance();
+  private final Navx gyro = Navx.getInstance();
   private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
   private final Limelight limelight = Limelight.getInstance();
 
@@ -113,18 +115,22 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    auto.loadPath();
     return auto.getCommand();
   }
 
   // Reset encoders for auto
   public void resetForAuto(Pose2d pose) {
-    drive.zeroEncoder();
+    drive.resetOdometry(pose);
     limelight.setMode(LimelightConstants.APRILTAG_PIPELINE);
+    gyro.resetGyroToPose(pose);
     poseEstimator.resetPose(pose);
     elevator.zeroEncoder();
     linSlide.zeroEncoder();
     wrist.turtleEncoder();
+  }
+
+  public void prepareForAuto() {
+    auto.prepareForAuto();
   }
 
   // Override commands and switch to manual control

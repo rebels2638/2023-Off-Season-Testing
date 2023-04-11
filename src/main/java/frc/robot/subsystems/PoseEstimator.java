@@ -26,10 +26,12 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.utils.AutoConstants.LimelightConstants;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -42,16 +44,19 @@ public class PoseEstimator extends SubsystemBase {
     private double[] botPose;
 
     private static DifferentialDrivePoseEstimator poseEstimator;
-    private AHRS m_gyro = new AHRS(Port.kUSB1);
+    public Navx m_gyro;
+    private double gyroAdjustmentSim = 0.0;
     private double pitchOffset = 0.0;
     private double previousPipelineTimestamp = 0;
 
     public PoseEstimator() {
         this.driveTrainSubsytem = FalconDrivetrain.getInstance();
         this.limelight = Limelight.getInstance();
-        pitchOffset = m_gyro.getPitch();
+        this.m_gyro = Navx.getInstance();
+        // pitchOffset = m_gyro.getPitch();
+        pitchOffset = 0.0;
         poseEstimator = new DifferentialDrivePoseEstimator(driveTrainSubsytem.m_kinematics,
-                m_gyro.getRotation2d(), driveTrainSubsytem.getLeftSideMeters(),
+                m_gyro.getRotation(), driveTrainSubsytem.getLeftSideMeters(),
                 driveTrainSubsytem.getRightSideMeters(), new Pose2d(),
                 VecBuilder.fill(0.02, 0.02, Units.degreesToRadians(5)), // State measurement standard deviations.
                                                                         // Left encoder, right encoder, gyro.
@@ -68,7 +73,7 @@ public class PoseEstimator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        poseEstimator.update(m_gyro.getRotation2d(),
+        poseEstimator.update(m_gyro.getRotation(),
                 driveTrainSubsytem.getLeftSideMeters(), driveTrainSubsytem.getRightSideMeters());
 
         // Limelight vision pose estimates
@@ -116,28 +121,13 @@ public class PoseEstimator extends SubsystemBase {
         return currentPose;
     }
 
-    public double getPitch() {
-        return m_gyro.getPitch() - pitchOffset;
-    }
-
-    public double getGyroAngle() {
-        return m_gyro.getAngle();
-    }
-
-    public double getGyroAngleUnmodified() {
-        return m_gyro.getAngle() - m_gyro.getAngleAdjustment();
-    }
-
     public double getYaw() {
         return currentPose.getRotation().getRadians();
     }
 
-    public void resetPitchOffset() {
-        pitchOffset = m_gyro.getPitch();
-    }
-
-    public void setYawAdjustment(double deg) {
-        m_gyro.setAngleAdjustment(deg);
+    // pitch in radians
+    public double getPitch() {
+        return Units.degreesToRadians(m_gyro.getPitch());
     }
 
     public static double degreesToRadians(int degrees) {
@@ -145,14 +135,8 @@ public class PoseEstimator extends SubsystemBase {
     }
 
     public void resetPose(Pose2d pose) {
-        resetPitchOffset();
-        setYawAdjustment(pose.getRotation().getDegrees() - getGyroAngleUnmodified());
         poseEstimator.resetPosition(pose.getRotation(), driveTrainSubsytem.getLeftSideMeters(),
                 driveTrainSubsytem.getRightSideMeters(), pose);
         currentPose = poseEstimator.getEstimatedPosition();
-    }
-
-    public void resetHeading() {
-        m_gyro.reset();
     }
 }

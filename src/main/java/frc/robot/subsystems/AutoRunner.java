@@ -60,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.pathplanner.lib.*;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.RamseteAutoBuilder;
 import com.pathplanner.lib.server.PathPlannerServer;
@@ -81,7 +82,7 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("elevatorFullDown", new ElevatorDown(ElevatorPIDNonProfiled.getInstance() /* ElevatorPID.getInstance()*/));
         PATH_COMMANDS.put("elevatorUpLinSlideOut", new HighScore());
         PATH_COMMANDS.put("elevatorDownLinSlideIn", new TurtleMode());
-        PATH_COMMANDS.put("resetGyro", new InstantCommand(PoseEstimator.getInstance()::resetHeading));
+        PATH_COMMANDS.put("resetGyro", new InstantCommand(Navx.getInstance()::resetHeading));
         PATH_COMMANDS.put("autoPlace", new AutoPlace());
         PATH_COMMANDS.put("wristDown", new WristDown(Wrist.getInstance()));
         PATH_COMMANDS.put("clawUnpinch", new InstantCommand(Claw.getInstance()::push));
@@ -128,7 +129,7 @@ public final class AutoRunner extends SubsystemBase {
         pathChooser.setDefaultOption("taxi", "taxi");
         m_autoBuilder = new RamseteAutoBuilder(
                 m_poseEstimator::getCurrentPose,
-                m_poseEstimator::resetPose,
+                this::doLiterallyNothing,
                 new RamseteController(),
                 m_drive.m_kinematics,
                 m_drive.m_feedforward,
@@ -147,7 +148,7 @@ public final class AutoRunner extends SubsystemBase {
         PATHS.forEach((pathName, pathFile) -> pathChooser.addOption(pathName, pathFile));
 
         Shuffleboard.getTab("Auto").add("Path", pathChooser);
-        Shuffleboard.getTab("Auto").add("Prepare Auto", new InstantCommand(() -> prepareForAuto()));
+        Shuffleboard.getTab("Auto").add("Prepare Auto", new InstantCommand(() -> prepareForAuto()).ignoringDisable(true));
     }
 
     public static AutoRunner getInstance() {
@@ -168,7 +169,12 @@ public final class AutoRunner extends SubsystemBase {
     public void prepareForAuto() {
         lastPath = pathChooser.getSelected();
         loadPath();
-        RobotContainer.getInstance().resetForAuto(getPath().get(0).getInitialPose());
+        PathPlannerState initialState = getPath().get(0).getInitialState();
+        initialState =
+                  PathPlannerTrajectory.transformStateForAlliance(
+                      initialState, DriverStation.getAlliance());
+
+        RobotContainer.getInstance().resetForAuto(initialState.poseMeters);
     }
 
     public List<PathPlannerTrajectory> getPath() {
@@ -208,7 +214,7 @@ public final class AutoRunner extends SubsystemBase {
                 if(constraint1 != -1.0 && constraint2 != 1.0) {
                     constraints.add(new PathConstraints(Math.max(constraint1, constraint2), 0.75));
                 } else {
-                    constraints.add(new PathConstraints(1.75, 0.8));
+                    constraints.add(new PathConstraints(5, 7));
                 }
             }
             
@@ -221,5 +227,9 @@ public final class AutoRunner extends SubsystemBase {
 
     public Command getCommand() {
         return m_autoBuilder.fullAuto(m_path);
+    }
+
+    public void doLiterallyNothing(Pose2d pose) {
+        // literally nothing
     }
 }

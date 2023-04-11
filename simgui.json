@@ -43,7 +43,10 @@
       "/Shuffleboard/Turret/Zero Encoder": "Command",
       "/Shuffleboard/Wrist/Wrist Ready": "Command",
       "/Shuffleboard/Wrist/Zero Encoder": "Command",
-      "/SmartDashboard/Field": "Field2d"
+      "/SmartDashboard/Arducam_OV9281_USB_Camera Sim Field": "Field2d",
+      "/SmartDashboard/Estimated Field Pose": "Field2d",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Simulated Field Pose": "Field2d"
     }
   },
   "NetworkTables": {
