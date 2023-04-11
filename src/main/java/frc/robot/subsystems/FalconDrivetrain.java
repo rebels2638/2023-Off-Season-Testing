@@ -126,6 +126,7 @@ public class FalconDrivetrain extends SubsystemBase {
   private boolean isBalancing = false;
 
   public final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(kTrackWidth);
+  private final Field2d m_fieldPose = new Field2d();
 
   // private final DifferentialDriveOdometry m_odometry;
 
@@ -325,10 +326,11 @@ public class FalconDrivetrain extends SubsystemBase {
     if (Robot.isSimulation())
       SmartDashboard.putNumber("CurrentDrawnAmps", m_differentialDrivetrainSimulator.getCurrentDrawAmps());
 
-    if(Robot.isSimulation()) m_fieldSim.setRobotPose(m_differentialDrivetrainSimulator.getPose());
-    else m_fieldSim.setRobotPose(getPose());
+    if(Robot.isSimulation()) m_fieldSim.setRobotPose(getSimulatedPose());
+    m_fieldPose.setRobotPose(getPose());
 
-    SmartDashboard.putData("Field", m_fieldSim);
+    SmartDashboard.putData("Estimated Field Pose", m_fieldPose);
+    SmartDashboard.putData("Simulated Field Pose", m_fieldSim);
     SmartDashboard.putNumber("leftGroup Diff", nativeToMeters(getCurrentEncoderRate(m_leftLeader)));
     SmartDashboard.putNumber("rightGroup Diff", nativeToMeters(-getCurrentEncoderRate(m_rightLeader)));
   }
@@ -383,6 +385,10 @@ public class FalconDrivetrain extends SubsystemBase {
     return PoseEstimator.getInstance().getCurrentPose();
   }
 
+  public Pose2d getSimulatedPose() {
+    return m_differentialDrivetrainSimulator.getPose();
+  }
+
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
   }
@@ -417,6 +423,7 @@ public class FalconDrivetrain extends SubsystemBase {
     return PoseEstimator.getInstance().getYaw();
   }
 
+  // pitch in degrees
   public double getPitch() {
     return Navx.getInstance().getPitch();
   }

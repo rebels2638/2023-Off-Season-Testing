@@ -125,8 +125,9 @@ public class PoseEstimator extends SubsystemBase {
         return currentPose.getRotation().getRadians();
     }
 
+    // pitch in radians
     public double getPitch() {
-        return m_gyro.getPitch();
+        return Units.degreesToRadians(m_gyro.getPitch());
     }
 
     public static double degreesToRadians(int degrees) {

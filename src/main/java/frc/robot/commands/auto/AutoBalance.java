@@ -111,7 +111,7 @@ public class AutoBalance extends CommandBase {
 		dpid2Controller.setSetpoint(0.0);
 
 		double rpidVoltage = rpidController.calculate(currentRot);
-		double dpidVoltage = dpidController.calculate(poseEstimatorSubsystem.getPitch() * (Math.PI / 180.0));
+		double dpidVoltage = dpidController.calculate(poseEstimatorSubsystem.getPitch());
 		
 		double veloErr = dpidController.getVelocityError();
 		

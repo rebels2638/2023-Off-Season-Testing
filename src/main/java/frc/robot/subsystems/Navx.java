@@ -34,6 +34,7 @@ public class Navx extends SubsystemBase {
         return m_gyro.getRotation2d();
     }
 
+    // pitch in degrees
     public double getPitch() {
         // return m_gyro.getPitch() - pitchOffset;
         return 0.0;
