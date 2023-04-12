@@ -130,6 +130,7 @@ public final class AutoRunner extends SubsystemBase {
     private PoseEstimator m_poseEstimator;
 
     public AutoRunner() {
+        PathPlannerServer.startServer(AutoConstants.PATH_PLANNER_PORT);
         m_drive = FalconDrivetrain.getInstance();
         m_poseEstimator = PoseEstimator.getInstance();
         pathChooser.setDefaultOption("taxi", "taxi");
