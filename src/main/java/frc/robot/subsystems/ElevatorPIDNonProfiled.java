@@ -291,7 +291,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     }
 
     public boolean sufficientlyUp() {
-        return getCurrentHeight() > 0.6;
+        return getCurrentHeight() > 0.645;
     }
 
     public void simArmOut() {
