@@ -103,22 +103,23 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     
     private final DCMotor m_gearbox = DCMotor.getCIM(2);
     private final double m_gearing = kGearingRatio;
-    private final double m_drumradius = 0.14;
-    private final double m_minHeight = 0.24;
-    private final double m_maxHeight = 1.12;
+    private final double m_drumradius = kWheelRadius;
+    private final double m_minHeight = 0;
+    private final double m_maxHeight = kUpperLimit;
     private final boolean m_simulateGravity = true;
-    private final double mass = 30; //KG
+    private final double mass = 21.591; //KG
 
-    private final double height = 20;//These are not accurate
-    private final double width = 40;//These are not accurate
+    private final double height = 0;//These are not accurate
+    private final double width = 0;//These are not accurate
 
     private final ElevatorSim m_elevatorSim = new ElevatorSim(m_gearbox, m_gearing, mass, m_drumradius, m_minHeight, m_maxHeight, m_simulateGravity); //Add another param for StdDev for measurements
     private Encoder m_encoder = new Encoder(0, 3); //Fake encoder
     private final EncoderSim m_encoderSim = new EncoderSim(m_encoder);
     private final TalonFXSimCollection m_motorSim = m_motor1.getSimCollection();
     private final Mechanism2d mech2d = new Mechanism2d(width, height);
-    private final MechanismRoot2d m_mech2dRoot = mech2d.getRoot("Elevator Root", 10, 0); //Creates a root at (x,y) of mech2d, or if it exists, returns the existing root.
-    private final MechanismLigament2d m_elevatorMech2d = m_mech2dRoot.append(new MechanismLigament2d("Elevator", m_elevatorSim.getPositionMeters(), 90));//Adds vertical component to the root
+    private final MechanismRoot2d m_mech2dRoot = mech2d.getRoot("Elevator Root", 0.1, 0); //Creates a root at (x,y) of mech2d, or if it exists, returns the existing root.
+    private final MechanismLigament2d m_elevatorMech2d = m_mech2dRoot.append(new MechanismLigament2d("Elevator Ligament", m_elevatorSim.getPositionMeters() + 0.4026, 90));//Adds vertical component to the root
+    private final MechanismLigament2d m_armMech2d = m_elevatorMech2d.append(new MechanismLigament2d("Arm Ligament", 0, -90));
 
     public ElevatorPIDNonProfiled() {
         m_motor1.setInverted(false); // they changed the motor
@@ -149,16 +150,13 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         voltageSetpoint = tab.add("Voltage Setpoint", 0.0).getEntry();
 
         if(RobotBase.isSimulation()){
-            m_encoder.setDistancePerPulse(kRotationsPerNativeUnit);
-            
-            SmartDashboard.putData("Elevator_Sim", mech2d);
+            m_encoder.setDistancePerPulse(nativeToHeight(1));
+            SmartDashboard.putData("ElevatorMechanism", mech2d);
         }
 
         tab.add("Zero Encoder",
                 new InstantCommand(() -> this.zeroEncoder()));
         zeroEncoder();
-
-
     }
 
     public static ElevatorPIDNonProfiled getInstance() {
@@ -211,10 +209,12 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     }
 
     public double getCurrentHeight() {
+        if(Robot.isSimulation()) return m_encoder.getDistance();
         return nativeToHeight(getCurrentEncoderPosition());
     }
 
     public double getCurrentVelocity() {
+        if(Robot.isSimulation()) return m_encoder.getRate();
         return nativeToHeight(getCurrentEncoderRate());
     }
 
@@ -223,6 +223,9 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
     }
 
     public void zeroEncoder() {
+        if(Robot.isSimulation()) {
+            m_encoder.reset();
+        }
         m_motor1.getSensorCollection().setIntegratedSensorPosition(0, 30);
         m_motor2.getSensorCollection().setIntegratedSensorPosition(0, 30);
     }
@@ -272,11 +275,12 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         m_lastTime = Timer.getFPGATimestamp();
     }
     public void simulationPeriodic(){
-        m_elevatorSim.setInput(getCurrentVelocity(), RobotController.getBatteryVoltage()); //Check this
+        m_elevatorSim.setInput(m_motor1.get() * RobotController.getInputVoltage()); //Check this
 
         m_elevatorSim.update(0.020); //20ms
 
         m_encoderSim.setDistance(m_elevatorSim.getPositionMeters());
+        m_elevatorMech2d.setLength(m_encoder.getDistance() + 0.4026);
 
         RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps()));
     }
@@ -288,5 +292,13 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
 
     public boolean sufficientlyUp() {
         return getCurrentHeight() > 0.6;
+    }
+
+    public void simArmOut() {
+        m_armMech2d.setLength(1.1446);
+    }
+
+    public void simArmIn() {
+        m_armMech2d.setLength(0);
     }
 }

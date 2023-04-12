@@ -13,6 +13,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -29,7 +30,7 @@ public class Limelight extends SubsystemBase {
 
     private int mode = 0;
 
-    private double camDiagFOV = 75.26; // degrees - assume wide-angle camera
+    private double camDiagFOV = 125; // degrees - assume wide-angle camera
     private double maxLEDRange = 20; // meters
     private int camResolutionWidth = 960; // pixels
     private int camResolutionHeight = 720; // pixels
@@ -44,15 +45,15 @@ public class Limelight extends SubsystemBase {
         photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
         setPipeline(LimelightConstants.DEFAULT_PIPELINE);
 
-        if(Robot.isSimulation()) {
+        if (Robot.isSimulation()) {
             simVision = new SimVisionSystem(
-                LimelightConstants.CAMERA_NAME,
-                camDiagFOV,
-                LimelightConstants.ROBOT_TO_CAM_TRANSFORM,
-                maxLEDRange,
-                camResolutionWidth,
-                camResolutionHeight,
-                minTargetArea);
+                    LimelightConstants.CAMERA_NAME,
+                    camDiagFOV,
+                    LimelightConstants.ROBOT_TO_CAM_TRANSFORM,
+                    maxLEDRange,
+                    camResolutionWidth,
+                    camResolutionHeight,
+                    minTargetArea);
             simVision.addVisionTargets(LimelightConstants.aprilTagFieldLayout);
         }
     }
@@ -111,14 +112,12 @@ public class Limelight extends SubsystemBase {
         return mode;
     }
 
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
+    public void processSimFrame(Pose2d pose) {
+        simVision.processFrame(pose);
     }
 
     @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run during simulation
-        simVision.processFrame(FalconDrivetrain.getInstance().getSimulatedPose());
+    public void periodic() {
+        // This method will be called once per scheduler run
     }
 }

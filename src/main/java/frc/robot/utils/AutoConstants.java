@@ -17,8 +17,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 0.0;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 0.0;
+    public static final double kMaxSpeedMetersPerSecond = 1.75;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0.8;
 
     // public static final TrajectoryConstraint autoVoltageConstraint = new
     // TrajectoryConstraint();

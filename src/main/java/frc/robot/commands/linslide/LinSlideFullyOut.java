@@ -2,6 +2,7 @@ package frc.robot.commands.linslide;
 
 import frc.lib.input.XboxController;
 import frc.robot.subsystems.ElevatorPID;
+import frc.robot.subsystems.ElevatorPIDNonProfiled;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LinSlidePiston;
 import frc.robot.subsystems.LinearSlide;
@@ -28,6 +29,7 @@ public class LinSlideFullyOut extends CommandBase {
     @Override
     public void initialize() {
         finished = false;
+        ElevatorPIDNonProfiled.getInstance().simArmOut();
         m_piston.pull();
         m_linslide.setPID(false);
         m_linslide.setVelocitySetpoint(0.5);

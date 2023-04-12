@@ -419,6 +419,7 @@ public class FalconDrivetrain extends SubsystemBase {
     m_rightEncoderSim.setDistance(m_differentialDrivetrainSimulator.getRightPositionMeters());
     m_rightEncoderSim.setRate(m_differentialDrivetrainSimulator.getRightVelocityMetersPerSecond());
     m_gyroSim.setAngle(-m_differentialDrivetrainSimulator.getHeading().getDegrees());
+    Limelight.getInstance().processSimFrame(getSimulatedPose());
   }
 
   public void zeroHeading() {
