@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -28,8 +29,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import frc.robot.utils.AutoConstants;
 import frc.robot.utils.ConstantsFXDriveTrain.DriveConstants;
 import java.util.HashMap;
+import java.util.Map;
 
 /** An example command that uses an example subsystem. */
 public class AutoNotch extends CommandBase {
@@ -37,7 +40,7 @@ public class AutoNotch extends CommandBase {
   private final FalconDrivetrain driveTrain;
   private RamseteCommand ramseteCommand;
   RamseteController controller = new RamseteController();
-  Trajectory goalTrajectory;
+  private Trajectory goalTrajectory;
   private double startTime = Timer.getFPGATimestamp();
   private boolean finished = false;
 
@@ -53,7 +56,6 @@ public class AutoNotch extends CommandBase {
    * @param subsystem The subsystem used by this command.
    */
   public AutoNotch(FalconDrivetrain subsystem) {
-  
     driveTrain = subsystem;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -63,12 +65,11 @@ public class AutoNotch extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
     // Using the default constructor of RamseteController. Here
     // the gains are initialized to 2.0 and 0.7.
-    
 
-    Trajectory goalTrajectory = generateTrajectory();
+    goalTrajectory = generateTrajectory();
+    startTime = Timer.getFPGATimestamp();
     
     // ramseteCommand =
     //     new RamseteCommand(
@@ -83,18 +84,15 @@ public class AutoNotch extends CommandBase {
     //         // RamseteCommand passes volts to the callback
     //         driveTrain::setVoltageFromAuto,
     //         driveTrain);
-    
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-    ChassisSpeeds adjustedSpeeds = controller.calculate(PoseEstimator.getInstance().getCurrentPose(), goalTrajectory.sample(startTime - Timer.getFPGATimestamp()));
+    ChassisSpeeds adjustedSpeeds = controller.calculate(PoseEstimator.getInstance().getCurrentPose(), goalTrajectory.sample(Timer.getFPGATimestamp() - startTime));
     DifferentialDriveWheelSpeeds wheelSpeeds = driveTrain.m_kinematics.toWheelSpeeds(adjustedSpeeds);
+    System.out.println(wheelSpeeds.leftMetersPerSecond + " " + wheelSpeeds.rightMetersPerSecond);
     driveTrain.setSpeeds(wheelSpeeds);
-    
   }
 
   // Called once the command ends or is interrupted.
@@ -107,32 +105,23 @@ public class AutoNotch extends CommandBase {
     return false;
   }
 
+  public double distPoses(Pose2d p1, Pose2d p2) {
+    return p1.getTranslation().getDistance(p2.getTranslation());
+  }
+
   public Trajectory generateTrajectory() {
-
-
     Pose2d startPose = PoseEstimator.getInstance().getCurrentPose();
     Translation2d poseFinder = new Translation2d(startPose.getRotation().getCos() * poseFinerDistance + startPose.getX(),
        (startPose.getRotation().getSin() * poseFinerDistance + startPose.getY()) );
 
-    double bestX = 999999;
-    double bestY = 999999;
-    // double bestScoreX = 0;
-    // double bestScoreY = 0;
-    double scoreingAngle = 0;
+    Pose2d bestPose = new Pose2d(999999, 999999, new Rotation2d(0.0, 0.0));
     int index = 0;
 
-    for (int i = 0; i < wayPoints.length; i++) {
-      // x 
-      if (i % 2 == 0) {
-        if ((Math.abs(wayPoints[i] - startPose.getX()) < Math.abs(bestX - startPose.getX())) && (Math.abs(wayPoints[i] - startPose.getY()) < Math.abs(bestY - startPose.getY()))) {
-          bestX = wayPoints[i];
-          bestY = wayPoints[i + 1];
-          scoreingAngle = scoringLocations[index];
-        }
-        index++;
-
-        }
+    for(Map.Entry<Integer, Pose3d> pose : AutoConstants.PoseMap.targetPoses.entrySet()) {
+      if(distPoses(startPose, pose.getValue().toPose2d()) < distPoses(startPose, bestPose)) {
+        bestPose = pose.getValue().toPose2d();
       }
+    }
     
     
     // double endRot = startPose.getRotation().getRadians();
@@ -152,16 +141,12 @@ public class AutoNotch extends CommandBase {
     // else if ( bestX - bestScoreX  > 0 && bestY - bestScoreY > 0) {
     //     endRot = Math.atan( bestY - bestScoreY ) / ( bestX - bestScoreX ) + Math.PI;
     // }
-    
-    
-    Pose2d endPose = new Pose2d(new Translation2d(bestX, bestY),
-        new Rotation2d( scoreingAngle));
       
     ArrayList<Translation2d> interiorWaypoints = new ArrayList<Translation2d>();
 
-    TrajectoryConfig config = new TrajectoryConfig(.75, .25); // TODO: get the proper accels and max velocities
+    TrajectoryConfig config = new TrajectoryConfig(1.75, 0.8); // TODO: get the proper accels and max velocities
 
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(startPose, interiorWaypoints, endPose, config);
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(startPose, interiorWaypoints, bestPose, config);
 
     return trajectory;
 

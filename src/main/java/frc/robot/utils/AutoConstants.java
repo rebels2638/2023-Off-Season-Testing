@@ -114,5 +114,49 @@ public class AutoConstants {
                         Units.inchesToMeters(42.19),
                         Units.inchesToMeters(18.22),
                         new Rotation3d()));
+
+    public static final Map<Integer, Pose3d> targetPoses = Map.of(
+                1,
+                new Pose3d(
+                        1.57,
+                        4.67,
+                        0.0,
+                        new Rotation3d(0.0, 0.0, Units.degreesToRadians(167.13))),
+                2,
+                new Pose3d(
+                        1.57,
+                        4.74,
+                        0.0,
+                        new Rotation3d(0.0, 0.0, Units.degreesToRadians(-165.30))),
+                3,
+                new Pose3d(
+                        1.57,
+                        4.20,
+                        0.0,
+                        new Rotation3d(0.0, 0.0, Units.degreesToRadians(-162.98))),
+                4,
+                new Pose3d(
+                        1.54,
+                        4.11,
+                        0.0,
+                        new Rotation3d(0.0, 0.0, Units.degreesToRadians(166.76))),
+                5,
+                new Pose3d(
+                        1.58,
+                        3.57,
+                        0.0,
+                        new Rotation3d(0.0, 0.0, Units.degreesToRadians(168.44))),
+                6,
+                new Pose3d(
+                        1.55,
+                        3.65,
+                        0.0,
+                        new Rotation3d(0.0, 0.0, Units.degreesToRadians(-161.57))),
+                7,
+                new Pose3d(
+                        1.57,
+                        3.02,
+                        0.0,
+                        new Rotation3d(0.0, 0.0, Units.degreesToRadians(168.89))));
     }
 }
