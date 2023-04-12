@@ -8,19 +8,20 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Navx extends SubsystemBase {
     private static Navx instance = null;
 
-    // public AHRS m_gyro = new AHRS(Port.kUSB1);
-    public AnalogGyro m_gyro = new AnalogGyro(1);
+    public AHRS m_gyro = new AHRS(Port.kUSB1);
+    // public AnalogGyro m_gyro = new AnalogGyro(1);
     private double gyroAdjustmentSim = 0.0;
     private double pitchOffset = 0.0;
 
     public Navx() {
-        // pitchOffset = m_gyro.getPitch();
-        pitchOffset = 0.0;
+        pitchOffset = m_gyro.getPitch();
+        // pitchOffset = 0.0;
     }
 
     public static Navx getInstance() {
@@ -36,28 +37,28 @@ public class Navx extends SubsystemBase {
 
     // pitch in degrees
     public double getPitch() {
-        // return m_gyro.getPitch() - pitchOffset;
-        return 0.0;
+        return m_gyro.getPitch() - pitchOffset;
+        // return 0.0;
     }
 
     public double getGyroAngle() {
-        // return m_gyro.getAngle();
-        return m_gyro.getAngle() + gyroAdjustmentSim;
+        return m_gyro.getAngle();
+        // return m_gyro.getAngle() + gyroAdjustmentSim;
     }
 
     public double getGyroAngleUnmodified() {
-        // return m_gyro.getAngle() - m_gyro.getAngleAdjustment();
-        return m_gyro.getAngle();
+        return m_gyro.getAngle() - m_gyro.getAngleAdjustment();
+        // return m_gyro.getAngle();
     }
 
     public void resetPitchOffset() {
-        // pitchOffset = m_gyro.getPitch();
-        pitchOffset = 0.0;
+        pitchOffset = m_gyro.getPitch();
+        // pitchOffset = 0.0;
     }
 
     public void setYawAdjustment(double deg) {
-        // m_gyro.setAngleAdjustment(deg);
-        gyroAdjustmentSim = deg;
+        m_gyro.setAngleAdjustment(deg);
+        // gyroAdjustmentSim = deg;
     }
 
     public static double degreesToRadians(int degrees) {

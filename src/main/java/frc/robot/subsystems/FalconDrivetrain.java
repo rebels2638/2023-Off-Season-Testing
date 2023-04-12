@@ -203,7 +203,7 @@ public class FalconDrivetrain extends SubsystemBase {
           getGearingRatio(), kTrackWidth,
           kWheelRadiusStandard,
           VecBuilder.fill(0.0, 0.0, 0.001, 0.1, 0.1, 0.005, 0.005));
-      m_gyroSim = new AnalogGyroSim(Navx.getInstance().m_gyro);
+      // m_gyroSim = new AnalogGyroSim(Navx.getInstance().m_gyro);
       m_leftEncoderSim = new EncoderSim(m_leftEncoder);
       m_rightEncoderSim = new EncoderSim(m_rightEncoder);
     }
