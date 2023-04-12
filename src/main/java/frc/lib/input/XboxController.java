@@ -87,7 +87,7 @@ public class XboxController implements Controller {
      *         negative)
      */
     public double getRightY() {
-        return -joystick.getRawAxis(JOYSTICK_RIGHT_Y);
+        return RebelUtil.linearDeadband(-joystick.getRawAxis(JOYSTICK_RIGHT_Y), 0.15);
     }
 
     /**
