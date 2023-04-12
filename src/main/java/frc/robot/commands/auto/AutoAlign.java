@@ -51,7 +51,7 @@ public class AutoAlign extends CommandBase {
 
         // Add gyro pitch for added accuracy
         double distanceToTarget = PhotonUtils.calculateDistanceToTargetMeters(
-                LimelightConstants.ROBOT_TO_CAM_TRANSFORM.getY(),
+                LimelightConstants.ROBOT_TO_CAM_HEIGHT,
                 AutoConstants.CONE_TARGET_HEIGHT,
                 LimelightConstants.ROBOT_TO_CAM_PITCH + m_estimator.getPitch(),
                 Units.degreesToRadians(lastTarget.getPitch()));

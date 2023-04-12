@@ -33,9 +33,10 @@ public class AutoConstants {
 
     public static final class LimelightConstants {
         public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
-        public static AprilTagFieldLayout aprilTagFieldLayout;
         public static final Transform3d ROBOT_TO_CAM_TRANSFORM = new Transform3d(new Translation3d(0.0, 0.0, 1.3),
                 new Rotation3d(0, -10, 0));
+
+        public static AprilTagFieldLayout aprilTagFieldLayout;
         public static final Transform3d ROBOT_TO_CAM_TRANSFORM_UNTILTED = new Transform3d(ROBOT_TO_CAM_TRANSFORM.getTranslation(),
                 new Rotation3d());
         public static final double ROBOT_TO_CAM_HEIGHT = ROBOT_TO_CAM_TRANSFORM.getTranslation().getZ();
