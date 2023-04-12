@@ -17,7 +17,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoConstants {
-	public static final int PATH_PLANNER_PORT = 5811;
+    public static final int PATH_PLANNER_PORT = 5811;
 
     public static final double kMaxSpeedMetersPerSecond = 1.75;
     public static final double kMaxAccelerationMetersPerSecondSquared = 0.8;
@@ -115,5 +115,4 @@ public class AutoConstants {
                         Units.inchesToMeters(18.22),
                         new Rotation3d()));
     }
-
 }
