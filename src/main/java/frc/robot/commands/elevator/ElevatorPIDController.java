@@ -37,7 +37,6 @@ public class ElevatorPIDController extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_elevatorPID.setToVelocityControlMode(true);
     m_elevatorPID.resetHeightAccumulator();
   }
   

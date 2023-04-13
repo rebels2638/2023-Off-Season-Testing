@@ -36,7 +36,7 @@ public class Wrist extends SubsystemBase {
     private static final double kRadiansPerRotation = 2 * Math.PI;
     private static final double kFeedforwardAngleOffset = 0;
 
-    public static final double kP = 15; // 5.8146 (it was actually 7.1682 but we increased it)
+    public static final double kP = 18; // 5.8146 (it was actually 7.1682 but we increased it)
     public static final double kI = 0;
     public static final double kD = 0.3;
 

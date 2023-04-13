@@ -18,8 +18,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.commands.TimerCommand;
 import frc.robot.commands.auto.AutoBalance;
 import frc.robot.commands.auto.AutoPlace;
 import frc.robot.commands.elevator.ElevatorDown;
@@ -27,6 +30,7 @@ import frc.robot.commands.elevator.ElevatorUp;
 import frc.robot.commands.linslide.LinSlideFullyIn;
 import frc.robot.commands.linslide.LinSlideFullyOut;
 import frc.robot.commands.presets.HighScore;
+import frc.robot.commands.presets.MidScore;
 import frc.robot.commands.presets.Place;
 import frc.robot.commands.presets.TurtleMode;
 import frc.robot.commands.wrist.WristDown;
@@ -80,6 +84,9 @@ public final class AutoRunner extends SubsystemBase {
                 new LinSlideFullyOut(LinearSlide.getInstance(), LinSlidePiston.getInstance()));
         PATH_COMMANDS.put("clawOpen", new Place());
         PATH_COMMANDS.put("clawClose", new InstantCommand(Claw.getInstance()::pull));
+        PATH_COMMANDS.put("clawPinch", new SequentialCommandGroup(
+            new InstantCommand(Claw.getInstance()::pull),
+            new TimerCommand(1)));
         PATH_COMMANDS.put("resetDTEncoders", new InstantCommand(FalconDrivetrain.getInstance()::zeroEncoder));
         PATH_COMMANDS.put("elevatorFullUp", new ElevatorUp(ElevatorPIDNonProfiled.getInstance() /*  ElevatorPID.getInstance() */));
         PATH_COMMANDS.put("elevatorFullDown", new ElevatorDown(ElevatorPIDNonProfiled.getInstance() /* ElevatorPID.getInstance()*/));
@@ -93,6 +100,8 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("wristTurtle", new WristTurtle(Wrist.getInstance()));
         PATH_COMMANDS.put("wristStraight", new WristStraight(Wrist.getInstance()));
         PATH_COMMANDS.put("autoBalance", new AutoBalance(FalconDrivetrain.getInstance(), PoseEstimator.getInstance()));
+        PATH_COMMANDS.put("linSlideIn", new LinSlideFullyIn(LinearSlide.getInstance(), LinSlidePiston.getInstance()));
+        PATH_COMMANDS.put("midScore", new MidScore());
 
         PATHS.put("taxi", "taxi");
         PATHS.put("OneConeAndPick1", "OneConeAndPick1");
@@ -130,7 +139,7 @@ public final class AutoRunner extends SubsystemBase {
     private PoseEstimator m_poseEstimator;
 
     public AutoRunner() {
-        PathPlannerServer.startServer(AutoConstants.PATH_PLANNER_PORT);
+        // PathPlannerServer.startServer(AutoConstants.PATH_PLANNER_PORT);
         m_drive = FalconDrivetrain.getInstance();
         m_poseEstimator = PoseEstimator.getInstance();
         pathChooser.setDefaultOption("taxi", "taxi");

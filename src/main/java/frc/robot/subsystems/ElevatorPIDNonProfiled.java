@@ -251,7 +251,7 @@ public class ElevatorPIDNonProfiled extends SubsystemBase {
         double pid = m_velocityControlEnabled ? velocityPID : positionPID;
         double feedforward = ElevatorConstants.kG + (pid == 0 ? 0 : pid < 0 ? -1 : 1) * ElevatorConstants.kS;
         double voltage = RebelUtil.constrain(feedforward + pid, -12.0, 12.0);
-        // System.out.println(m_velocityControlEnabled + " " + voltage);
+        // System.out.println("AAA " + m_velocityControlEnabled + " " + pid);
         // System.out.println("VOLTAGE " + voltage);
         if (getCurrentHeight() >= kUpperLimit && voltage >= ElevatorConstants.kG) {
             voltage = ElevatorConstants.kG;

@@ -105,11 +105,18 @@ public class PoseEstimator extends SubsystemBase {
         if (limelight.getMode() == LimelightConstants.APRILTAG_PIPELINE) {
             currentPose = poseEstimator.getEstimatedPosition();
             EstimatedRobotPose photonPose = limelight.getEstimatedPose(new Pose3d(currentPose));
-            if (photonPose != null)
-                poseEstimator.addVisionMeasurement(photonPose.estimatedPose.toPose2d(), photonPose.timestampSeconds);
+            if (photonPose != null) {
+                
+                System.out.println(distPoses(photonPose.estimatedPose.toPose2d(), currentPose));
+                // poseEstimator.addVisionMeasurement(photonPose.estimatedPose.toPose2d(), photonPose.timestampSeconds);
+            }
         }
 
         currentPose = poseEstimator.getEstimatedPosition();
+    }
+
+    public double distPoses(Pose2d p1, Pose2d p2) {
+        return p1.getTranslation().getDistance(p2.getTranslation());
     }
 
     public String getFormattedPose() {

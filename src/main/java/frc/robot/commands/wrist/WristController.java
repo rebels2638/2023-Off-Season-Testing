@@ -32,7 +32,7 @@ public class WristController extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_wrist.setToVelocityControlMode(true);
+    // m_wrist.setToVelocityControlMode(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
