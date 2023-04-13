@@ -14,6 +14,8 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -105,10 +107,15 @@ public class PoseEstimator extends SubsystemBase {
         if (limelight.getMode() == LimelightConstants.APRILTAG_PIPELINE) {
             currentPose = poseEstimator.getEstimatedPosition();
             EstimatedRobotPose photonPose = limelight.getEstimatedPose(new Pose3d(currentPose));
+            
             if (photonPose != null) {
-                
-                System.out.println(distPoses(photonPose.estimatedPose.toPose2d(), currentPose));
-                // poseEstimator.addVisionMeasurement(photonPose.estimatedPose.toPose2d(), photonPose.timestampSeconds);
+                PathPlannerState state = new PathPlannerState();
+                state.poseMeters = photonPose.estimatedPose.toPose2d();
+                PathPlannerState pose = PathPlannerTrajectory.transformStateForAlliance(
+                    state, DriverStation.getAlliance());
+                // System.out.println(currentPose);
+                System.out.println(distPoses(pose.poseMeters, currentPose));
+                // poseEstimator.addVisionMeasurement(pose.poseMeters, photonPose.timestampSeconds);
             }
         }
 
