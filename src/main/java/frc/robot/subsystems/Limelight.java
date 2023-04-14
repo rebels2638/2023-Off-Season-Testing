@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
@@ -18,6 +19,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.utils.AutoConstants.LimelightConstants;
@@ -27,6 +30,7 @@ public class Limelight extends SubsystemBase {
 
     private PhotonCamera photonCamera = new PhotonCamera(LimelightConstants.CAMERA_NAME);
     private PhotonPoseEstimator photonPoseEstimator;
+    private Field2d m_fieldLLPose = new Field2d();
 
     private int mode = 0;
 
@@ -70,6 +74,8 @@ public class Limelight extends SubsystemBase {
         Optional<EstimatedRobotPose> result = photonPoseEstimator.update();
         if (result.isPresent()) {
             EstimatedRobotPose photonPose = result.get();
+            m_fieldLLPose.setRobotPose(photonPose.estimatedPose.toPose2d());
+            SmartDashboard.putData("Estimated LL Pose", m_fieldLLPose);
             return photonPose;
         }
 
