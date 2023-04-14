@@ -23,6 +23,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -120,6 +121,8 @@ public class PoseEstimator extends SubsystemBase {
                 m_fieldLLPose.setRobotPose(pose.poseMeters);
                 System.out.println(distPoses(pose.poseMeters, currentPose));
                 // poseEstimator.addVisionMeasurement(pose.poseMeters, photonPose.timestampSeconds);
+            } else {
+                m_fieldLLPose.setRobotPose(new Pose2d(-100, -100, new Rotation2d()));
             }
         }
         SmartDashboard.putData("Estimated LL Pose", m_fieldLLPose);
