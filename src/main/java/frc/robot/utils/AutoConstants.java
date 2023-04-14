@@ -17,6 +17,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoConstants {
+    public static final FIELD_LENGTH = 16.54175;
+    public static final FIELD_WIDTH = 8.0137;
+    
     public static final int PATH_PLANNER_PORT = 5811;
 
     public static final double kMaxSpeedMetersPerSecond = 1.75;
