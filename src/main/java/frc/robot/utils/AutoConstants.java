@@ -8,7 +8,9 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -19,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class AutoConstants {
     public static final double FIELD_LENGTH = 16.54175;
     public static final double FIELD_WIDTH = 8.0137;
+    public static final Transform2d FIELD_FLIP_TRANSFORM = new Transform2d(new Translation2d(FIELD_LENGTH, FIELD_WIDTH), new Rotation2d(Math.PI));
     
     public static final int PATH_PLANNER_PORT = 5811;
 

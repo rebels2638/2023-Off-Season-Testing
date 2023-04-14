@@ -91,7 +91,7 @@ public class AutoNotch extends CommandBase {
   public void execute() {
     ChassisSpeeds adjustedSpeeds = controller.calculate(PoseEstimator.getInstance().getCurrentPose(), goalTrajectory.sample(Timer.getFPGATimestamp() - startTime));
     DifferentialDriveWheelSpeeds wheelSpeeds = driveTrain.m_kinematics.toWheelSpeeds(adjustedSpeeds);
-    System.out.println(wheelSpeeds.leftMetersPerSecond + " " + wheelSpeeds.rightMetersPerSecond);
+    // System.out.println(wheelSpeeds.leftMetersPerSecond + " " + wheelSpeeds.rightMetersPerSecond);
     driveTrain.setSpeeds(wheelSpeeds);
   }
 

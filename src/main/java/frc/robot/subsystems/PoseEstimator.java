@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.utils.AutoConstants;
 import frc.robot.utils.AutoConstants.LimelightConstants;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -113,14 +114,11 @@ public class PoseEstimator extends SubsystemBase {
             EstimatedRobotPose photonPose = limelight.getEstimatedPose(new Pose3d(currentPose));
             
             if (photonPose != null) {
-                PathPlannerState state = new PathPlannerState();
-                state.poseMeters = photonPose.estimatedPose.toPose2d();
-                PathPlannerState pose = PathPlannerTrajectory.transformStateForAlliance(
-                    state, DriverStation.getAlliance());
-                // System.out.println(currentPose);
-                m_fieldLLPose.setRobotPose(pose.poseMeters);
-                System.out.println(distPoses(pose.poseMeters, currentPose));
-                // poseEstimator.addVisionMeasurement(pose.poseMeters, photonPose.timestampSeconds);
+                Pose2d pose = photonPose.estimatedPose.toPose2d();
+                if(DriverStation.getAlliance() == DriverStation.Alliance.Red) pose = pose.transformBy(AutoConstants.FIELD_FLIP_TRANSFORM);
+                m_fieldLLPose.setRobotPose(pose);
+                // System.out.println(distPoses(pose, currentPose));
+                poseEstimator.addVisionMeasurement(pose, photonPose.timestampSeconds);
             } else {
                 m_fieldLLPose.setRobotPose(new Pose2d(-100, -100, new Rotation2d()));
             }
