@@ -30,7 +30,6 @@ public class Limelight extends SubsystemBase {
 
     private PhotonCamera photonCamera = new PhotonCamera(LimelightConstants.CAMERA_NAME);
     private PhotonPoseEstimator photonPoseEstimator;
-    private Field2d m_fieldLLPose = new Field2d();
 
     private int mode = 0;
 
@@ -74,7 +73,6 @@ public class Limelight extends SubsystemBase {
         Optional<EstimatedRobotPose> result = photonPoseEstimator.update();
         if (result.isPresent()) {
             EstimatedRobotPose photonPose = result.get();
-            m_fieldLLPose.setRobotPose(photonPose.estimatedPose.toPose2d());
             return photonPose;
         }
 
@@ -124,6 +122,5 @@ public class Limelight extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        SmartDashboard.putData("Estimated LL Pose", m_fieldLLPose);
     }
 }

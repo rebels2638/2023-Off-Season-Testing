@@ -32,6 +32,8 @@ import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.utils.AutoConstants.LimelightConstants;
@@ -43,6 +45,7 @@ public class PoseEstimator extends SubsystemBase {
     private FalconDrivetrain driveTrainSubsytem;
     private Limelight limelight;
     private Pose2d currentPose = new Pose2d();
+    private Field2d m_fieldLLPose = new Field2d();
     private double[] botPose;
 
     private static DifferentialDrivePoseEstimator poseEstimator;
@@ -114,10 +117,12 @@ public class PoseEstimator extends SubsystemBase {
                 PathPlannerState pose = PathPlannerTrajectory.transformStateForAlliance(
                     state, DriverStation.getAlliance());
                 // System.out.println(currentPose);
+                m_fieldLLPose.setRobotPose(pose.poseMeters);
                 System.out.println(distPoses(pose.poseMeters, currentPose));
                 // poseEstimator.addVisionMeasurement(pose.poseMeters, photonPose.timestampSeconds);
             }
         }
+        SmartDashboard.putData("Estimated LL Pose", m_fieldLLPose);
 
         currentPose = poseEstimator.getEstimatedPosition();
     }
