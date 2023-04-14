@@ -75,7 +75,6 @@ public class Limelight extends SubsystemBase {
         if (result.isPresent()) {
             EstimatedRobotPose photonPose = result.get();
             m_fieldLLPose.setRobotPose(photonPose.estimatedPose.toPose2d());
-            SmartDashboard.putData("Estimated LL Pose", m_fieldLLPose);
             return photonPose;
         }
 
@@ -125,5 +124,6 @@ public class Limelight extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+        SmartDashboard.putData("Estimated LL Pose", m_fieldLLPose);
     }
 }
