@@ -86,7 +86,7 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("clawClose", new InstantCommand(Claw.getInstance()::pull));
         PATH_COMMANDS.put("clawPinch", new SequentialCommandGroup(
             new InstantCommand(Claw.getInstance()::pull),
-            new TimerCommand(1)));
+            new TimerCommand(0.5)));
         PATH_COMMANDS.put("resetDTEncoders", new InstantCommand(FalconDrivetrain.getInstance()::zeroEncoder));
         PATH_COMMANDS.put("elevatorFullUp", new ElevatorUp(ElevatorPIDNonProfiled.getInstance() /*  ElevatorPID.getInstance() */));
         PATH_COMMANDS.put("elevatorFullDown", new ElevatorDown(ElevatorPIDNonProfiled.getInstance() /* ElevatorPID.getInstance()*/));
@@ -114,7 +114,7 @@ public final class AutoRunner extends SubsystemBase {
         PATHS.put("OneCubeLowAndPick3", "OneCubeLowAndPick3");
         PATHS.put("OneCubeAndTaxiOutNoBump2", "OneCubeAndTaxiOutNoBump2");
         PATHS.put("OneCubeAndTaxiOutBump2", "OneCubeAndTaxiOutBump2");
-        PATHS.put("TheEnd", "TheEnd");
+        PATHS.put("OneCubeAndMidCone1", "OneCubeAndMidCone1");
 
         // IGNORE
         // PATHS.put("OneAndBack3Working", "OneAndBack3Working");

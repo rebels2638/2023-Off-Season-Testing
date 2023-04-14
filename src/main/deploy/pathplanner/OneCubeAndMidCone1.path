@@ -122,7 +122,7 @@
       "stopEvent": {
         "names": [
           "clawPinch",
-          "wristTurtle"
+          "wristStraight"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -190,56 +190,6 @@
         "x": 1.90606618640475,
         "y": 4.215653961358271
       },
-      "nextControl": {
-        "x": 2.309974160869538,
-        "y": 4.248697401320981
-      },
-      "holonomicAngle": 0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 2.1612671490101483,
-        "y": 3.097515747804305
-      },
-      "prevControl": {
-        "x": 1.8601197846402857,
-        "y": 3.097515747804305
-      },
-      "nextControl": {
-        "x": 2.634715949774745,
-        "y": 3.097515747804305
-      },
-      "holonomicAngle": 0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 3.89644958180793,
-        "y": 3.097515747804305
-      },
-      "prevControl": {
-        "x": 3.5734731741668657,
-        "y": 3.097515747804305
-      },
       "nextControl": null,
       "holonomicAngle": 0,
       "isReversal": false,
@@ -247,9 +197,7 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "autoBalance"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -257,7 +205,7 @@
     }
   ],
   "maxVelocity": 3.25,
-  "maxAcceleration": 1.9,
+  "maxAcceleration": 1.85,
   "isReversed": null,
   "markers": [
     {
@@ -270,6 +218,12 @@
       "position": 1.4545454545454546,
       "names": [
         "elevatorFullDown"
+      ]
+    },
+    {
+      "position": 4.581818181818182,
+      "names": [
+        "wristTurtle"
       ]
     }
   ]
