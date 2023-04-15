@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class AutoConstants {
     public static final double FIELD_LENGTH = 16.54175;
     public static final double FIELD_WIDTH = 8.0137;
-    public static final Pose2d FIELD_FLIP_TRANSFORM = new Pose2d(FIELD_LENGTH, FIELD_WIDTH, new Rotation2d(Math.PI));
+    public static final Pose2d FIELD_FLIP_POSE = new Pose2d(FIELD_LENGTH, FIELD_WIDTH, new Rotation2d(Math.PI));
     
     public static final int PATH_PLANNER_PORT = 5811;
 
