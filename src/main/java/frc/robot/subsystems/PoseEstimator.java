@@ -115,7 +115,7 @@ public class PoseEstimator extends SubsystemBase {
             
             if (photonPose != null) {
                 Pose2d pose = photonPose.estimatedPose.toPose2d();
-                if(DriverStation.getAlliance() == DriverStation.Alliance.Red) pose = new Pose2d(FIELD_LENGTH - pose.getX(), FIELD_WIDTH - pose.getY(), pose.getRotation().plus(new Rotation2d(Math.PI)));
+                if(DriverStation.getAlliance() == DriverStation.Alliance.Red) pose = pose.relativeTo(AutoConstants.FIELD_FLIP_POSE);
                 m_fieldLLPose.setRobotPose(pose);
                 // System.out.println(distPoses(pose, currentPose));
                 poseEstimator.addVisionMeasurement(pose, photonPose.timestampSeconds);
