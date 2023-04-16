@@ -291,6 +291,12 @@
         "elevatorFullUp",
         "wristUp"
       ]
+    },
+    {
+      "position": 6.4636363636363585,
+      "names": [
+        "elevatorFullDown"
+      ]
     }
   ]
 }
