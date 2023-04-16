@@ -44,6 +44,7 @@ public class FalconDrive extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    rateLimiter.reset(m_driveSubsystem.m_kinematics.toChassisSpeeds(m_driveSubsystem.getWheelSpeeds()).vxMetersPerSecond);
     m_limelight.setMode(LimelightConstants.DRIVER_PIPELINE);
   }
 
