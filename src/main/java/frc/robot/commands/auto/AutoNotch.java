@@ -103,7 +103,7 @@ public class AutoNotch extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return controller.atReference();
+    return false;
   }
 
   public double distPoses(Pose2d p1, Pose2d p2) {
@@ -147,8 +147,9 @@ public class AutoNotch extends CommandBase {
       
     ArrayList<Translation2d> interiorWaypoints = new ArrayList<Translation2d>();
 
-    TrajectoryConfig config = new TrajectoryConfig(3, 2); // TODO: get the proper accels and max velocities
-    config.setStartVelocity(driveTrain.m_kinematics.toChassisSpeeds(driveTrain.getWheelSpeeds()).vxMetersPerSecond);
+    double startVelo = driveTrain.m_kinematics.toChassisSpeeds(driveTrain.getWheelSpeeds()).vxMetersPerSecond;
+    TrajectoryConfig config = new TrajectoryConfig(startVelo, 3); // TODO: get the proper accels and max velocities
+    config.setStartVelocity(startVelo);
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(startPose, interiorWaypoints, bestPose, config);
 
     return trajectory;
