@@ -103,7 +103,7 @@ public class AutoNotch extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return controller.atReference();
   }
 
   public double distPoses(Pose2d p1, Pose2d p2) {
@@ -120,7 +120,7 @@ public class AutoNotch extends CommandBase {
 
     for(Map.Entry<Integer, Pose3d> pose : AutoConstants.PoseMap.targetPoses.entrySet()) {
       Pose2d refPose = pose.getValue().toPose2d();
-      if(DriverStation.getAlliance() == DriverStation.Alliance.Red) refPose = new Pose2d(refPose.getX(), AutoConstants.FIELD_WIDTH - refPose.getY(), refPose.getRotation().plus(new Rotation2d(Math.PI)));
+      if(DriverStation.getAlliance() == DriverStation.Alliance.Red) refPose = new Pose2d(refPose.getX(), AutoConstants.FIELD_WIDTH - refPose.getY(), refPose.getRotation());
       if(distPoses(startPose, refPose) < distPoses(startPose, bestPose)) {
         bestPose = refPose;
       }
