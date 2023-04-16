@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -138,6 +139,7 @@ public final class AutoRunner extends SubsystemBase {
 
     private final SendableChooser<String> pathChooser = new SendableChooser<String>();
     private String lastPath;
+    private Alliance lastAlliance;
 
     private PoseEstimator m_poseEstimator;
 
@@ -146,6 +148,7 @@ public final class AutoRunner extends SubsystemBase {
         m_drive = FalconDrivetrain.getInstance();
         m_poseEstimator = PoseEstimator.getInstance();
         pathChooser.setDefaultOption("taxi", "taxi");
+        lastAlliance = Alliance.Blue;
         m_autoBuilder = new RamseteAutoBuilder(
                 m_poseEstimator::getCurrentPose,
                 this::doLiterallyNothing,
@@ -180,13 +183,14 @@ public final class AutoRunner extends SubsystemBase {
     @Override
     public void periodic() {
         // Automatically update the paths before auto starts (this reduces wait time at the start of auto)
-        if(lastPath != pathChooser.getSelected()) {
+        if(lastPath != pathChooser.getSelected() || lastAlliance != DriverStation.getAlliance()) {
             prepareForAuto();
         }
     }
 
     public void prepareForAuto() {
         lastPath = pathChooser.getSelected();
+        lastAlliance = DriverStation.getAlliance();
         loadPath();
         PathPlannerState initialState = getPath().get(0).getInitialState();
         initialState =
