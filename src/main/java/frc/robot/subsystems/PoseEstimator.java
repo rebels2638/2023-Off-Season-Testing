@@ -111,7 +111,11 @@ public class PoseEstimator extends SubsystemBase {
         // Add apriltag pose estimates through photonlib
         if (limelight.getMode() == LimelightConstants.APRILTAG_PIPELINE) {
             currentPose = poseEstimator.getEstimatedPosition();
-            EstimatedRobotPose photonPose = limelight.getEstimatedPose(new Pose3d(currentPose));
+            Pose2d referencePose = currentPose;
+            if(DriverStation.getAlliance() == DriverStation.Alliance.Red) referencePose = referencePose.relativeTo(AutoConstants.FIELD_FLIP_POSE);
+            Rotation2d referenceHeading = m_gyro.getRotation();
+            if(DriverStation.getAlliance() == DriverStation.Alliance.Red) referenceHeading = referenceHeading.plus(new Rotation2d(Math.PI));
+            EstimatedRobotPose photonPose = limelight.getEstimatedPose(new Pose3d(referencePose), referenceHeading);
             
             if (photonPose != null) {
                 Pose2d pose = photonPose.estimatedPose.toPose2d();

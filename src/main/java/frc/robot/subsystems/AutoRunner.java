@@ -101,6 +101,7 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("wristStraight", new WristStraight(Wrist.getInstance()));
         PATH_COMMANDS.put("autoBalance", new AutoBalance(FalconDrivetrain.getInstance(), PoseEstimator.getInstance()));
         PATH_COMMANDS.put("linSlideIn", new LinSlideFullyIn(LinearSlide.getInstance(), LinSlidePiston.getInstance()));
+        PATH_COMMANDS.put("linSlideOut", new LinSlideFullyOut(LinearSlide.getInstance(), LinSlidePiston.getInstance()));
         PATH_COMMANDS.put("midScore", new MidScore());
 
         PATHS.put("taxi", "taxi");
