@@ -33,7 +33,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
  import edu.wpi.first.math.geometry.Transform3d;
  import edu.wpi.first.math.geometry.Translation3d;
- import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.lib.DifferentialDrivePoseEstimator.InterpolationRecord;
 import frc.robot.utils.AutoConstants;
 import frc.robot.utils.AutoConstants.LimelightConstants;
 
@@ -259,7 +261,7 @@ import org.photonvision.estimation.VisionEstimation;
       * @return an EstimatedRobotPose with an estimated pose, the timestamp, and targets used to create
       *     the estimate
       */
-     public Optional<EstimatedRobotPose> update() {
+     public Optional<EstimatedRobotPose> update(TimeInterpolatableBuffer<InterpolationRecord> poseBuffer) {
          if (camera == null) {
              DriverStation.reportError("[PhotonPoseEstimator] Missing camera!", false);
              return Optional.empty();
@@ -267,7 +269,7 @@ import org.photonvision.estimation.VisionEstimation;
  
          PhotonPipelineResult cameraResult = camera.getLatestResult();
  
-         return update(cameraResult);
+         return update(cameraResult, poseBuffer);
      }
  
      /**
@@ -278,7 +280,7 @@ import org.photonvision.estimation.VisionEstimation;
       * @return an EstimatedRobotPose with an estimated pose, and information about the camera(s) and
       *     pipeline results used to create the estimate
       */
-     public Optional<EstimatedRobotPose> update(PhotonPipelineResult cameraResult) {
+     public Optional<EstimatedRobotPose> update(PhotonPipelineResult cameraResult, TimeInterpolatableBuffer<InterpolationRecord> poseBuffer) {
          // Time in the past -- give up, since the following if expects times > 0
          if (cameraResult.getTimestampSeconds() < 0) {
              return Optional.empty();
@@ -298,6 +300,15 @@ import org.photonvision.estimation.VisionEstimation;
          if (!cameraResult.hasTargets()) {
              return Optional.empty();
          }
+
+         Optional<InterpolationRecord> poseRecord = poseBuffer.getSample(poseCacheTimestampSeconds);
+         if(poseRecord.isEmpty()) return Optional.empty();
+         Pose2d referencePose = poseRecord.get().poseMeters;
+         if(DriverStation.getAlliance() == DriverStation.Alliance.Red) referencePose = referencePose.relativeTo(AutoConstants.FIELD_FLIP_POSE);
+         Rotation2d referenceHeading = poseRecord.get().gyroAngle;
+         if(DriverStation.getAlliance() == DriverStation.Alliance.Red) referenceHeading = referenceHeading.plus(new Rotation2d(Math.PI));
+         setReferencePose(referencePose);
+         setReferenceHeading(referenceHeading);
  
          return update(cameraResult, this.primaryStrategy);
      }

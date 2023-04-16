@@ -20,7 +20,8 @@ import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import frc.lib.DifferentialDrivePoseEstimator;
+import frc.lib.DifferentialDrivePoseEstimator.InterpolationRecord;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -111,11 +112,7 @@ public class PoseEstimator extends SubsystemBase {
         // Add apriltag pose estimates through photonlib
         if (limelight.getMode() == LimelightConstants.APRILTAG_PIPELINE) {
             currentPose = poseEstimator.getEstimatedPosition();
-            Pose2d referencePose = currentPose;
-            if(DriverStation.getAlliance() == DriverStation.Alliance.Red) referencePose = referencePose.relativeTo(AutoConstants.FIELD_FLIP_POSE);
-            Rotation2d referenceHeading = m_gyro.getRotation();
-            if(DriverStation.getAlliance() == DriverStation.Alliance.Red) referenceHeading = referenceHeading.plus(new Rotation2d(Math.PI));
-            EstimatedRobotPose photonPose = limelight.getEstimatedPose(new Pose3d(referencePose), referenceHeading);
+            EstimatedRobotPose photonPose = limelight.getEstimatedPose(poseEstimator.m_poseBuffer);
             
             if (photonPose != null) {
                 Pose2d pose = photonPose.estimatedPose.toPose2d();

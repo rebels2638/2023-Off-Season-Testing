@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import frc.lib.PhotonPoseEstimator;
+import frc.lib.DifferentialDrivePoseEstimator.InterpolationRecord;
 import org.photonvision.SimVisionSystem;
 import frc.lib.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.common.hardware.VisionLEDMode;
@@ -20,6 +21,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -71,10 +73,8 @@ public class Limelight extends SubsystemBase {
         return instance;
     }
 
-    public EstimatedRobotPose getEstimatedPose(Pose3d referencePose, Rotation2d referenceHeading) {
-        photonPoseEstimator.setReferencePose(referencePose);
-        photonPoseEstimator.setReferenceHeading(referenceHeading);
-        Optional<EstimatedRobotPose> result = photonPoseEstimator.update();
+    public EstimatedRobotPose getEstimatedPose(TimeInterpolatableBuffer<InterpolationRecord> poseBuffer) {
+        Optional<EstimatedRobotPose> result = photonPoseEstimator.update(poseBuffer);
         if (result.isPresent()) {
             EstimatedRobotPose photonPose = result.get();
             return photonPose;
