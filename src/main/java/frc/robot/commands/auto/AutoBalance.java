@@ -48,7 +48,7 @@ public class AutoBalance extends CommandBase {
 	private final double rki = 0;
 	private final double rkd = 0;
 
-	private double dkp = -1.15; // originally -1.25
+	private double dkp =  1.25; // originally -1.25
 	private double dki = 0; // d = degrees relative to ground
 	private double dkd = 0;
 
@@ -111,7 +111,7 @@ public class AutoBalance extends CommandBase {
 		dpid2Controller.setSetpoint(0.0);
 
 		double rpidVoltage = rpidController.calculate(currentRot);
-		double dpidVoltage = dpidController.calculate(poseEstimatorSubsystem.getPitch());
+		double dpidVoltage = dpidController.calculate(poseEstimatorSubsystem.getPitch() * (180/Math.PI)) ;
 		
 		double veloErr = dpidController.getVelocityError();
 		

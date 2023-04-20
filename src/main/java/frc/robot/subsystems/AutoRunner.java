@@ -114,7 +114,9 @@ public final class AutoRunner extends SubsystemBase {
         PATHS.put("OneCubeLowAndPick3", "OneCubeLowAndPick3");
         PATHS.put("OneCubeAndTaxiOutNoBump2", "OneCubeAndTaxiOutNoBump2");
         PATHS.put("OneCubeAndTaxiOutBump2", "OneCubeAndTaxiOutBump2");
-        PATHS.put("TheEnd", "TheEnd");
+        PATHS.put("TheEnd", "TheEnd");        
+        PATHS.put("OnlyAutoBalanceNomovement", "New New New New New New Path");
+
 
         // IGNORE
         // PATHS.put("OneAndBack3Working", "OneAndBack3Working");
