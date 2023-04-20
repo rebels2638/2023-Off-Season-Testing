@@ -23,6 +23,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -91,7 +92,7 @@ public class AutoNotch extends CommandBase {
   public void execute() {
     ChassisSpeeds adjustedSpeeds = controller.calculate(PoseEstimator.getInstance().getCurrentPose(), goalTrajectory.sample(Timer.getFPGATimestamp() - startTime));
     DifferentialDriveWheelSpeeds wheelSpeeds = driveTrain.m_kinematics.toWheelSpeeds(adjustedSpeeds);
-    System.out.println(wheelSpeeds.leftMetersPerSecond + " " + wheelSpeeds.rightMetersPerSecond);
+    // System.out.println(wheelSpeeds.leftMetersPerSecond + " " + wheelSpeeds.rightMetersPerSecond);
     driveTrain.setSpeeds(wheelSpeeds);
   }
 
@@ -118,8 +119,10 @@ public class AutoNotch extends CommandBase {
     int index = 0;
 
     for(Map.Entry<Integer, Pose3d> pose : AutoConstants.PoseMap.targetPoses.entrySet()) {
-      if(distPoses(startPose, pose.getValue().toPose2d()) < distPoses(startPose, bestPose)) {
-        bestPose = pose.getValue().toPose2d();
+      Pose2d refPose = pose.getValue().toPose2d();
+      if(DriverStation.getAlliance() == DriverStation.Alliance.Red) refPose = new Pose2d(refPose.getX(), AutoConstants.FIELD_WIDTH - refPose.getY(), refPose.getRotation());
+      if(distPoses(startPose, refPose) < distPoses(startPose, bestPose)) {
+        bestPose = refPose;
       }
     }
     
@@ -144,8 +147,9 @@ public class AutoNotch extends CommandBase {
       
     ArrayList<Translation2d> interiorWaypoints = new ArrayList<Translation2d>();
 
-    TrajectoryConfig config = new TrajectoryConfig(1.75, 0.8); // TODO: get the proper accels and max velocities
-
+    double startVelo = driveTrain.m_kinematics.toChassisSpeeds(driveTrain.getWheelSpeeds()).vxMetersPerSecond;
+    TrajectoryConfig config = new TrajectoryConfig(startVelo, 3); // TODO: get the proper accels and max velocities
+    config.setStartVelocity(startVelo);
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(startPose, interiorWaypoints, bestPose, config);
 
     return trajectory;

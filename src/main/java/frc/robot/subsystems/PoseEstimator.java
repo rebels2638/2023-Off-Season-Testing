@@ -20,9 +20,11 @@ import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import frc.lib.DifferentialDrivePoseEstimator;
+import frc.lib.DifferentialDrivePoseEstimator.InterpolationRecord;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -32,8 +34,11 @@ import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.utils.AutoConstants;
 import frc.robot.utils.AutoConstants.LimelightConstants;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -43,6 +48,7 @@ public class PoseEstimator extends SubsystemBase {
     private FalconDrivetrain driveTrainSubsytem;
     private Limelight limelight;
     private Pose2d currentPose = new Pose2d();
+    private Field2d m_fieldLLPose = new Field2d();
     private double[] botPose;
 
     private static DifferentialDrivePoseEstimator poseEstimator;
@@ -106,18 +112,19 @@ public class PoseEstimator extends SubsystemBase {
         // Add apriltag pose estimates through photonlib
         if (limelight.getMode() == LimelightConstants.APRILTAG_PIPELINE) {
             currentPose = poseEstimator.getEstimatedPosition();
-            EstimatedRobotPose photonPose = limelight.getEstimatedPose(new Pose3d(currentPose));
+            EstimatedRobotPose photonPose = limelight.getEstimatedPose(poseEstimator.m_poseBuffer);
             
             if (photonPose != null) {
-                PathPlannerState state = new PathPlannerState();
-                state.poseMeters = photonPose.estimatedPose.toPose2d();
-                PathPlannerState pose = PathPlannerTrajectory.transformStateForAlliance(
-                    state, DriverStation.getAlliance());
-                // System.out.println(currentPose);
-                System.out.println(distPoses(pose.poseMeters, currentPose));
-                // poseEstimator.addVisionMeasurement(pose.poseMeters, photonPose.timestampSeconds);
+                Pose2d pose = photonPose.estimatedPose.toPose2d();
+                if(DriverStation.getAlliance() == DriverStation.Alliance.Red) pose = pose.relativeTo(AutoConstants.FIELD_FLIP_POSE);
+                m_fieldLLPose.setRobotPose(pose);
+                // System.out.println(distPoses(pose, currentPose));
+                poseEstimator.addVisionMeasurement(pose, photonPose.timestampSeconds);
+            } else {
+                m_fieldLLPose.setRobotPose(new Pose2d(-100, -100, new Rotation2d()));
             }
         }
+        SmartDashboard.putData("Estimated LL Pose", m_fieldLLPose);
 
         currentPose = poseEstimator.getEstimatedPosition();
     }

@@ -8,7 +8,9 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -17,6 +19,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoConstants {
+    public static final double FIELD_LENGTH = 16.54175;
+    public static final double FIELD_WIDTH = 8.0137;
+    public static final Pose2d FIELD_FLIP_POSE = new Pose2d(FIELD_LENGTH, FIELD_WIDTH, new Rotation2d(Math.PI));
+    
     public static final int PATH_PLANNER_PORT = 5811;
 
     public static final double kMaxSpeedMetersPerSecond = 1.75;
@@ -39,11 +45,11 @@ public class AutoConstants {
                 new Rotation3d(0, -10, 0));
 
         public static AprilTagFieldLayout aprilTagFieldLayout;
-        public static final Transform3d ROBOT_TO_CAM_TRANSFORM_UNTILTED = new Transform3d(ROBOT_TO_CAM_TRANSFORM.getTranslation(),
+        public static final Pose3d ROBOT_TO_CAM_POSE_UNTILTED = new Pose3d(ROBOT_TO_CAM_TRANSFORM.getTranslation(),
                 new Rotation3d());
         public static final double ROBOT_TO_CAM_HEIGHT = ROBOT_TO_CAM_TRANSFORM.getTranslation().getZ();
         public static final double ROBOT_TO_CAM_PITCH = ROBOT_TO_CAM_TRANSFORM.getRotation().getY();
-        public static final Pose2d CAM_TO_ARM_POSE = ROBOT_TO_ARM_POSE.transformBy(ROBOT_TO_CAM_TRANSFORM_UNTILTED).toPose2d();
+        public static final Pose2d CAM_TO_ARM_POSE = ROBOT_TO_ARM_POSE.relativeTo(ROBOT_TO_CAM_POSE_UNTILTED).toPose2d();
         public static final double CAM_TO_ARM_YAW = Math.atan2(CAM_TO_ARM_POSE.getY(), CAM_TO_ARM_POSE.getX());
         public static final double CAM_TO_ARM_DIST = CAM_TO_ARM_POSE.getTranslation().getNorm();
 
@@ -118,45 +124,15 @@ public class AutoConstants {
     public static final Map<Integer, Pose3d> targetPoses = Map.of(
                 1,
                 new Pose3d(
-                        1.57,
-                        4.67,
+                        15.60,
+                        6.01,
                         0.0,
-                        new Rotation3d(0.0, 0.0, Units.degreesToRadians(167.13))),
+                        new Rotation3d(0.0, 0.0, 0.0)),
                 2,
                 new Pose3d(
-                        1.57,
-                        4.74,
+                        15.60,
+                        7.34,
                         0.0,
-                        new Rotation3d(0.0, 0.0, Units.degreesToRadians(-165.30))),
-                3,
-                new Pose3d(
-                        1.57,
-                        4.20,
-                        0.0,
-                        new Rotation3d(0.0, 0.0, Units.degreesToRadians(-162.98))),
-                4,
-                new Pose3d(
-                        1.54,
-                        4.11,
-                        0.0,
-                        new Rotation3d(0.0, 0.0, Units.degreesToRadians(166.76))),
-                5,
-                new Pose3d(
-                        1.58,
-                        3.57,
-                        0.0,
-                        new Rotation3d(0.0, 0.0, Units.degreesToRadians(168.44))),
-                6,
-                new Pose3d(
-                        1.55,
-                        3.65,
-                        0.0,
-                        new Rotation3d(0.0, 0.0, Units.degreesToRadians(-161.57))),
-                7,
-                new Pose3d(
-                        1.57,
-                        3.02,
-                        0.0,
-                        new Rotation3d(0.0, 0.0, Units.degreesToRadians(168.89))));
+                        new Rotation3d(0.0, 0.0, 0.0)));
     }
 }

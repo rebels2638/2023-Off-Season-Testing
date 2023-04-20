@@ -1,13 +1,15 @@
 package frc.robot.subsystems;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
+import frc.lib.PhotonPoseEstimator;
+import frc.lib.DifferentialDrivePoseEstimator.InterpolationRecord;
 import org.photonvision.SimVisionSystem;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import frc.lib.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.common.hardware.VisionLEDMode;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -15,11 +17,17 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.utils.AutoConstants;
 import frc.robot.utils.AutoConstants.LimelightConstants;
 
 public class Limelight extends SubsystemBase {
@@ -43,7 +51,7 @@ public class Limelight extends SubsystemBase {
         
         photonPoseEstimator = new PhotonPoseEstimator(LimelightConstants.aprilTagFieldLayout,
                 PoseStrategy.MULTI_TAG_PNP, photonCamera, LimelightConstants.ROBOT_TO_CAM_TRANSFORM);
-        photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
+        photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_GYRO_OR_HEIGHT_ELSE_LOWEST_AMBIGUITY);
         setPipeline(LimelightConstants.DEFAULT_PIPELINE);
         
 
@@ -67,9 +75,8 @@ public class Limelight extends SubsystemBase {
         return instance;
     }
 
-    public EstimatedRobotPose getEstimatedPose(Pose3d referencePose) {
-        photonPoseEstimator.setReferencePose(referencePose);
-        Optional<EstimatedRobotPose> result = photonPoseEstimator.update();
+    public EstimatedRobotPose getEstimatedPose(TimeInterpolatableBuffer<InterpolationRecord> poseBuffer) {
+        Optional<EstimatedRobotPose> result = photonPoseEstimator.update(poseBuffer);
         if (result.isPresent()) {
             EstimatedRobotPose photonPose = result.get();
             return photonPose;
@@ -115,6 +122,7 @@ public class Limelight extends SubsystemBase {
     }
 
     public void processSimFrame(Pose2d pose) {
+        if(DriverStation.getAlliance() == DriverStation.Alliance.Red) pose = pose.relativeTo(AutoConstants.FIELD_FLIP_POSE);
         simVision.processFrame(pose);
     }
 

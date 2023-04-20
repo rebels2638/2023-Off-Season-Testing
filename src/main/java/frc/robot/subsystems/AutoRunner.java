@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -86,7 +88,7 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("clawClose", new InstantCommand(Claw.getInstance()::pull));
         PATH_COMMANDS.put("clawPinch", new SequentialCommandGroup(
             new InstantCommand(Claw.getInstance()::pull),
-            new TimerCommand(1)));
+            new TimerCommand(0.5)));
         PATH_COMMANDS.put("resetDTEncoders", new InstantCommand(FalconDrivetrain.getInstance()::zeroEncoder));
         PATH_COMMANDS.put("elevatorFullUp", new ElevatorUp(ElevatorPIDNonProfiled.getInstance() /*  ElevatorPID.getInstance() */));
         PATH_COMMANDS.put("elevatorFullDown", new ElevatorDown(ElevatorPIDNonProfiled.getInstance() /* ElevatorPID.getInstance()*/));
@@ -101,6 +103,8 @@ public final class AutoRunner extends SubsystemBase {
         PATH_COMMANDS.put("wristStraight", new WristStraight(Wrist.getInstance()));
         PATH_COMMANDS.put("autoBalance", new AutoBalance(FalconDrivetrain.getInstance(), PoseEstimator.getInstance()));
         PATH_COMMANDS.put("linSlideIn", new LinSlideFullyIn(LinearSlide.getInstance(), LinSlidePiston.getInstance()));
+        PATH_COMMANDS.put("linSlideOut", Commands.waitUntil(ElevatorPIDNonProfiled.getInstance()::sufficientlyUp).andThen(
+            new LinSlideFullyOut(LinearSlide.getInstance(), LinSlidePiston.getInstance())));
         PATH_COMMANDS.put("midScore", new MidScore());
 
         PATHS.put("taxi", "taxi");
@@ -114,7 +118,7 @@ public final class AutoRunner extends SubsystemBase {
         PATHS.put("OneCubeLowAndPick3", "OneCubeLowAndPick3");
         PATHS.put("OneCubeAndTaxiOutNoBump2", "OneCubeAndTaxiOutNoBump2");
         PATHS.put("OneCubeAndTaxiOutBump2", "OneCubeAndTaxiOutBump2");
-        PATHS.put("TheEnd", "TheEnd");        
+        PATHS.put("OneCubeAndHighCone1", "OneCubeAndHighCone1");        
         PATHS.put("OnlyAutoBalanceNomovement", "New New New New New New Path");
 
 
@@ -137,6 +141,7 @@ public final class AutoRunner extends SubsystemBase {
 
     private final SendableChooser<String> pathChooser = new SendableChooser<String>();
     private String lastPath;
+    private Alliance lastAlliance;
 
     private PoseEstimator m_poseEstimator;
 
@@ -145,6 +150,7 @@ public final class AutoRunner extends SubsystemBase {
         m_drive = FalconDrivetrain.getInstance();
         m_poseEstimator = PoseEstimator.getInstance();
         pathChooser.setDefaultOption("taxi", "taxi");
+        lastAlliance = Alliance.Blue;
         m_autoBuilder = new RamseteAutoBuilder(
                 m_poseEstimator::getCurrentPose,
                 this::doLiterallyNothing,
@@ -179,13 +185,14 @@ public final class AutoRunner extends SubsystemBase {
     @Override
     public void periodic() {
         // Automatically update the paths before auto starts (this reduces wait time at the start of auto)
-        if(lastPath != pathChooser.getSelected()) {
+        if(lastPath != pathChooser.getSelected() || lastAlliance != DriverStation.getAlliance()) {
             prepareForAuto();
         }
     }
 
     public void prepareForAuto() {
         lastPath = pathChooser.getSelected();
+        lastAlliance = DriverStation.getAlliance();
         loadPath();
         PathPlannerState initialState = getPath().get(0).getInitialState();
         initialState =
