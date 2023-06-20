@@ -16,6 +16,7 @@ public class GamePieceIdentifier extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   private static final double limelightMountHight = 9; //TODO: find hight
   private static final double limelightMountAngle = 50; //TODO: find angle
+  private PoseEstimator poseEstimator = PoseEstimator.getInstance();
   private double tv, tx, ty, transformedXDistance, transformedYDistance;
   private NetworkTable limelightNetworkTable;
   public GamePieceIdentifier() {
@@ -32,8 +33,8 @@ public class GamePieceIdentifier extends SubsystemBase {
     // not sure if tv is only 1 and 0
     if (tv == 1) {
       //relitive to limelight
-      double yDistance = Math.tan(ty - limelightMountAngle) * limelightMountHight;
-      double xDistance = Math.tan(tx) * yDistance;
+      double yLimeDistance = Math.tan(ty - limelightMountAngle) * limelightMountHight;
+      double xLimeDistance = Math.tan(tx) * yDistance;
 
       // TODO: ADD Constants!!!!
       transformedXDistance = xDistance;
