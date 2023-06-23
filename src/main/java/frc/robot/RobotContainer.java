@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -37,6 +38,8 @@ import frc.robot.commands.presets.TurtleMode;
 import frc.robot.commands.wrist.WristController;
 import frc.robot.commands.wrist.WristDown;
 
+import frc.robot.commands.DriveSecondary;
+
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
@@ -53,6 +56,9 @@ public class RobotContainer {
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
   private final XboxController xboxTester;
+
+  public final double LEFT_X_DEADBAND = 0.01;
+  public final double LEFT_Y_DEADBAND = 0.01;
   
   // Robot Subsystems
   private final Wrist wrist = Wrist.getInstance();
@@ -61,7 +67,7 @@ public class RobotContainer {
   private final LinearSlide linSlide = LinearSlide.getInstance();
   private final LinSlidePiston linPiston = LinSlidePiston.getInstance();
   private final Claw claw = Claw.getInstance();
-  private final FalconDrivetrain drive = FalconDrivetrain.getInstance();
+  private final DriveSecondary drivebase = new DriveSecondary();
   private final AutoRunner auto = AutoRunner.getInstance();
   private final Navx gyro = Navx.getInstance();
   private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
@@ -74,13 +80,17 @@ public class RobotContainer {
     this.xboxDriver = new XboxController(3);
 
     // Controller Throttle Mappings
-    this.drive.setDefaultCommand(new FalconDrive(drive, limelight, xboxDriver));
+    // this.drive.setDefaultCommand(new FalconDrive(drive, limelight, xboxDriver));
+    this.drive.setDefaultCommand(new DriveSecondary(drivebase,
+                                                    () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), LEFT_Y_DEADBAND),
+                                                    () -> MathUtil.applyDeadband(xboxDriver.getRightX(), LEFT_X_DEADBAND),
+                                                    () -> -xboxDriver.getRawAxis(3), () -> true, false, true)) // replace the raw axis call with something which calculates the angular velocity using the formula dθ/dt dθ can be obtained by doing some method calls from pose2D im quite sure, the rest should be trivial, the class maintains an internal timer for dt so make it ret that
     this.elevator.setDefaultCommand(new ElevatorPIDController(elevator, xboxOperator));
     this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
 
     // Driver presets
-    this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
-    this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
+    // this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
+    // this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
     this.xboxDriver.getYButton().whileTrue(new AutoNotch(drive));
     this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, poseEstimator));
     this.xboxDriver.getBButton().onTrue(new SequentialCommandGroup(
