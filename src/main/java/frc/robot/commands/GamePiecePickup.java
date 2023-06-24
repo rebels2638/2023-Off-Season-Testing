@@ -17,6 +17,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -110,10 +111,8 @@ public class GamePiecePickup extends CommandBase {
 
     Pose2d startPose = poseEstimator.getCurrentPose();
 
-    double endX =
-
-    Pose2d endPose = new Pose2d(new Translation2d(endX, endY),
-        new Rotation2d( poseEstimator.getYaw()));
+    Pose2d endPose = new Pose2d(gamePieceIdentifier.GetAbsoluteGamePieceTranslation() + , 
+      new Rotation2d(poseEstimator.getCurrentPose().getRotation().getRadians()));
       
     ArrayList<Translation2d> interiorWaypoints = new ArrayList<Translation2d>();
 
