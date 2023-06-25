@@ -2,6 +2,7 @@ package frc.robot.commands.swervedrive;
 
 import frc.lib.swervelib.SwerveController;
 import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -25,7 +26,7 @@ public class DriveSecondary extends CommandBase {
   private final boolean headingCorrection;
   private double angle = 0;
   private double lastTime = 0;
-  private final xboxcontroller;
+  private final XboxController xboxcontroller;
 
 
   /**
@@ -67,8 +68,8 @@ public class DriveSecondary extends CommandBase {
   @Override
   public void execute()
   {
-    double xVelocity = Math.pow(m_controller.getLeftY(), 3);
-    double yVelocity = Math.pow(m_controller.getRightX(), 3);
+    double xVelocity = Math.pow(xboxcontroller.getLeftY(), 3);
+    double yVelocity = Math.pow(xboxcontroller.getRightX(), 3);
     double angVelocity = Math.pow(omega.getAsDouble(), 3);
     SmartDashboard.putNumber("vX", xVelocity);
     SmartDashboard.putNumber("vY", yVelocity);
