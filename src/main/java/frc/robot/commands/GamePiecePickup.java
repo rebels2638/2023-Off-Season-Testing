@@ -43,8 +43,9 @@ public class GamePiecePickup extends CommandBase {
   private double startTime = Timer.getFPGATimestamp();
   private boolean finished = false;
   private PoseEstimator poseEstimator = PoseEstimator.getInstance();
-  GamePieceIdentifier gamePieceIdentifier;
+  private GamePieceIdentifier gamePieceIdentifier;
 
+  private final double clawDistanceOffset = .5;
   /**
    * Creates a new ExampleCommand.
    *
@@ -66,7 +67,9 @@ public class GamePiecePickup extends CommandBase {
     // Using the default constructor of RamseteController. Here
     // the gains are initialized to 2.0 and 0.7.
     
-
+    if (!gamePieceIdentifier.GamePieceVisible()) {
+      finished = true;
+    }
     Trajectory goalTrajectory = generateTrajectory();
     
     // ramseteCommand =
@@ -107,12 +110,13 @@ public class GamePiecePickup extends CommandBase {
 
   public Trajectory generateTrajectory() {
 
-
-
     Pose2d startPose = poseEstimator.getCurrentPose();
+    Translation2d absoluteGamePieceTranslation = gamePieceIdentifier.GetAbsoluteGamePieceTranslation();
+    double endRot = gamePieceIdentifier.GetAngleToRobot() + poseEstimator.getCurrentPose().getRotation().getRadians();
+    double endX = absoluteGamePieceTranslation.getX() - (Math.cos(gamePieceIdentifier.GetAngleToRobot()) * clawDistanceOffset);
+    double endY = absoluteGamePieceTranslation.getX() - (Math.sin(gamePieceIdentifier.GetAngleToRobot()) * clawDistanceOffset);
 
-    Pose2d endPose = new Pose2d(gamePieceIdentifier.GetAbsoluteGamePieceTranslation() + , 
-      new Rotation2d(poseEstimator.getCurrentPose().getRotation().getRadians()));
+    Pose2d endPose = new Pose2d(endX, endY, new Rotation2d(endRot));
       
     ArrayList<Translation2d> interiorWaypoints = new ArrayList<Translation2d>();
 
