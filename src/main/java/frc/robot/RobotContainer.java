@@ -45,6 +45,7 @@ import frc.robot.commands.presets.Place;
 import frc.robot.commands.presets.TurtleMode;
 import frc.robot.commands.wrist.WristController;
 import frc.robot.commands.wrist.WristDown;
+import frc.robot.commands.drivetrain.AbsoluteDrive;
 
 import frc.robot.commands.drivetrain.DriveSecondary;
 
@@ -90,10 +91,25 @@ public class RobotContainer {
 
     // Controller Throttle Mappings
     // this.drive.setDefaultCommand(new FalconDrive(drive, limelight, xboxDriver));
-    (new DriveSecondary(swerveSubsystem,
-                                                    () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), LEFT_Y_DEADBAND),
-                                                    () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), LEFT_X_DEADBAND),
-                                                    () -> -Math.asin(xboxDriver.getRightY()), () -> true, false, true)); // replaced call
+
+    AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(swerveSubsystem,
+
+        () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
+                                    OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
+                                    OperatorConstants.LEFT_X_DEADBAND),
+        () -> -driverXbox.getRightX(),
+        () -> -driverXbox.getRightY(),
+        false);
+
+    DriveSecondary closedfieldrel = new DriveSecondary(
+      swerveSubsystem,
+      () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), LEFT_Y_DEADBAND),
+      () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), LEFT_X_DEADBAND),
+      () -> -Math.asin(xboxDriver.getRightY()), () -> true, false, true);
+
+    swerveSubsystem.setDefaultCommand(closedAbsoluteDrive);
+
     this.elevator.setDefaultCommand(new ElevatorPIDController(elevator, xboxOperator));
     this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
 
