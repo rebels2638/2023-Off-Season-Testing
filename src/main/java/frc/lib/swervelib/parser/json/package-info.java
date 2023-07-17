@@ -1,4 +1,4 @@
 /**
  * JSON Mapped classes for parsing configuration files.
  */
-package swervelib.parser.json;
+package frc.lib.swervelib.parser.json;

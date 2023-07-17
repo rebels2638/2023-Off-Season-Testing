@@ -1,4 +1,4 @@
-package swervelib.math;
+package frc.lib.swervelib.math;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -8,12 +8,12 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
-import swervelib.SwerveController;
-import swervelib.SwerveModule;
-import swervelib.parser.SwerveDriveConfiguration;
-import swervelib.parser.SwerveModuleConfiguration;
-import swervelib.telemetry.SwerveDriveTelemetry;
-import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+import frc.lib.swervelib.SwerveController;
+import frc.lib.swervelib.SwerveModule;
+import frc.lib.swervelib.parser.SwerveDriveConfiguration;
+import frc.lib.swervelib.parser.SwerveModuleConfiguration;
+import frc.lib.swervelib.telemetry.SwerveDriveTelemetry;
+import frc.lib.swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 /**
  * Mathematical functions which pertain to swerve drive.

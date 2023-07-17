@@ -1,17 +1,17 @@
-package swervelib;
+package frc.lib.swervelib;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import swervelib.encoders.SwerveAbsoluteEncoder;
-import swervelib.math.SwerveMath;
-import swervelib.math.SwerveModuleState2;
-import swervelib.motors.SwerveMotor;
-import swervelib.parser.SwerveModuleConfiguration;
-import swervelib.simulation.SwerveModuleSimulation;
-import swervelib.telemetry.SwerveDriveTelemetry;
-import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+import frc.lib.swervelib.encoders.SwerveAbsoluteEncoder;
+import frc.lib.swervelib.math.SwerveMath;
+import frc.lib.swervelib.math.SwerveModuleState2;
+import frc.lib.swervelib.motors.SwerveMotor;
+import frc.lib.swervelib.parser.SwerveModuleConfiguration;
+import frc.lib.swervelib.simulation.SwerveModuleSimulation;
+import frc.lib.swervelib.telemetry.SwerveDriveTelemetry;
+import frc.lib.swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 /**
  * The Swerve Module class which represents and controls Swerve Modules for the swerve drive.

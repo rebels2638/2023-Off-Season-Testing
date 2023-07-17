@@ -1,10 +1,10 @@
-package swervelib;
+package frc.lib.swervelib;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import swervelib.parser.SwerveControllerConfiguration;
+import frc.lib.swervelib.parser.SwerveControllerConfiguration;
 
 /**
  * Controller class used to convert raw inputs into robot speeds.

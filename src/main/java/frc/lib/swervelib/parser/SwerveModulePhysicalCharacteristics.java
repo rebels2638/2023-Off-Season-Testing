@@ -1,4 +1,4 @@
-package swervelib.parser;
+package frc.lib.swervelib.parser;
 
 /**
  * Configuration class which stores physical characteristics shared between every swerve module.

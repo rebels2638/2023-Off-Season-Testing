@@ -3,4 +3,4 @@
  *
  * @version 1.0.0
  */
-package swervelib;
+package frc.lib.swervelib;

@@ -1,9 +1,9 @@
-package swervelib.simulation.ctre;
+package frc.lib.swervelib.simulation.ctre;
 
-import static swervelib.simulation.ctre.PhysicsSim.random;
+import static frc.lib.swervelib.simulation.ctre.PhysicsSim.random;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import swervelib.simulation.ctre.PhysicsSim.SimProfile;
+import frc.lib.swervelib.simulation.ctre.PhysicsSim.SimProfile;
 
 /**
  * Holds information about a simulated TalonFX.

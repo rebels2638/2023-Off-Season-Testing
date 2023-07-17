@@ -1,9 +1,9 @@
-package swervelib.simulation;
+package frc.lib.swervelib.simulation;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Timer;
-import swervelib.math.SwerveModuleState2;
+import frc.lib.swervelib.math.SwerveModuleState2;
 
 /**
  * Class to hold simulation data for {@link swervelib.SwerveModule}

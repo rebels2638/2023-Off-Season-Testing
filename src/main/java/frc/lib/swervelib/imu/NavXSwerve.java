@@ -1,4 +1,4 @@
-package swervelib.imu;
+package frc.lib.swervelib.imu;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Quaternion;

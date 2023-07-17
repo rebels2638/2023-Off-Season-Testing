@@ -1,8 +1,8 @@
-package swervelib.parser.json;
+package frc.lib.swervelib.parser.json;
 
-import swervelib.parser.PIDFConfig;
-import swervelib.parser.SwerveControllerConfiguration;
-import swervelib.parser.SwerveDriveConfiguration;
+import frc.lib.swervelib.parser.PIDFConfig;
+import frc.lib.swervelib.parser.SwerveControllerConfiguration;
+import frc.lib.swervelib.parser.SwerveDriveConfiguration;
 
 /**
  * {@link swervelib.SwerveController} parsed class. Used to access the JSON data.

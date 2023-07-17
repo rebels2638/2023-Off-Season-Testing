@@ -1,13 +1,13 @@
-package swervelib.parser.json;
+package frc.lib.swervelib.parser.json;
 
 import edu.wpi.first.math.util.Units;
-import swervelib.encoders.SwerveAbsoluteEncoder;
-import swervelib.motors.SwerveMotor;
-import swervelib.parser.PIDFConfig;
-import swervelib.parser.SwerveModuleConfiguration;
-import swervelib.parser.SwerveModulePhysicalCharacteristics;
-import swervelib.parser.json.modules.BoolMotorJson;
-import swervelib.parser.json.modules.LocationJson;
+import frc.lib.swervelib.encoders.SwerveAbsoluteEncoder;
+import frc.lib.swervelib.motors.SwerveMotor;
+import frc.lib.swervelib.parser.PIDFConfig;
+import frc.lib.swervelib.parser.SwerveModuleConfiguration;
+import frc.lib.swervelib.parser.SwerveModulePhysicalCharacteristics;
+import frc.lib.swervelib.parser.json.modules.BoolMotorJson;
+import frc.lib.swervelib.parser.json.modules.LocationJson;
 
 /**
  * {@link swervelib.SwerveModule} JSON parsed class. Used to access the JSON data.

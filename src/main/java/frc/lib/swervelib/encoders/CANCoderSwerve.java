@@ -1,4 +1,4 @@
-package swervelib.encoders;
+package frc.lib.swervelib.encoders;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;

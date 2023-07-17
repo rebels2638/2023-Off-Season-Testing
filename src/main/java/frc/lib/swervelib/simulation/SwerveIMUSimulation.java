@@ -1,4 +1,4 @@
-package swervelib.simulation;
+package frc.lib.swervelib.simulation;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -7,8 +7,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import java.util.Optional;
-import swervelib.math.SwerveKinematics2;
-import swervelib.math.SwerveModuleState2;
+import frc.lib.swervelib.math.SwerveKinematics2;
+import frc.lib.swervelib.math.SwerveModuleState2;
 
 /**
  * Simulation for {@link swervelib.SwerveDrive} IMU.

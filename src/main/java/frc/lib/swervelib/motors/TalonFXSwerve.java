@@ -1,4 +1,4 @@
-package swervelib.motors;
+package frc.lib.swervelib.motors;
 
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -8,11 +8,11 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Timer;
-import swervelib.encoders.SwerveAbsoluteEncoder;
-import swervelib.math.SwerveMath;
-import swervelib.parser.PIDFConfig;
-import swervelib.simulation.ctre.PhysicsSim;
-import swervelib.telemetry.SwerveDriveTelemetry;
+import frc.lib.swervelib.encoders.SwerveAbsoluteEncoder;
+import frc.lib.swervelib.math.SwerveMath;
+import frc.lib.swervelib.parser.PIDFConfig;
+import frc.lib.swervelib.simulation.ctre.PhysicsSim;
+import frc.lib.swervelib.telemetry.SwerveDriveTelemetry;
 
 /**
  * {@link com.ctre.phoenix.motorcontrol.can.TalonFX} Swerve Motor. Made by Team 1466 WebbRobotics.

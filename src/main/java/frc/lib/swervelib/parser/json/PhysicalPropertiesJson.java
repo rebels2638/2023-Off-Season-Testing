@@ -1,8 +1,8 @@
-package swervelib.parser.json;
+package frc.lib.swervelib.parser.json;
 
 import edu.wpi.first.math.util.Units;
-import swervelib.parser.SwerveModulePhysicalCharacteristics;
-import swervelib.telemetry.SwerveDriveTelemetry;
+import frc.lib.swervelib.parser.SwerveModulePhysicalCharacteristics;
+import frc.lib.swervelib.telemetry.SwerveDriveTelemetry;
 
 /**
  * {@link swervelib.parser.SwerveModulePhysicalCharacteristics} parsed data. Used to configure the SwerveModule.
