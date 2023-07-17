@@ -83,8 +83,8 @@ public class RobotContainer {
     // this.drive.setDefaultCommand(new FalconDrive(drive, limelight, xboxDriver));
     this.drive.setDefaultCommand(new DriveSecondary(drivebase,
                                                     () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), LEFT_Y_DEADBAND),
-                                                    () -> MathUtil.applyDeadband(xboxDriver.getRightX(), LEFT_X_DEADBAND),
-                                                    () -> -xboxDriver.getRawAxis(3), () -> true, false, true)); // replace the raw axis call with something which calculates the angular velocity using the formula dθ/dt dθ can be obtained by doing some method calls from pose2D im quite sure, the rest should be trivial, the class maintains an internal timer for dt so make it ret that
+                                                    () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), LEFT_X_DEADBAND),
+                                                    () -> -Math.asin(xboxDriver.getRightY()), () -> true, false, true)); // replaced call
     this.elevator.setDefaultCommand(new ElevatorPIDController(elevator, xboxOperator));
     this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
 
