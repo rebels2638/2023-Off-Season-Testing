@@ -5,7 +5,11 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+
+import java.io.File;
+
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -23,6 +27,7 @@ import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.Navx;
 import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Wrist;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.AutoConstants.LimelightConstants;
 import frc.robot.commands.auto.AutoAlign;
 import frc.robot.commands.auto.AutoBalance;
@@ -67,7 +72,8 @@ public class RobotContainer {
   private final LinearSlide linSlide = LinearSlide.getInstance();
   private final LinSlidePiston linPiston = LinSlidePiston.getInstance();
   private final Claw claw = Claw.getInstance();
-  private final frc.robot.commands.drivetrain.DriveSecondary drivebase;
+  private final DriveSecondary drivebase;
+  private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"));
   private final AutoRunner auto = AutoRunner.getInstance();
   private final Navx gyro = Navx.getInstance();
   private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
@@ -81,7 +87,7 @@ public class RobotContainer {
 
     // Controller Throttle Mappings
     // this.drive.setDefaultCommand(new FalconDrive(drive, limelight, xboxDriver));
-    this.drivebase.setDefaultCommand(new DriveSecondary(drivebase,
+    (new DriveSecondary(swerveSubsystem,
                                                     () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), LEFT_Y_DEADBAND),
                                                     () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), LEFT_X_DEADBAND),
                                                     () -> -Math.asin(xboxDriver.getRightY()), () -> true, false, true)); // replaced call
@@ -91,12 +97,12 @@ public class RobotContainer {
     // Driver presets
     // this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
     // this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
-    this.xboxDriver.getYButton().whileTrue(new AutoNotch(drivebase));
-    this.xboxDriver.getAButton().whileTrue(new AutoBalance(drivebase, poseEstimator));
+    //this.xboxDriver.getYButton().whileTrue(new AutoNotch(drivebase));
+    //this.xboxDriver.getAButton().whileTrue(new AutoBalance(drivebase, poseEstimator));
     this.xboxDriver.getBButton().onTrue(new SequentialCommandGroup(
       new Place(),
       new TurtleMode()));
-    this.xboxDriver.getXButton().whileTrue(new AutoAlign(drivebase, limelight, poseEstimator));
+    //this.xboxDriver.getXButton().whileTrue(new AutoAlign(drivebase, limelight, poseEstimator));
     this.xboxDriver.getLeftMiddleButton().onTrue(new InstantCommand(() -> wrist.zeroEncoder()));
 
     // Operator presets
@@ -130,7 +136,7 @@ public class RobotContainer {
 
   // Reset encoders for auto
   public void resetForAuto(Pose2d pose) {
-    drivebase.resetOdometry(pose);
+    swerveSubsystem.resetOdometry(pose);
     limelight.setMode(LimelightConstants.APRILTAG_PIPELINE);
     gyro.resetGyroToPose(pose);
     poseEstimator.resetPose(pose);
