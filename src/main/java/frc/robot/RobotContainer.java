@@ -91,12 +91,12 @@ public class RobotContainer {
     // Driver presets
     // this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
     // this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
-    this.xboxDriver.getYButton().whileTrue(new AutoNotch(drive));
-    this.xboxDriver.getAButton().whileTrue(new AutoBalance(drive, poseEstimator));
+    this.xboxDriver.getYButton().whileTrue(new AutoNotch(drivebase));
+    this.xboxDriver.getAButton().whileTrue(new AutoBalance(drivebase, poseEstimator));
     this.xboxDriver.getBButton().onTrue(new SequentialCommandGroup(
       new Place(),
       new TurtleMode()));
-    this.xboxDriver.getXButton().whileTrue(new AutoAlign(drive, limelight, poseEstimator));
+    this.xboxDriver.getXButton().whileTrue(new AutoAlign(drivebase, limelight, poseEstimator));
     this.xboxDriver.getLeftMiddleButton().onTrue(new InstantCommand(() -> wrist.zeroEncoder()));
 
     // Operator presets
@@ -130,7 +130,7 @@ public class RobotContainer {
 
   // Reset encoders for auto
   public void resetForAuto(Pose2d pose) {
-    drive.resetOdometry(pose);
+    drivebase.resetOdometry(pose);
     limelight.setMode(LimelightConstants.APRILTAG_PIPELINE);
     gyro.resetGyroToPose(pose);
     poseEstimator.resetPose(pose);
