@@ -5,6 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +26,7 @@ import frc.robot.subsystems.LinearSlide;
 import frc.robot.subsystems.Navx;
 import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Wrist;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.AutoConstants.LimelightConstants;
 import frc.robot.commands.auto.AutoAlign;
 import frc.robot.commands.auto.AutoBalance;
@@ -67,7 +71,7 @@ public class RobotContainer {
   private final LinearSlide linSlide = LinearSlide.getInstance();
   private final LinSlidePiston linPiston = LinSlidePiston.getInstance();
   private final Claw claw = Claw.getInstance();
-  private final frc.robot.commands.drivetrain.DriveSecondary drivebase;
+  private final SwerveSubsystem drivebase;
   private final AutoRunner auto = AutoRunner.getInstance();
   private final Navx gyro = Navx.getInstance();
   private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
