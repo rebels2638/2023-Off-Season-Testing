@@ -38,7 +38,7 @@ import frc.robot.commands.presets.TurtleMode;
 import frc.robot.commands.wrist.WristController;
 import frc.robot.commands.wrist.WristDown;
 
-import frc.robot.commands.DriveSecondary;
+import frc.robot.commands.drivetrain.DriveSecondary;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -67,7 +67,7 @@ public class RobotContainer {
   private final LinearSlide linSlide = LinearSlide.getInstance();
   private final LinSlidePiston linPiston = LinSlidePiston.getInstance();
   private final Claw claw = Claw.getInstance();
-  private final DriveSecondary drivebase = new DriveSecondary();
+  private final frc.robot.commands.drivetrain.DriveSecondary drivebase;
   private final AutoRunner auto = AutoRunner.getInstance();
   private final Navx gyro = Navx.getInstance();
   private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
@@ -81,7 +81,7 @@ public class RobotContainer {
 
     // Controller Throttle Mappings
     // this.drive.setDefaultCommand(new FalconDrive(drive, limelight, xboxDriver));
-    this.drive.setDefaultCommand(new DriveSecondary(drivebase,
+    this.drivebase.setDefaultCommand(new DriveSecondary(drivebase,
                                                     () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), LEFT_Y_DEADBAND),
                                                     () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), LEFT_X_DEADBAND),
                                                     () -> -Math.asin(xboxDriver.getRightY()), () -> true, false, true)); // replaced call

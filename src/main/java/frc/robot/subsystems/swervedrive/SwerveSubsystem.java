@@ -16,14 +16,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-import swervelib.SwerveController;
-import swervelib.SwerveDrive;
-import swervelib.math.SwerveKinematics2;
-import swervelib.parser.SwerveControllerConfiguration;
-import swervelib.parser.SwerveDriveConfiguration;
-import swervelib.parser.SwerveParser;
-import swervelib.telemetry.SwerveDriveTelemetry;
-import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+import frc.lib.swervelib.SwerveController;
+import frc.lib.swervelib.SwerveDrive;
+import frc.lib.swervelib.math.SwerveKinematics2;
+import frc.lib.swervelib.parser.SwerveControllerConfiguration;
+import frc.lib.swervelib.parser.SwerveDriveConfiguration;
+import frc.lib.swervelib.parser.SwerveParser;
+import frc.lib.swervelib.telemetry.SwerveDriveTelemetry;
+import frc.lib.swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class SwerveSubsystem extends SubsystemBase
 {
@@ -52,7 +52,7 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive = new SwerveParser(directory).createSwerveDrive();
     } catch (Exception e)
     {
-      throw new ValueError("File not found.");
+      throw new IllegalArgumentException("File not found.");
     }
   }
 
