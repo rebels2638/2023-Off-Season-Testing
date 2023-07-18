@@ -79,7 +79,8 @@ public class RobotContainer {
   private final LinearSlide linSlide = LinearSlide.getInstance();
   private final LinSlidePiston linPiston = LinSlidePiston.getInstance();
   private final Claw claw = Claw.getInstance();
-  private final DriveSecondary drivebase;
+  private final DriveSecondary closedfieldrel;
+  private final AbsoluteDrive closedAbsoluteDrive;
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"));
   private final AutoRunner auto = AutoRunner.getInstance();
   private final Navx gyro = Navx.getInstance();
@@ -105,13 +106,13 @@ public class RobotContainer {
     //     () -> -driverXbox.getRightY(),
     //     false);
 
-    AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(swerveSubsystem, 
+    closedAbsoluteDrive = new AbsoluteDrive(swerveSubsystem, 
     () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), LEFT_X_DEADBAND),
     () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), LEFT_Y_DEADBAND),
     () -> MathUtil.applyDeadband(xboxDriver.getRightX(), RIGHT_X_DEADBAND),
     () -> MathUtil.applyDeadband(xboxDriver.getRightY(), RIGHT_Y_DEADBAND), false);
 
-    DriveSecondary closedfieldrel = new DriveSecondary(
+    closedfieldrel = new DriveSecondary(
       swerveSubsystem,
       () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), LEFT_Y_DEADBAND),
       () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), LEFT_X_DEADBAND),
