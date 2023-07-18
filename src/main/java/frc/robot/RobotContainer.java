@@ -10,9 +10,10 @@ import java.util.function.DoubleSupplier;
 
 
 import java.io.File;
-
+import frc.robot.commands.drivetrain.AbsoluteFieldDrive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -66,11 +67,6 @@ public class RobotContainer {
   private final XboxController xboxDriver;
   private final XboxController xboxOperator;
   private final XboxController xboxTester;
-
-  public final double LEFT_X_DEADBAND = 0.01;
-  public final double LEFT_Y_DEADBAND = 0.01;
-  public final double RIGHT_X_DEADBAND = 0.01;
-  public final double RIGHT_Y_DEADBAND = 0.01;
   
   // Robot Subsystems
   private final Wrist wrist = Wrist.getInstance();
@@ -79,13 +75,14 @@ public class RobotContainer {
   private final LinearSlide linSlide = LinearSlide.getInstance();
   private final LinSlidePiston linPiston = LinSlidePiston.getInstance();
   private final Claw claw = Claw.getInstance();
-  private final DriveSecondary closedfieldrel;
+  // private final DriveSecondary closedfieldrel;
   private final AbsoluteDrive closedAbsoluteDrive;
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"));
   private final AutoRunner auto = AutoRunner.getInstance();
   private final Navx gyro = Navx.getInstance();
   private final PoseEstimator poseEstimator = PoseEstimator.getInstance();
   private final Limelight limelight = Limelight.getInstance();
+  AbsoluteFieldDrive closedFieldAbsoluteDrive;
 
   public RobotContainer() {
     // Instantiate our controllers with proper ports.
@@ -96,29 +93,18 @@ public class RobotContainer {
     // Controller Throttle Mappings
     // this.drive.setDefaultCommand(new FalconDrive(drive, limelight, xboxDriver));
 
-    // AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(swerveSubsystem,
-
-    //     () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
-    //                                 OperatorConstants.LEFT_Y_DEADBAND),
-    //     () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
-    //                                 OperatorConstants.LEFT_X_DEADBAND),
-    //     () -> -driverXbox.getRightX(),
-    //     () -> -driverXbox.getRightY(),
-    //     false);
-
     closedAbsoluteDrive = new AbsoluteDrive(swerveSubsystem, 
-    () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), LEFT_X_DEADBAND),
-    () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), LEFT_Y_DEADBAND),
-    () -> MathUtil.applyDeadband(xboxDriver.getRightX(), RIGHT_X_DEADBAND),
-    () -> MathUtil.applyDeadband(xboxDriver.getRightY(), RIGHT_Y_DEADBAND), false);
+    () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+    () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+    () -> xboxDriver.getRightX(),
+    () -> xboxDriver.getRightY(), false);
 
-    closedfieldrel = new DriveSecondary(
-      swerveSubsystem,
-      () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), LEFT_Y_DEADBAND),
-      () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), LEFT_X_DEADBAND),
-      () -> -Math.asin(xboxDriver.getRightY()), () -> true, false, true, xboxDriver);
+    closedFieldAbsoluteDrive = new AbsoluteFieldDrive(swerveSubsystem,
+    () -> MathUtil.applyDeadband(xboxDriver.getLeftY(),OperatorConstants.LEFT_Y_DEADBAND),
+    () -> MathUtil.applyDeadband(xboxDriver.getLeftX(),OperatorConstants.LEFT_X_DEADBAND),
+    () -> xboxDriver.getRightY(), false);
 
-    swerveSubsystem.setDefaultCommand(closedAbsoluteDrive);
+    swerveSubsystem.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
 
     // this.elevator.setDefaultCommand(new ElevatorPIDController(elevator, xboxOperator));
     // this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
