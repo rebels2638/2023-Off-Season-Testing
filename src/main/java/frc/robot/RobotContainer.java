@@ -119,31 +119,31 @@ public class RobotContainer {
 
     swerveSubsystem.setDefaultCommand(closedAbsoluteDrive);
 
-    this.elevator.setDefaultCommand(new ElevatorPIDController(elevator, xboxOperator));
-    this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
+    // this.elevator.setDefaultCommand(new ElevatorPIDController(elevator, xboxOperator));
+    // this.wrist.setDefaultCommand(new WristController(wrist, xboxOperator));
 
     // Driver presets
     // this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> this.drive.switchToHighGear()));
     // this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> this.drive.switchToLowGear()));
     //this.xboxDriver.getYButton().whileTrue(new AutoNotch(drivebase));
     //this.xboxDriver.getAButton().whileTrue(new AutoBalance(drivebase, poseEstimator));
-    this.xboxDriver.getBButton().onTrue(new SequentialCommandGroup(
-      new Place(),
-      new TurtleMode()));
-    //this.xboxDriver.getXButton().whileTrue(new AutoAlign(drivebase, limelight, poseEstimator));
-    this.xboxDriver.getLeftMiddleButton().onTrue(new InstantCommand(() -> wrist.zeroEncoder()));
+    // this.xboxDriver.getBButton().onTrue(new SequentialCommandGroup(
+    //   new Place(),
+    //   new TurtleMode()));
+    // //this.xboxDriver.getXButton().whileTrue(new AutoAlign(drivebase, limelight, poseEstimator));
+    // this.xboxDriver.getLeftMiddleButton().onTrue(new InstantCommand(() -> wrist.zeroEncoder()));
 
     // Operator presets
-    this.xboxOperator.getYButton().onTrue(new LoadingStationPickup());
-    this.xboxOperator.getXButton().onTrue(new TurtleMode());
-    this.xboxOperator.getBButton().onTrue(new HighScore());
-    this.xboxOperator.getAButton().onTrue(new InstantCommand(() -> this.claw.toggle()));
-    this.xboxOperator.getLeftMiddleButton().onTrue(new WristDown(Wrist.getInstance()));
-    this.xboxOperator.getRightMiddleButton().onTrue(new MidScore());
-    this.xboxOperator.getRightBumper().onTrue(new SequentialCommandGroup(
-        new Place(),
-        new TurtleMode()));
-    this.xboxOperator.getLeftBumper().onTrue(new LinSlideToggle(linSlide, linPiston));
+    // this.xboxOperator.getYButton().onTrue(new LoadingStationPickup());
+    // this.xboxOperator.getXButton().onTrue(new TurtleMode());
+    // this.xboxOperator.getBButton().onTrue(new HighScore());
+    // this.xboxOperator.getAButton().onTrue(new InstantCommand(() -> this.claw.toggle()));
+    // this.xboxOperator.getLeftMiddleButton().onTrue(new WristDown(Wrist.getInstance()));
+    // this.xboxOperator.getRightMiddleButton().onTrue(new MidScore());
+    // this.xboxOperator.getRightBumper().onTrue(new SequentialCommandGroup(
+    //     new Place(),
+    //     new TurtleMode()));
+    // this.xboxOperator.getLeftBumper().onTrue(new LinSlideToggle(linSlide, linPiston));
   }
 
   public static RobotContainer getInstance() {
