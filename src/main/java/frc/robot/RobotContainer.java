@@ -32,6 +32,7 @@ import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.AutoConstants.LimelightConstants;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.auto.AutoAlign;
 import frc.robot.commands.auto.AutoBalance;
 import frc.robot.commands.auto.AutoNotch;
@@ -68,6 +69,8 @@ public class RobotContainer {
 
   public final double LEFT_X_DEADBAND = 0.01;
   public final double LEFT_Y_DEADBAND = 0.01;
+  public final double RIGHT_X_DEADBAND = 0.01;
+  public final double RIGHT_Y_DEADBAND = 0.01;
   
   // Robot Subsystems
   private final Wrist wrist = Wrist.getInstance();
@@ -92,21 +95,27 @@ public class RobotContainer {
     // Controller Throttle Mappings
     // this.drive.setDefaultCommand(new FalconDrive(drive, limelight, xboxDriver));
 
-    AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(swerveSubsystem,
+    // AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(swerveSubsystem,
 
-        () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                    OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                    OperatorConstants.LEFT_X_DEADBAND),
-        () -> -driverXbox.getRightX(),
-        () -> -driverXbox.getRightY(),
-        false);
+    //     () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
+    //                                 OperatorConstants.LEFT_Y_DEADBAND),
+    //     () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
+    //                                 OperatorConstants.LEFT_X_DEADBAND),
+    //     () -> -driverXbox.getRightX(),
+    //     () -> -driverXbox.getRightY(),
+    //     false);
+
+    AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(swerveSubsystem, 
+    () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), LEFT_X_DEADBAND),
+    () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), LEFT_Y_DEADBAND),
+    () -> MathUtil.applyDeadband(xboxDriver.getRightX(), RIGHT_X_DEADBAND),
+    () -> MathUtil.applyDeadband(xboxDriver.getRightY(), RIGHT_Y_DEADBAND), false);
 
     DriveSecondary closedfieldrel = new DriveSecondary(
       swerveSubsystem,
       () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), LEFT_Y_DEADBAND),
       () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), LEFT_X_DEADBAND),
-      () -> -Math.asin(xboxDriver.getRightY()), () -> true, false, true);
+      () -> -Math.asin(xboxDriver.getRightY()), () -> true, false, true, xboxDriver);
 
     swerveSubsystem.setDefaultCommand(closedAbsoluteDrive);
 
