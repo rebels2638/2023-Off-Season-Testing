@@ -9,12 +9,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Navx extends SubsystemBase {
     private static Navx instance = null;
 
-    public AHRS m_gyro = new AHRS(Port.kUSB1);
+    public AHRS m_gyro = new AHRS(I2C.Port.kMXP);
     // public AnalogGyro m_gyro = new AnalogGyro(1);
     private double gyroAdjustmentSim = 0.0;
     private double pitchOffset = 0.0;
