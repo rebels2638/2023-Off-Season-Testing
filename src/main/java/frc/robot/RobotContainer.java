@@ -96,13 +96,15 @@ public class RobotContainer {
     closedAbsoluteDrive = new AbsoluteDrive(swerveSubsystem, 
     () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
     () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-    () -> xboxDriver.getRightX(),
-    () -> xboxDriver.getRightY(), false);
+    () -> MathUtil.applyDeadband(xboxDriver.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
+    () -> MathUtil.applyDeadband(xboxDriver.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND),
+    false);
 
     closedFieldAbsoluteDrive = new AbsoluteFieldDrive(swerveSubsystem,
     () -> MathUtil.applyDeadband(xboxDriver.getLeftY(),OperatorConstants.LEFT_Y_DEADBAND),
     () -> MathUtil.applyDeadband(xboxDriver.getLeftX(),OperatorConstants.LEFT_X_DEADBAND),
-    () -> -xboxDriver.getRightY(), false);
+    () -> MathUtil.applyDeadband(xboxDriver.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND),
+    false);
 
     swerveSubsystem.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
 
