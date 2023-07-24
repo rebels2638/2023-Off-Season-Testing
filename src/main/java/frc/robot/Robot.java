@@ -11,8 +11,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.ElevatorPIDNonProfiled;
-import frc.robot.subsystems.FalconDrivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -22,9 +20,6 @@ import frc.robot.subsystems.FalconDrivetrain;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-  private ElevatorPIDNonProfiled m_elevator;
-
-  private FalconDrivetrain m_Drivetrain;
   private RobotContainer m_robotContainer;
 
   private Timer time;
@@ -66,19 +61,19 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
-  @Override
-  public void autonomousInit() {
-    time.reset();
-    time.start();
+  // @Override
+  // public void autonomousInit() {
+  //   time.reset();
+  //   time.start();
     
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    // m_robotContainer.prepareForAuto();
+  //   m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+  //   // m_robotContainer.prepareForAuto();
     
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
-  }
+  //   // schedule the autonomous command (example)
+  //   if (m_autonomousCommand != null) {
+  //     m_autonomousCommand.schedule();
+  //   }
+  // }
 
   /** This function is called periodically during autonomous. */
   @Override
@@ -99,7 +94,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    m_robotContainer.checkControllers();
+    // m_robotContainer.checkControllers();
   }
 
   @Override
