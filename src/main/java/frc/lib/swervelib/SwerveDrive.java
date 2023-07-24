@@ -583,7 +583,7 @@ public class SwerveDrive
   {
     for (SwerveModule swerveModule : swerveModules)
     {
-      swerveModule.setMotorBrake(brake);
+      swerveModule.setMotorBrake(true);
     }
   }
 
