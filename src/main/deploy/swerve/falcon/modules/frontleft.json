@@ -13,12 +13,12 @@
       "type": "cancoder",
       "id": 8,
       "canbus": null
-    },
+    },  
     "inverted": {
       "drive": false,
       "angle": false
     },
-    "absoluteEncoderOffset": 228.340,
+    "absoluteEncoderOffset": 45.527,
     "location": {
       "front": 13,
       "left": 13
