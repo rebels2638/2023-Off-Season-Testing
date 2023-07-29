@@ -24,6 +24,7 @@ public class SwerveParser
    * Module number mapped to the JSON name.
    */
   private static final HashMap<String, Integer> moduleConfigs = new HashMap<>();
+  
   /**
    * Parsed swervedrive.json
    */
