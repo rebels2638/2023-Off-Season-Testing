@@ -14,7 +14,6 @@
       "id": 11,
       "canbus": null
     },
- 
     "inverted": {
       "drive": false,
       "angle": false
