@@ -4,7 +4,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import org.json.*;
 
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class JsonChanger extends CommandBase {
+public class JsonChanger extends SubsystemBase {
 
     public static class PIDF {
         public double p;
@@ -91,7 +91,7 @@ public class JsonChanger extends CommandBase {
         
     }
     @Override
-    public void execute() {
+    public void periodic() {
 
         // Updating the values on Shuffleboard
         driveP.setDouble(drive.p);
@@ -117,12 +117,5 @@ public class JsonChanger extends CommandBase {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-    
-
-    @Override
-    public boolean isFinished()
-    {
-        return false;
     }
 }
