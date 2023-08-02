@@ -10,6 +10,8 @@ import java.util.function.DoubleSupplier;
 
 
 import java.io.File;
+import java.io.IOException;
+
 import frc.robot.commands.drivetrain.AbsoluteFieldDrive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -20,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
+import frc.robot.subsystems.swervedrive.JsonChanger;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.AutoConstants.LimelightConstants;
 import frc.robot.Constants.OperatorConstants;
@@ -50,11 +53,20 @@ public class RobotContainer {
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"));
   AbsoluteFieldDrive closedFieldAbsoluteDrive;
 
+  
+
   public RobotContainer() {
     // Instantiate our controllers with proper ports.
     this.xboxTester = new XboxController(1);
     this.xboxOperator = new XboxController(2);
     this.xboxDriver = new XboxController(3);
+
+    try {
+      JsonChanger jsonChanger = new JsonChanger();
+     }
+    catch (IOException e) {
+      e.printStackTrace();;
+    }
 
     // Controller Throttle Mappings
     // this.drive.setDefaultCommand(new FalconDrive(drive, limelight, xboxDriver));

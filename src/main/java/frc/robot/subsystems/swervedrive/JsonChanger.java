@@ -1,10 +1,10 @@
-package frc.robot.commands;
+package frc.robot.subsystems.swervedrive;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import org.json.*;
 
@@ -13,14 +13,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class JsonChanger extends CommandBase {
+public class JsonChanger extends SubsystemBase {
 
-    public static class PIDF {
-        public double p;
-        public double i;
-        public double d;
-        public double f;
-        public double iz;
+    public class PIDF {
+        public double p = 0;
+        public double i = 0;
+        public double d = 0;
+        public double f = 0;
+        public double iz = 0;
 
         public PIDF(double p, double i, double d, double f, double iz) {
             this.p = p;
@@ -28,6 +28,7 @@ public class JsonChanger extends CommandBase {
             this.d = d;
             this.f = f;
             this.iz = iz;
+            System.out.println("PIDFPFIFFASKFN");
         }
 
         public JSONObject toJSON() {
@@ -40,7 +41,7 @@ public class JsonChanger extends CommandBase {
             return obj;
         }
 
-        public static PIDF fromJSON(JSONObject obj) {
+        public PIDF fromJSON(JSONObject obj) {
             return new PIDF(
                 obj.getDouble("p"),
                 obj.getDouble("i"),
@@ -51,9 +52,9 @@ public class JsonChanger extends CommandBase {
         }
     }
 
-    private PIDF drive;
-    private PIDF angle;
-    private ShuffleboardTab tab = Shuffleboard.getTab("SwerveJson");
+    private PIDF drive = new PIDF(0, 0, 0, 0, 0);
+    private PIDF angle = new PIDF(0, 0, 0, 0, 0);
+    private ShuffleboardTab tab;
     private GenericEntry driveP;
     private GenericEntry driveI;
     private GenericEntry driveD;
@@ -69,15 +70,19 @@ public class JsonChanger extends CommandBase {
     public JsonChanger() throws IOException {
         String jsonContent = new String(Files.readAllBytes(Paths.get("/src/main/deploy/swerve/falcon/modules/pidfproperties.json")));
         JSONObject json = new JSONObject(jsonContent);
+        JSONObject driveJSON = json.getJSONObject("drive");
+        JSONObject angleJSON = json.getJSONObject("angle");
 
-        drive = PIDF.fromJSON(json.getJSONObject("drive"));
-        angle = PIDF.fromJSON(json.getJSONObject("angle"));
+        drive.fromJSON(driveJSON);
+        drive.fromJSON(angleJSON);
 
-        System.out.println("Drive: P = " + drive.p + ", I = " + drive.i + ", D = " + drive.d + ", F = " + drive.f + ", Iz = " + drive.iz);
-        System.out.println("Angle: P = " + angle.p + ", I = " + angle.i + ", D = " + angle.d + ", F = " + angle.f + ", Iz = " + angle.iz);
 
+        // System.out.println("Drive: P = " + drive.p + ", I = " + drive.i + ", D = " + drive.d + ", F = " + drive.f + ", Iz = " + drive.iz);
+        // System.out.println("Angle: P = " + angle.p + ", I = " + angle.i + ", D = " + angle.d + ", F = " + angle.f + ", Iz = " + angle.iz);
+
+        tab = Shuffleboard.getTab("SwerveJson");
         //do the rest for all pid values
-        driveP = tab.add("driveP", driveP).getEntry();
+        driveP = tab.add("driveP", 0).getEntry();
         driveI = tab.add("driveI", driveI).getEntry();
         driveD = tab.add("driveD", driveD).getEntry();
         driveF = tab.add("driveF", driveF).getEntry();
@@ -91,7 +96,7 @@ public class JsonChanger extends CommandBase {
         
     }
     @Override
-    public void execute() {
+    public void periodic() {
 
         // Updating the values on Shuffleboard
         driveP.setDouble(drive.p);
@@ -111,7 +116,7 @@ public class JsonChanger extends CommandBase {
         outputJson.put("angle", angle.toJSON());
 
         // Write JSON to file
-        try (FileWriter file = new FileWriter("file.json")) {
+        try (FileWriter file = new FileWriter("/src/main/deploy/swerve/falcon/modules/pidfproperties.json")) {
             file.write(outputJson.toString());
             System.out.println("Successfully Copied JSON Object to File...");
         } catch (IOException e) {
@@ -119,10 +124,6 @@ public class JsonChanger extends CommandBase {
         }
     }
     
-
-    @Override
-    public boolean isFinished()
-    {
-        return false;
-    }
 }
+// ********** Robot program startup complete **********
+// Unhandled exception: java.lang.NullPointerException: Cannot read field "p" because "this.drive" is null
