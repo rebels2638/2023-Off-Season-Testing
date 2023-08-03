@@ -1,7 +1,6 @@
 package frc.robot.subsystems.swervedrive;
 
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -68,7 +67,7 @@ public class JsonChanger extends SubsystemBase {
     private GenericEntry angleIz;
 
     public JsonChanger() throws IOException {
-        String jsonContent = new String(Files.readAllBytes(Paths.get("/src/main/deploy/swerve/falcon/modules/pidfproperties.json")));
+        String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/deploy/swerve/falcon/modules/pidfproperties.json")));
         JSONObject json = new JSONObject(jsonContent);
         JSONObject driveJSON = json.getJSONObject("drive");
         JSONObject angleJSON = json.getJSONObject("angle");
@@ -82,16 +81,16 @@ public class JsonChanger extends SubsystemBase {
 
         tab = Shuffleboard.getTab("SwerveJson");
         //do the rest for all pid values
-        driveP = tab.add("driveP", 0).getEntry();
-        driveI = tab.add("driveI", driveI).getEntry();
-        driveD = tab.add("driveD", driveD).getEntry();
-        driveF = tab.add("driveF", driveF).getEntry();
-        driveIz = tab.add("driveIz", driveIz).getEntry();
-        angleP = tab.add("angleP", angleP).getEntry();
-        angleI = tab.add("angleI", angleI).getEntry();
-        angleD = tab.add("angleD", angleD).getEntry();
-        angleF = tab.add("angleF", angleF).getEntry();
-        angleIz = tab.add("angleIz", angleIz).getEntry();
+        driveP = tab.add("driveP", drive.p).getEntry();
+        driveI = tab.add("driveI", drive.i).getEntry();
+        driveD = tab.add("driveD", drive.d).getEntry();
+        driveF = tab.add("driveF", drive.f).getEntry();
+        driveIz = tab.add("driveIz", drive.iz).getEntry();
+        angleP = tab.add("angleP", angle.p).getEntry();
+        angleI = tab.add("angleI", angle.i).getEntry();
+        angleD = tab.add("angleD", angle.d).getEntry();
+        angleF = tab.add("angleF", angle.f).getEntry();
+        angleIz = tab.add("angleIz", angle.iz).getEntry();
 
         
     }
@@ -116,14 +115,13 @@ public class JsonChanger extends SubsystemBase {
         outputJson.put("angle", angle.toJSON());
 
         // Write JSON to file
-        try (FileWriter file = new FileWriter("/src/main/deploy/swerve/falcon/modules/pidfproperties.json")) {
+        try (FileWriter file = new FileWriter("src/main/deploy/swerve/falcon/modules/pidfproperties.json")) {
             file.write(outputJson.toString());
             System.out.println("Successfully Copied JSON Object to File...");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
 }
 // ********** Robot program startup complete **********
 // Unhandled exception: java.lang.NullPointerException: Cannot read field "p" because "this.drive" is null
