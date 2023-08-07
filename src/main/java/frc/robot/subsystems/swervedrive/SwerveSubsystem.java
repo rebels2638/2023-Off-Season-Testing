@@ -58,7 +58,7 @@ public class SwerveSubsystem extends SubsystemBase
       throw new IllegalArgumentException("File not found.");
     }
 
-    swerveDrive.setMotorIdleMode(false);
+    swerveDrive.setMotorIdleMode(true);
     
   }
 

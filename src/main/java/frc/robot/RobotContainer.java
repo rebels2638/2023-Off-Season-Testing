@@ -28,7 +28,7 @@ import frc.robot.utils.AutoConstants.LimelightConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.drivetrain.AbsoluteDrive;
 
-import frc.robot.commands.drivetrain.DriveSecondary;
+import frc.robot.commands.drivetrain.TeleopDrive;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -48,13 +48,11 @@ public class RobotContainer {
   private final XboxController xboxTester;
   
   // Robot Subsystems
-  // private final DriveSecondary closedfieldrel;
-  private final AbsoluteDrive closedAbsoluteDrive;
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"));
-  AbsoluteFieldDrive closedFieldAbsoluteDrive;
-
+  private final TeleopDrive closedFieldRel;
+  private final AbsoluteDrive closedAbsoluteDrive;
+  private final AbsoluteFieldDrive closedFieldAbsoluteDrive;
   
-
   public RobotContainer() {
     // Instantiate our controllers with proper ports.
     this.xboxTester = new XboxController(1);
@@ -72,20 +70,27 @@ public class RobotContainer {
     // this.drive.setDefaultCommand(new FalconDrive(drive, limelight, xboxDriver));
 
     closedAbsoluteDrive = new AbsoluteDrive(swerveSubsystem, 
-    () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-    () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+    () -> MathUtil.applyDeadband(-xboxDriver.getLeftY(), OperatorConstants.LEFT_X_DEADBAND),
+    () -> MathUtil.applyDeadband(-xboxDriver.getLeftX(), OperatorConstants.LEFT_Y_DEADBAND),
     () -> xboxDriver.getRightX(),
     () -> xboxDriver.getRightY(), false);
 
     closedFieldAbsoluteDrive = new AbsoluteFieldDrive(swerveSubsystem,
     () -> MathUtil.applyDeadband(xboxDriver.getLeftY(),OperatorConstants.LEFT_Y_DEADBAND),
     () -> MathUtil.applyDeadband(xboxDriver.getLeftX(),OperatorConstants.LEFT_X_DEADBAND),
-    () -> -xboxDriver.getRightY(), false);
+    () -> Math.atan(xboxDriver.getRightY()/xboxDriver.getRightX()), false);
+
+    closedFieldRel = new TeleopDrive(
+    swerveSubsystem,
+    () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+    () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+    () -> Math.atan(xboxDriver.getRightY()/xboxDriver.getRightX()), () -> true, false, true, xboxDriver);
 
     System.out.println(xboxDriver.getRightX()+","+xboxDriver.getRightY());
 
-    swerveSubsystem.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
+    // swerveSubsystem.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
 
+    swerveSubsystem.setDefaultCommand(closedAbsoluteDrive);
     
   }
 
