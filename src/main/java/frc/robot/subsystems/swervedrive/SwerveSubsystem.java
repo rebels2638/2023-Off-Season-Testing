@@ -5,6 +5,8 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
+
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -43,6 +45,7 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @param directory Directory of swerve drive config files.
    */
+  //private static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.16026, 0.0023745, 2.774E-05);
   public SwerveSubsystem(File directory)
   {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
@@ -54,6 +57,9 @@ public class SwerveSubsystem extends SubsystemBase
     {
       throw new IllegalArgumentException("File not found.");
     }
+
+    swerveDrive.setMotorIdleMode(false);
+    
   }
 
   /**
