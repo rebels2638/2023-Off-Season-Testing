@@ -6,7 +6,6 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -18,6 +17,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+
+import org.littletonrobotics.junction.Logger;
+
 import frc.lib.swervelib.SwerveController;
 import frc.lib.swervelib.SwerveDrive;
 import frc.lib.swervelib.math.SwerveKinematics2;
@@ -26,10 +28,19 @@ import frc.lib.swervelib.parser.SwerveDriveConfiguration;
 import frc.lib.swervelib.parser.SwerveParser;
 import frc.lib.swervelib.telemetry.SwerveDriveTelemetry;
 import frc.lib.swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+import frc.robot.subsystems.swervedrive.module.ModuleIO;
+import frc.robot.subsystems.swervedrive.module.ModuleIOInputsAutoLogged;
+import frc.robot.subsystems.swervedrive.module.ModuleIOYAGSL;
 
 public class SwerveSubsystem extends SubsystemBase
 {
 
+  private final ModuleIOYAGSL io = new ModuleIOYAGSL();
+  private final ModuleIOInputsAutoLogged frontRightInput = new ModuleIOInputsAutoLogged();
+  private final ModuleIOInputsAutoLogged frontLeftInput = new ModuleIOInputsAutoLogged();
+  private final ModuleIOInputsAutoLogged backLeftInput = new ModuleIOInputsAutoLogged();
+  private final ModuleIOInputsAutoLogged backRightInput = new ModuleIOInputsAutoLogged();
+  
   /**
    * Swerve drive object.
    */
@@ -96,6 +107,16 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
+    io.updateInputs(frontLeftInput, 0);
+    io.updateInputs(frontRightInput, 1);
+    io.updateInputs(backRightInput, 2);
+    io.updateInputs(backLeftInput, 3);
+
+    Logger.getInstance().processInputs("Swerve/frontleft", frontLeftInput);
+    Logger.getInstance().processInputs("Swerve/frontright", frontRightInput);
+    Logger.getInstance().processInputs("Swerve/backright", backRightInput);
+    Logger.getInstance().processInputs("Swerve/backleft", backLeftInput);
+
     swerveDrive.updateOdometry();
   }
 
