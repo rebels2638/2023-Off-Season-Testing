@@ -11,5 +11,6 @@ public class ModuleIOYAGSL implements ModuleIO {
         inputs.turnPositionRad = Math.toRadians(SwerveDriveTelemetry.measuredStates[moduleNumber * 2]);
         inputs.turnSetpointDeg = SwerveDriveTelemetry.desiredStates[moduleNumber * 2];
         inputs.turnSetpointRad = Math.toRadians(SwerveDriveTelemetry.desiredStates[moduleNumber * 2]);
+        System.out.println("update");
     }
 }

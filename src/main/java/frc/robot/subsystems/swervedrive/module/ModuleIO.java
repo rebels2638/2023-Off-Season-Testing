@@ -31,6 +31,7 @@ public interface ModuleIO {
     //public double[] turnTempCelcius = new double[] {};
   }
 
-  /** Updates the set of loggable inputs. */
+  /** Updates the set of loggable inputs. 
+ * @return */
   public default void updateInputs(ModuleIOInputs inputs, int moduleNumber) {}
 }

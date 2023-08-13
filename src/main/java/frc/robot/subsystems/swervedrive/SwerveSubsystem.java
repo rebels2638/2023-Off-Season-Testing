@@ -35,6 +35,8 @@ import frc.robot.subsystems.swervedrive.module.ModuleIOYAGSL;
 public class SwerveSubsystem extends SubsystemBase
 {
 
+  private double[] turnSetpointDegArr = new double[4];
+  private double[] turnPositionDegArr = new double[4]; 
   private final ModuleIOYAGSL io = new ModuleIOYAGSL();
   private final ModuleIOInputsAutoLogged frontRightInput = new ModuleIOInputsAutoLogged();
   private final ModuleIOInputsAutoLogged frontLeftInput = new ModuleIOInputsAutoLogged();
@@ -107,6 +109,8 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
+    swerveDrive.updateOdometry();
+
     io.updateInputs(frontLeftInput, 0);
     io.updateInputs(frontRightInput, 1);
     io.updateInputs(backRightInput, 2);
@@ -116,8 +120,22 @@ public class SwerveSubsystem extends SubsystemBase
     Logger.getInstance().processInputs("Swerve/frontright", frontRightInput);
     Logger.getInstance().processInputs("Swerve/backright", backRightInput);
     Logger.getInstance().processInputs("Swerve/backleft", backLeftInput);
+    
 
-    swerveDrive.updateOdometry();
+    turnPositionDegArr[0] = frontLeftInput.trunPositionDeg;
+    turnPositionDegArr[1] = frontRightInput.trunPositionDeg;
+    turnPositionDegArr[2] = backRightInput.trunPositionDeg;
+    turnPositionDegArr[3] = backLeftInput.trunPositionDeg;
+
+    turnSetpointDegArr[0] = frontLeftInput.turnSetpointDeg;
+    turnSetpointDegArr[1] = frontRightInput.turnSetpointDeg;
+    turnSetpointDegArr[2] = backRightInput.turnSetpointDeg;
+    turnSetpointDegArr[3] = backLeftInput.turnSetpointDeg;
+
+    Logger.getInstance().recordOutput("Swerve/turnPositionDegArr", turnPositionDegArr);
+    Logger.getInstance().recordOutput("Swerve/turnSetpointDegArr", turnSetpointDegArr);
+
+
   }
 
   @Override
