@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.io.File;
@@ -22,31 +23,24 @@ import org.littletonrobotics.junction.Logger;
 
 import frc.lib.swervelib.SwerveController;
 import frc.lib.swervelib.SwerveDrive;
+import frc.lib.swervelib.SwerveModule;
 import frc.lib.swervelib.math.SwerveKinematics2;
+import frc.lib.swervelib.math.SwerveModuleState2;
 import frc.lib.swervelib.parser.SwerveControllerConfiguration;
 import frc.lib.swervelib.parser.SwerveDriveConfiguration;
 import frc.lib.swervelib.parser.SwerveParser;
 import frc.lib.swervelib.telemetry.SwerveDriveTelemetry;
 import frc.lib.swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-import frc.robot.subsystems.swervedrive.module.ModuleIO;
-import frc.robot.subsystems.swervedrive.module.ModuleIOInputsAutoLogged;
-import frc.robot.subsystems.swervedrive.module.ModuleIOYAGSL;
+
 
 public class SwerveSubsystem extends SubsystemBase
-{
-
-  private double[] turnSetpointDegArr = new double[4];
-  private double[] turnPositionDegArr = new double[4]; 
-  private final ModuleIOYAGSL io = new ModuleIOYAGSL();
-  private final ModuleIOInputsAutoLogged frontRightInput = new ModuleIOInputsAutoLogged();
-  private final ModuleIOInputsAutoLogged frontLeftInput = new ModuleIOInputsAutoLogged();
-  private final ModuleIOInputsAutoLogged backLeftInput = new ModuleIOInputsAutoLogged();
-  private final ModuleIOInputsAutoLogged backRightInput = new ModuleIOInputsAutoLogged();
-  
+{  
   /**
    * Swerve drive object.
    */
   private final SwerveDrive swerveDrive;
+  
+
   /**
    * The auto builder for PathPlanner, there can only ever be one created so we save it just incase we generate multiple
    * paths with events.
@@ -111,31 +105,20 @@ public class SwerveSubsystem extends SubsystemBase
   {
     swerveDrive.updateOdometry();
 
-    io.updateInputs(frontLeftInput, 0);
-    io.updateInputs(frontRightInput, 1);
-    io.updateInputs(backRightInput, 2);
-    io.updateInputs(backLeftInput, 3);
-
-    Logger.getInstance().processInputs("Swerve/frontleft", frontLeftInput);
-    Logger.getInstance().processInputs("Swerve/frontright", frontRightInput);
-    Logger.getInstance().processInputs("Swerve/backright", backRightInput);
-    Logger.getInstance().processInputs("Swerve/backleft", backLeftInput);
-    
-
-    turnPositionDegArr[0] = frontLeftInput.trunPositionDeg;
-    turnPositionDegArr[1] = frontRightInput.trunPositionDeg;
-    turnPositionDegArr[2] = backRightInput.trunPositionDeg;
-    turnPositionDegArr[3] = backLeftInput.trunPositionDeg;
-
-    turnSetpointDegArr[0] = frontLeftInput.turnSetpointDeg;
-    turnSetpointDegArr[1] = frontRightInput.turnSetpointDeg;
-    turnSetpointDegArr[2] = backRightInput.turnSetpointDeg;
-    turnSetpointDegArr[3] = backLeftInput.turnSetpointDeg;
-
-    Logger.getInstance().recordOutput("Swerve/turnPositionDegArr", turnPositionDegArr);
-    Logger.getInstance().recordOutput("Swerve/turnSetpointDegArr", turnSetpointDegArr);
-
-
+    //log all tlemetry to a log file
+    Logger.getInstance().recordOutput("swerve/moduleCount", SwerveDriveTelemetry.moduleCount);
+    Logger.getInstance().recordOutput("swerve/wheelLocations", SwerveDriveTelemetry.wheelLocations);
+    Logger.getInstance().recordOutput("swerve/measuredStates", SwerveDriveTelemetry.measuredStates);
+    Logger.getInstance().recordOutput("swerve/desiredStates", SwerveDriveTelemetry.desiredStates);
+    Logger.getInstance().recordOutput("swerve/robotRotation", SwerveDriveTelemetry.robotRotation);
+    Logger.getInstance().recordOutput("swerve/maxSpeed", SwerveDriveTelemetry.maxSpeed);
+    Logger.getInstance().recordOutput("swerve/rotationUnit", SwerveDriveTelemetry.rotationUnit);
+    Logger.getInstance().recordOutput("swerve/sizeLeftRight", SwerveDriveTelemetry.sizeLeftRight);
+    Logger.getInstance().recordOutput("swerve/sizeFrontBack", SwerveDriveTelemetry.sizeFrontBack);
+    Logger.getInstance().recordOutput("swerve/forwardDirection", SwerveDriveTelemetry.forwardDirection);
+    Logger.getInstance().recordOutput("swerve/maxAngularVelocity", SwerveDriveTelemetry.maxAngularVelocity);
+    Logger.getInstance().recordOutput("swerve/measuredChassisSpeeds", SwerveDriveTelemetry.measuredChassisSpeeds);
+    Logger.getInstance().recordOutput("swerve/desiredChassisSpeeds", SwerveDriveTelemetry.desiredChassisSpeeds);
   }
 
   @Override
@@ -252,6 +235,8 @@ public class SwerveSubsystem extends SubsystemBase
   {
     xInput = Math.pow(xInput, 3);
     yInput = Math.pow(yInput, 3);
+
+    //getHeading().getRadians()
     return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, angle.getRadians(), getHeading().getRadians());
   }
 
@@ -363,4 +348,26 @@ public class SwerveSubsystem extends SubsystemBase
 
     return autoBuilder.fullAuto(pathGroup);
   }
+
+  /**
+   * Set the module states (azimuth and velocity) directly. Used primarily for auto paths.
+   *
+   * @param desiredStates A list of SwerveModuleStates to send to the modules.
+   * @param isOpenLoop    Whether to use closed-loop velocity control. Set to true to disable closed-loop.
+   */
+  public void setModuleStates(SwerveModuleState2[] desiredStates, boolean isOpenLoop)
+  {
+    swerveDrive.setModuleStates(desiredStates, isOpenLoop);
+  }
+
+  /**
+   * Gets the current module states (azimuth and velocity)
+   *
+   * @return A list of SwerveModuleStates containing the current module states
+   */
+  public SwerveModuleState2[] getStates()
+  {
+    return swerveDrive.getStates();
+  }
+
 }

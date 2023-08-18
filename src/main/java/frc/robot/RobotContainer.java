@@ -78,17 +78,17 @@ public class RobotContainer {
     closedFieldAbsoluteDrive = new AbsoluteFieldDrive(swerveSubsystem,
     () -> MathUtil.applyDeadband(xboxDriver.getLeftY(),OperatorConstants.LEFT_Y_DEADBAND),
     () -> MathUtil.applyDeadband(xboxDriver.getLeftX(),OperatorConstants.LEFT_X_DEADBAND),
-    () -> Math.atan(xboxDriver.getRightY()/xboxDriver.getRightX()), false);
+    () -> xboxDriver.getRightX(), false);
 
     closedFieldRel = new TeleopDrive(
     swerveSubsystem,
     () -> MathUtil.applyDeadband(xboxDriver.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
     () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-    () -> Math.atan(xboxDriver.getRightY()/xboxDriver.getRightX()), () -> true, false, true, xboxDriver);
+    () -> MathUtil.applyDeadband(xboxDriver.getRightX(),OperatorConstants.RIGHT_X_DEADBAND), () -> true, false, true, xboxDriver);
 
     System.out.println(xboxDriver.getRightX()+","+xboxDriver.getRightY());
 
-    // swerveSubsystem.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
+    //swerveSubsystem.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
 
     swerveSubsystem.setDefaultCommand(closedAbsoluteDrive);
     
