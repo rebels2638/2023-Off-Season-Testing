@@ -78,7 +78,7 @@ public class RobotContainer {
     closedFieldAbsoluteDrive = new AbsoluteFieldDrive(swerveSubsystem,
     () -> MathUtil.applyDeadband(xboxDriver.getLeftY(),OperatorConstants.LEFT_Y_DEADBAND),
     () -> MathUtil.applyDeadband(xboxDriver.getLeftX(),OperatorConstants.LEFT_X_DEADBAND),
-    () -> xboxDriver.getRightX()*10, false); //TODO: tune the rightX value constant
+    () -> xboxDriver.getRightX(), false); //TODO: tune the rightX value constant
 
     closedFieldRel = new TeleopDrive(
     swerveSubsystem,
