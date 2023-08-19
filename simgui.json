@@ -3,22 +3,17 @@
     "Other Devices": {
       "Talon FX[13]": {
         "header": {
-          "open": true
+          "open": false
         }
       },
       "Talon FX[13]/Fwd Limit": {
         "header": {
-          "open": true
+          "open": false
         }
       },
       "Talon FX[13]/Integrated Sensor": {
         "header": {
-          "open": true
-        }
-      },
-      "Talon FX[6]": {
-        "header": {
-          "open": true
+          "open": false
         }
       }
     }
@@ -26,70 +21,22 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/Shuffleboard/Arm/Zero Encoder": "Command",
-      "/Shuffleboard/Auto/Command": "String Chooser",
-      "/Shuffleboard/Auto/Load Path": "Command",
-      "/Shuffleboard/Auto/Path": "String Chooser",
-      "/Shuffleboard/Auto/Prepare Auto": "Command",
-      "/Shuffleboard/Auto/ResetPoseEstimator": "Command",
-      "/Shuffleboard/Commands/Zero Elevator Position": "Command",
-      "/Shuffleboard/Drive/Zero Encoders": "Command",
-      "/Shuffleboard/Drive/Zero Gyro": "Command",
-      "/Shuffleboard/Drive/Zero Heading": "Command",
-      "/Shuffleboard/Elevator/Zero Encoder": "Command",
-      "/Shuffleboard/Encoders/Zero Encoder": "Command",
-      "/Shuffleboard/Linear Slide/Max Out Encoder": "Command",
-      "/Shuffleboard/Linear Slide/Zero Encoder": "Command",
-      "/Shuffleboard/Turret/Zero Encoder": "Command",
-      "/Shuffleboard/Wrist/Wrist Ready": "Command",
-      "/Shuffleboard/Wrist/Zero Encoder": "Command",
-      "/SmartDashboard/Arducam_OV9281_USB_Camera Sim Field": "Field2d",
-      "/SmartDashboard/ElevatorMechanism": "Mechanism2d",
-      "/SmartDashboard/Elevator_Sim": "Mechanism2d",
-      "/SmartDashboard/Estimated Field Pose": "Field2d",
       "/SmartDashboard/Field": "Field2d",
-      "/SmartDashboard/Simulated Field Pose": "Field2d",
       "/SmartDashboard/navX-Sensor[1]": "Gyro"
     }
   },
   "NetworkTables": {
-    "Retained Values": {
-      "open": false
-    },
     "transitory": {
-      "FMSInfo": {
-        "open": true
-      },
-      "LiveWindow": {
-        ".status": {
-          "open": true
-        },
-        "open": true
-      },
       "Shuffleboard": {
-        ".metadata": {
-          "open": true
-        },
-        ".recording": {
-          "open": true
-        },
         "Auto": {
           "Command": {
-            "open": true
+            "open": false
           },
           "Path": {
-            "open": true
+            "open": false
           },
-          "open": true
-        },
-        "open": true
-      }
-    }
-  },
-  "Plot": {
-    "Plot <0>": {
-      "window": {
-        "visible": false
+          "open": false
+        }
       }
     }
   }

@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -104,8 +105,8 @@ public class SwerveSubsystem extends SubsystemBase
   public void periodic()
   {
     swerveDrive.updateOdometry();
-
     //log all tlemetry to a log file
+
     Logger.getInstance().recordOutput("swerve/moduleCount", SwerveDriveTelemetry.moduleCount);
     Logger.getInstance().recordOutput("swerve/wheelLocations", SwerveDriveTelemetry.wheelLocations);
     Logger.getInstance().recordOutput("swerve/measuredStates", SwerveDriveTelemetry.measuredStates);
@@ -218,8 +219,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY)
   {
-    xInput = Math.pow(xInput, 3);
-    yInput = Math.pow(yInput, 3);
+    
     return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, headingX, headingY, getHeading().getRadians());
   }
 
@@ -233,8 +233,6 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle)
   {
-    xInput = Math.pow(xInput, 3);
-    yInput = Math.pow(yInput, 3);
 
     //getHeading().getRadians()
     return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, angle.getRadians(), getHeading().getRadians());

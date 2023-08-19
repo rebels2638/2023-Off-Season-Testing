@@ -47,7 +47,7 @@ public class Robot extends LoggedRobot {
         Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
         new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
     } else {
-        setUseTiming(false); // Run as fast as possible
+        setUseTiming(true); // Run as fast as possible
         //logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
         logPath = "/Users/edan/Downloads/test.wpilog";
        // Logger.getInstance().setReplaySource(new WPILOGReader(logPath)); // Read replay log
