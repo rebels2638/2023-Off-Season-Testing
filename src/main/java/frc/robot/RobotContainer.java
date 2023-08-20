@@ -24,9 +24,10 @@ import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import frc.robot.subsystems.swervedrive.JsonChanger;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.utils.AutoConstants.LimelightConstants;
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.utils.Constants.OperatorConstants;
 import frc.robot.commands.drivetrain.AbsoluteDrive;
+import frc.robot.auto.AutoRunner;
+
 
 import frc.robot.commands.drivetrain.TeleopDrive;
 
@@ -47,11 +48,15 @@ public class RobotContainer {
   private final XboxController xboxOperator;
   private final XboxController xboxTester;
   
+  
   // Robot Subsystems
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"));
   private final TeleopDrive closedFieldRel;
   private final AbsoluteDrive closedAbsoluteDrive;
   private final AbsoluteFieldDrive closedFieldAbsoluteDrive;
+
+  // Auto
+  private final AutoRunner autoRunner = new AutoRunner(swerveSubsystem);
   
   public RobotContainer() {
     // Instantiate our controllers with proper ports.
@@ -109,7 +114,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() { // Command
 
-    return closedAbsoluteDrive;
+    return autoRunner.getAutonomousCommand();
     
   }
 

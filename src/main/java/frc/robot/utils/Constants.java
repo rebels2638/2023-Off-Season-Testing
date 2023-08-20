@@ -2,7 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot;
+package frc.robot.utils;
+
+import com.pathplanner.lib.auto.PIDConstants;
 
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -27,11 +29,10 @@ public final class Constants
   public static final class Auton
   {
 
-    public static final PIDFConfig xAutoPID     = new PIDFConfig(0, 0, 0);
-    public static final PIDFConfig yAutoPID     = new PIDFConfig(0, 0, 0);
-    public static final PIDFConfig angleAutoPID = new PIDFConfig(0, 0, 0);
+    public static final PIDConstants TRANSLATION_PID_CONFIG = new PIDConstants(1, 0, 0);
+    public static final PIDConstants ANGLE_PID_CONFIG = new PIDConstants(1, 0, 0);
 
-    public static final double MAX_SPEED        = 4;
+    public static final double MAX_SPEED = 4;
     public static final double MAX_ACCELERATION = 2;
   }
 
