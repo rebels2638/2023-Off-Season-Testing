@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,7 +23,6 @@ import org.littletonrobotics.junction.Logger;
 
 import frc.lib.swervelib.SwerveController;
 import frc.lib.swervelib.SwerveDrive;
-import frc.lib.swervelib.SwerveModule;
 import frc.lib.swervelib.math.SwerveKinematics2;
 import frc.lib.swervelib.math.SwerveModuleState2;
 import frc.lib.swervelib.parser.SwerveControllerConfiguration;
@@ -105,8 +103,8 @@ public class SwerveSubsystem extends SubsystemBase
   public void periodic()
   {
     swerveDrive.updateOdometry();
-    //log all tlemetry to a log file
 
+    //log all tlemetry to a log file
     Logger.getInstance().recordOutput("swerve/moduleCount", SwerveDriveTelemetry.moduleCount);
     Logger.getInstance().recordOutput("swerve/wheelLocations", SwerveDriveTelemetry.wheelLocations);
     Logger.getInstance().recordOutput("swerve/measuredStates", SwerveDriveTelemetry.measuredStates);
@@ -347,6 +345,44 @@ public class SwerveSubsystem extends SubsystemBase
     return autoBuilder.fullAuto(pathGroup);
   }
 
+   /**
+   * Factory to fetch the PathPlanner command to follow the defined path.
+   *
+   * @param trajectory        Path planner trajectory to specify.
+   * @param eventMap         {@link java.util.HashMap} of commands corresponding to path planner events given as
+   *                         strings.
+   * @param translation      The {@link PIDConstants} for the translation of the robot while following the path.
+   * @param rotation         The {@link PIDConstants} for the rotation of the robot while following the path.
+   * @param useAllianceColor Automatically transform the path based on alliance color.
+   * @return PathPlanner command to follow the given path.
+   */
+  public Command creatPathPlannerCommand( PathPlannerTrajectory trajectory, Map<String, Command> eventMap, 
+                                          PIDConstants translation, PIDConstants rotation, boolean useAllianceColor)
+  {
+//    SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+//      Pose2d supplier,
+//      Pose2d consumer- used to reset odometry at the beginning of auto,
+//      PID constants to correct for translation error (used to create the X and Y PID controllers),
+//      PID constants to correct for rotation error (used to create the rotation controller),
+//      Module states consumer used to output to the drive subsystem,
+//      Should the path be automatically mirrored depending on alliance color. Optional- defaults to true
+//   )
+    if (autoBuilder == null)
+    {
+      autoBuilder = new SwerveAutoBuilder(
+          swerveDrive::getPose,
+          swerveDrive::resetOdometry,
+          translation,
+          rotation,
+          swerveDrive::setChassisSpeeds,
+          eventMap,
+          useAllianceColor,
+          this
+      );
+    }
+
+    return autoBuilder.fullAuto(trajectory);
+  }
   /**
    * Set the module states (azimuth and velocity) directly. Used primarily for auto paths.
    *

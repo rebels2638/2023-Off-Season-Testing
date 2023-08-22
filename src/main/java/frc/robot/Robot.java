@@ -8,12 +8,8 @@ import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-import com.pathplanner.lib.server.PathPlannerServer;
-
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -38,7 +34,7 @@ public class Robot extends LoggedRobot {
    */
   String logPath;
   @Override
-  public void robotInit() {
+  public void robotInit() { 
 
     Logger.getInstance().recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 

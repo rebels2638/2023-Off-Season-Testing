@@ -1,19 +1,13 @@
 package frc.robot.auto;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.lib.swervelib.SwerveDrive;
-import frc.lib.swervelib.telemetry.SwerveDriveTelemetry;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.Constants;
 
@@ -48,7 +42,7 @@ public class AutoRunner {
 
     public Command getAutonomousCommand() {
         return swerveSubsystem.creatPathPlannerCommand
-            ("OneAndBack1Working", 
+            ("OneCubeAndHighCone1", 
             new PathConstraints(Constants.Auton.MAX_SPEED, 
             Constants.Auton.MAX_ACCELERATION), EVENT_MAP, 
             Constants.Auton.TRANSLATION_PID_CONFIG, 

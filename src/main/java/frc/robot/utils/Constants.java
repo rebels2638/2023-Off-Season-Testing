@@ -6,6 +6,8 @@ package frc.robot.utils;
 
 import com.pathplanner.lib.auto.PIDConstants;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import frc.lib.swervelib.math.Matter;
@@ -29,7 +31,7 @@ public final class Constants
   public static final class Auton
   {
 
-    public static final PIDConstants TRANSLATION_PID_CONFIG = new PIDConstants(1, 0, 0);
+    public static final PIDConstants TRANSLATION_PID_CONFIG = new PIDConstants(0, 0, 0);
     public static final PIDConstants ANGLE_PID_CONFIG = new PIDConstants(1, 0, 0);
 
     public static final double MAX_SPEED = 4;
@@ -51,5 +53,18 @@ public final class Constants
     public static final double LEFT_Y_DEADBAND = 0.01;
 
     public static final double RIGHT_X_DEADBAND = 0.01;
+  }
+
+  public static final class FeildConstants {
+    public static final Translation2d[] autoAlignTranslationArr = 
+      { new Translation2d(1.77, 0.50),
+      new Translation2d(1.77, 1.07),
+      new Translation2d(1.77, 1.62),
+      new Translation2d(1.77, 2.18),
+      new Translation2d(1.77, 2.74),
+      new Translation2d(1.77, 3.30),
+      new Translation2d(1.77, 3.85),
+      new Translation2d(1.77, 4.42),
+      new Translation2d(1.77, 4.97) };
   }
 }

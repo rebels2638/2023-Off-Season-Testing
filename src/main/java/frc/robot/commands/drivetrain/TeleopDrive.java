@@ -2,13 +2,11 @@ package frc.robot.commands.drivetrain;
 
 import frc.lib.swervelib.SwerveController;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.lib.RebelUtil;
 import frc.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
