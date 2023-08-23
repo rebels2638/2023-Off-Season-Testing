@@ -1,4 +1,4 @@
-package frc.robot.auto;
+package frc.robot.commands.automation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,25 +22,45 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.Constants;
 
 // helper class
-public class AutoAlign {
+public class AutoAlign extends CommandBase {
     private SwerveSubsystem swerveSubsystem;
-    public AutoAlign (SwerveSubsystem swerveSubsystem) {
+    private int targetNum;
+    public AutoAlign (SwerveSubsystem swerveSubsystem, int targetNum) {
+        this.targetNum = targetNum;
         this.swerveSubsystem = swerveSubsystem;
+        addRequirements(swerveSubsystem);
     }
 
-    public Command align( int targetNum ) {
+    private Command align( int targetNum ) {
         ArrayList<PathPoint> pathPoints = new ArrayList<PathPoint>();
+
         Translation2d currentTranslation = swerveSubsystem.getPose().getTranslation();
-        // current robot state 
+        Translation2d targetTranslation = Constants.FeildConstants.autoAlignTranslationArr[targetNum];
+
+
+        Rotation2d angleToTarget;
+        if (currentTranslation.getX() - targetTranslation.getX() > .5 && currentTranslation.getX() - targetTranslation.getX() > 1) {
+            angleToTarget = new Rotation2d(Math.toRadians(180));
+        }
+        else if (currentTranslation.getY() > targetTranslation.getY() +1.5) {
+            angleToTarget = new Rotation2d(Math.toRadians(270));
+        }
+        else {
+            angleToTarget = new Rotation2d(Math.toRadians(90));
+        }
+        SmartDashboard.putNumber("swerve/angleToTarget", angleToTarget.getDegrees());
         pathPoints.add(new PathPoint(currentTranslation,
-                 swerveSubsystem.getHeading(),
-                  swerveSubsystem.getPitch(),
-                  (swerveSubsystem.getRobotVelocity().vxMetersPerSecond + swerveSubsystem.getRobotVelocity().vyMetersPerSecond)) );
-        
+                angleToTarget,
+                new Rotation2d(Math.toRadians(0)),
+                (Math.abs(swerveSubsystem.getRobotVelocity().vxMetersPerSecond) + 
+                  Math.abs(swerveSubsystem.getRobotVelocity().vyMetersPerSecond))));
+
+        SmartDashboard.putNumber("swerve/totalVelocity", Math.abs(swerveSubsystem.getRobotVelocity().vxMetersPerSecond) + 
+        Math.abs(swerveSubsystem.getRobotVelocity().vyMetersPerSecond));
         // end goal
-        pathPoints.add( new PathPoint(Constants.FeildConstants.autoAlignTranslationArr[targetNum], 
-        new Rotation2d(Math.toRadians(180)),
-        new Rotation2d(Math.toRadians(0))));
+        pathPoints.add( new PathPoint(targetTranslation, 
+        angleToTarget,
+        new Rotation2d(Math.toRadians(0)), 0));
 
         double[] log = { swerveSubsystem.getPose().getTranslation().getX(), swerveSubsystem.getPose().getTranslation().getY() };
         SmartDashboard.putNumberArray("swerve/align", log);
@@ -65,5 +85,15 @@ public class AutoAlign {
 
         SmartDashboard.putNumber("swerve/poseLog", swerveSubsystem.getPose().getTranslation().getX());               
         return pathCommand;
+    }
+
+    @Override
+    public void initialize() {
+        Command pathCommand = align(targetNum);
+        CommandScheduler.getInstance().schedule(pathCommand);
+    }
+    @Override
+    public boolean isFinished() {
+        return true;
     }
 }

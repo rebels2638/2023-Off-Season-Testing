@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lib.input.XboxController;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.Constants.OperatorConstants;
+import frc.robot.commands.automation.AutoAlign;
 import frc.robot.commands.drivetrain.AbsoluteDrive;
-import frc.robot.auto.AutoAlign;
 import frc.robot.auto.AutoRunner;
 
 
@@ -49,6 +49,7 @@ public class RobotContainer {
 
   // Auto
   private final AutoRunner autoRunner = new AutoRunner(swerveSubsystem);
+  private int autoAlignTargetNum = 0;
   
   public RobotContainer() {
     // Instantiate our controllers with proper ports.
@@ -88,9 +89,18 @@ public class RobotContainer {
     //swerveSubsystem.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
 
     swerveSubsystem.setDefaultCommand(closedFieldAbsoluteDrive);
-
     
-    this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem).align(0));
+    this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> {
+        if (autoAlignTargetNum >= 0) {
+          autoAlignTargetNum--;
+        }
+    }));
+    this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> {
+      if (autoAlignTargetNum <= 8) {
+        autoAlignTargetNum++;
+      }
+    }));
+    this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, autoAlignTargetNum));
     
   }
   
