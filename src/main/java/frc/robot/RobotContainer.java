@@ -10,6 +10,7 @@ import java.io.File;
 import frc.robot.commands.drivetrain.AbsoluteFieldDrive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -49,7 +50,7 @@ public class RobotContainer {
 
   // Auto
   private final AutoRunner autoRunner = new AutoRunner(swerveSubsystem);
-  private int autoAlignTargetNum = 0;
+  private final int[] autoAlignTargetNum = {0};
   
   public RobotContainer() {
     // Instantiate our controllers with proper ports.
@@ -90,17 +91,18 @@ public class RobotContainer {
 
     swerveSubsystem.setDefaultCommand(closedFieldAbsoluteDrive);
     
-    this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> {
-        if (autoAlignTargetNum >= 0) {
-          autoAlignTargetNum--;
+    this.xboxDriver.getLeftBumper().onTrue(new InstantCommand( () ->  {
+        if (autoAlignTargetNum[0] > 0) {
+          autoAlignTargetNum[0]--;
         }
-    }));
+      } 
+    ));
     this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> {
-      if (autoAlignTargetNum <= 8) {
-        autoAlignTargetNum++;
+      if (autoAlignTargetNum[0] < 8) {
+        autoAlignTargetNum[0]++;
       }
     }));
-    this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, autoAlignTargetNum));
+    this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, () -> autoAlignTargetNum[0]));
     
   }
   

@@ -3,6 +3,8 @@ package frc.robot.commands.automation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -24,8 +26,10 @@ import frc.robot.utils.Constants;
 // helper class
 public class AutoAlign extends CommandBase {
     private SwerveSubsystem swerveSubsystem;
-    private int targetNum;
-    public AutoAlign (SwerveSubsystem swerveSubsystem, int targetNum) {
+    private IntSupplier targetNum;
+    public AutoAlign (SwerveSubsystem swerveSubsystem, IntSupplier targetNum) {
+        SmartDashboard.putNumber("swerve/aligment/targetNum", targetNum.getAsInt());
+
         this.targetNum = targetNum;
         this.swerveSubsystem = swerveSubsystem;
         addRequirements(swerveSubsystem);
@@ -89,7 +93,7 @@ public class AutoAlign extends CommandBase {
 
     @Override
     public void initialize() {
-        Command pathCommand = align(targetNum);
+        Command pathCommand = align(targetNum.getAsInt());
         CommandScheduler.getInstance().schedule(pathCommand);
     }
     @Override
