@@ -5,6 +5,7 @@
 package frc.robot;
 
 import org.littletonrobotics.junction.LogFileUtil;
+import edu.wpi.first.wpilibj.DataLogManager;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -37,6 +38,10 @@ public class Robot extends LoggedRobot {
   public void robotInit() { 
 
     Logger.getInstance().recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+
+    // // all nt values
+    // DataLogManager.
+    // DataLogManager.start();
 
     if (isReal()) {
         Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/sda1/")); // Log to a USB stick

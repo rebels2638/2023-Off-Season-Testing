@@ -7,12 +7,11 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 
 import java.io.File;
+import frc.robot.subsystems.logging.SmartDashboardLogger;
 import frc.robot.commands.drivetrain.AbsoluteFieldDrive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lib.input.XboxController;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -51,6 +50,7 @@ public class RobotContainer {
   // Auto
   private final AutoRunner autoRunner = new AutoRunner(swerveSubsystem);
   private final int[] autoAlignTargetNum = {0};
+  //private final SmartDashboardLogger smartDashboardLogger = new SmartDashboardLogger();
   
   public RobotContainer() {
     // Instantiate our controllers with proper ports.
