@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 
 import java.io.File;
-import frc.robot.subsystems.logging.SmartDashboardLogger;
 import frc.robot.commands.drivetrain.AbsoluteFieldDrive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
