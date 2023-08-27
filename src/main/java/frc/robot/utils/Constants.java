@@ -7,6 +7,7 @@ package frc.robot.utils;
 import com.pathplanner.lib.auto.PIDConstants;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -77,38 +78,47 @@ public final class Constants
     public static final String FRONT_LEFT_CAMERA_NAME = "frontLeftCamera";
     public static final String BACK_RIGHT_CAMERA_NAME = "backRightCamera";
     public static final String BACK_LEFT_CAMERA_NAME = "backLeftCamera";
-
     
-    public static final double FRONT_RIGHT_CAMERA_FOV = 0;
     public static final double FRONT_RIGHT_CAMERA_FOV_DIAGONAL = 0;
     public static final Transform3d FRONT_RIGHT_CAMERA_ROBOT_TO_CAMERA = null;
     public static final double FRONT_RIGHT_MAX_LED_RANGE_METERS = 0;
     public static final int FRONT_RIGHT_CAMERA_RESOLUTION_WIDTH = 0;
     public static final int FRONT_RIGHT_CAMERA_RESOLUTION_HEIGHT = 0;
     public static final double FRONT_RIGHT_CAMERA_MIN_TARGET_AREA = 0;
+    public static final Transform3d frontRightCameraToRobot = new Transform3d();
 
-    public static final double FRONT_LEFT_CAMERA_FOV = 0;
     public static final double FRONT_LEFT_CAMERA_FOV_DIAGONAL = 0;
     public static final Transform3d FRONT_LEFT_CAMERA_ROBOT_TO_CAMERA = null;
     public static final double FRONT_LEFT_MAX_LED_RANGE_METERS = 0;
     public static final int FRONT_LEFT_CAMERA_RESOLUTION_WIDTH = 0;
     public static final int FRONT_LEFT_CAMERA_RESOLUTION_HEIGHT = 0;
     public static final double FRONT_LEFT_CAMERA_MIN_TARGET_AREA = 0;
+    public static final Transform3d frontLeftCameraToRobot = new Transform3d();
 
-    public static final double BACK_RIGHT_CAMERA_FOV = 0;
     public static final double BACK_RIGHT_CAMERA_FOV_DIAGONAL = 0;
     public static final Transform3d BACK_RIGHT_CAMERA_ROBOT_TO_CAMERA = null;
     public static final double BACK_RIGHT_MAX_LED_RANGE_METERS = 0;
     public static final int BACK_RIGHT_CAMERA_RESOLUTION_WIDTH = 0;
     public static final int BACK_RIGHT_CAMERA_RESOLUTION_HEIGHT = 0;
     public static final double BACK_RIGHT_CAMERA_MIN_TARGET_AREA = 0;
+    public static final Transform3d backRightCameraToRobot = new Transform3d();
 
-    public static final double BACK_LEFT_CAMERA_FOV = 0;
     public static final double BACK_LEFT_CAMERA_FOV_DIAGONAL = 0;
     public static final Transform3d BACK_LEFT_CAMERA_ROBOT_TO_CAMERA = null;
     public static final double BACK_LEFT_MAX_LED_RANGE_METERS = 0;
     public static final int BACK_LEFT_CAMERA_RESOLUTION_WIDTH = 0;
     public static final int BACK_LEFT_CAMERA_RESOLUTION_HEIGHT = 0;
     public static final double BACK_LEFT_CAMERA_MIN_TARGET_AREA = 0;
+    public static final Transform3d backLeftCameraToRobot = new Transform3d();
+
+    public static AprilTagFieldLayout aprilTagFieldLayout;
+    public VisionConstants() {
+      // The parameter for loadFromResource() will be different depending on the game.
+      try {
+        aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
   }
 }

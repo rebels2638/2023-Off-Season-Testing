@@ -7,8 +7,11 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
@@ -30,6 +33,7 @@ import frc.lib.swervelib.parser.SwerveDriveConfiguration;
 import frc.lib.swervelib.parser.SwerveParser;
 import frc.lib.swervelib.telemetry.SwerveDriveTelemetry;
 import frc.lib.swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+import frc.robot.subsystems.aprilTagVision.AprilTagVision;
 
 
 public class SwerveSubsystem extends SubsystemBase
@@ -39,6 +43,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   private final SwerveDrive swerveDrive;
   
+  AprilTagVision aprilTagVision;
 
   /**
    * The auto builder for PathPlanner, there can only ever be one created so we save it just incase we generate multiple
@@ -52,8 +57,9 @@ public class SwerveSubsystem extends SubsystemBase
    * @param directory Directory of swerve drive config files.
    */
   //private static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.16026, 0.0023745, 2.774E-05);
-  public SwerveSubsystem(File directory)
+  public SwerveSubsystem(File directory, AprilTagVision aprilTagVision)
   {
+    this.aprilTagVision = aprilTagVision;
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
@@ -103,7 +109,18 @@ public class SwerveSubsystem extends SubsystemBase
   public void periodic()
   {
     swerveDrive.updateOdometry();
-    
+
+    Pose2d currentPose2d = swerveDrive.getPose();
+    Pose3d refrencePose = new Pose3d( new Translation3d( currentPose2d.getX(), currentPose2d.getY(), 0), 
+      new Rotation3d(currentPose2d.getRotation().getRadians(), 0, 0));
+      
+    Pose3d estimatedPose = aprilTagVision.getEstimatedPosition(refrencePose);
+
+    if (estimatedPose != null) {
+      swerveDrive.addVisionMeasurement(estimatedPose.toPose2d(),
+        Timer.getFPGATimestamp() - aprilTagVision.getPiplineLatency(),
+        true, 1);
+    }
     //log all tlemetry to a log file
     Logger.getInstance().recordOutput("swerve/moduleCount", SwerveDriveTelemetry.moduleCount);
     Logger.getInstance().recordOutput("swerve/wheelLocations", SwerveDriveTelemetry.wheelLocations);

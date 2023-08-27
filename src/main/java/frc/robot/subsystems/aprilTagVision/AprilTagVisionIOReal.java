@@ -2,6 +2,7 @@ package frc.robot.subsystems.aprilTagVision;
 
 import org.photonvision.PhotonCamera;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import frc.robot.utils.Constants;
 
 public class AprilTagVisionIOReal implements AprilTagVisionIO {
@@ -18,10 +19,15 @@ public class AprilTagVisionIOReal implements AprilTagVisionIO {
     }
     
     @Override
-    public void updateInputs(AprilTagVisionIOInputs inputs) {
+    public void updateInputs(AprilTagVisionIOInputs inputs, Pose3d refrencePose) {
         inputs.frontRightBestTarget = frontRightCamera.getLatestResult().getBestTarget();
         inputs.frontLeftBestTarget = frontLeftCamera.getLatestResult().getBestTarget();
         inputs.backRightBestTarget = backRightCamera.getLatestResult().getBestTarget();
         inputs.backLeftBestTarget = backLeftCamera.getLatestResult().getBestTarget();
+
+        inputs.frontRightPipleineLatency = frontRightCamera.getLatestResult().getLatencyMillis();
+        inputs.frontLeftPipleineLatency = frontLeftCamera.getLatestResult().getLatencyMillis();
+        inputs.backRightPipleineLatency = backRightCamera.getLatestResult().getLatencyMillis();
+        inputs.backLeftPipleineLatency = backLeftCamera.getLatestResult().getLatencyMillis();
     }
 }

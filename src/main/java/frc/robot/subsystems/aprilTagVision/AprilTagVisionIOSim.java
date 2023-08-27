@@ -4,6 +4,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.SimVisionSystem;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.Constants;
 
@@ -18,8 +19,7 @@ public class AprilTagVisionIOSim implements AprilTagVisionIO {
     private SimVisionSystem backRightVisionSystem;
     private SimVisionSystem backLeftVisionSystem;
     
-    private SwerveSubsystem swerveSubsystem;
-    public AprilTagVisionIOSim(SwerveSubsystem swerveSubsystem) {
+    public AprilTagVisionIOSim() {
         frontRightVisionSystem = new SimVisionSystem(
             Constants.VisionConstants.FRONT_RIGHT_CAMERA_NAME, 
             Constants.VisionConstants.FRONT_RIGHT_CAMERA_FOV_DIAGONAL, 
@@ -60,8 +60,9 @@ public class AprilTagVisionIOSim implements AprilTagVisionIO {
     }
 
     @Override
-    public void updateInputs(AprilTagVisionIOInputs inputs) {
-        Pose2d robotPose = swerveSubsystem.getPose();
+    public void updateInputs(AprilTagVisionIOInputs inputs, Pose3d refrencePose) {
+        Pose2d robotPose = refrencePose.toPose2d();
+
         frontRightVisionSystem.processFrame(robotPose);
         frontLeftVisionSystem.processFrame(robotPose);
         backRightVisionSystem.processFrame(robotPose);
@@ -71,5 +72,10 @@ public class AprilTagVisionIOSim implements AprilTagVisionIO {
         inputs.frontLeftBestTarget = frontLeftCamera.getLatestResult().getBestTarget();
         inputs.backRightBestTarget = backRightCamera.getLatestResult().getBestTarget();
         inputs.backLeftBestTarget = backLeftCamera.getLatestResult().getBestTarget();
+
+        inputs.frontRightPipleineLatency = frontRightCamera.getLatestResult().getLatencyMillis();
+        inputs.frontLeftPipleineLatency = frontLeftCamera.getLatestResult().getLatencyMillis();
+        inputs.backRightPipleineLatency = backRightCamera.getLatestResult().getLatencyMillis();
+        inputs.backLeftPipleineLatency = backLeftCamera.getLatestResult().getLatencyMillis();
     }
 }

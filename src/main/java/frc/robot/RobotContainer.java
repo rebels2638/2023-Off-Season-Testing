@@ -10,9 +10,14 @@ import java.io.File;
 import frc.robot.commands.drivetrain.AbsoluteFieldDrive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lib.input.XboxController;
+import frc.robot.subsystems.aprilTagVision.AprilTagVision;
+import frc.robot.subsystems.aprilTagVision.AprilTagVisionIO;
+import frc.robot.subsystems.aprilTagVision.AprilTagVisionIOReal;
+import frc.robot.subsystems.aprilTagVision.AprilTagVisionIOSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.Constants.OperatorConstants;
 import frc.robot.commands.automation.AutoAlign;
@@ -41,17 +46,30 @@ public class RobotContainer {
   
   
   // Robot Subsystems
-  private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"));
+  private final AprilTagVisionIO aprilTagVisionIO;
+  private final AprilTagVision aprilTagVision;
+  private final SwerveSubsystem swerveSubsystem;
   private final TeleopDrive closedFieldRel;
   private final AbsoluteDrive closedAbsoluteDrive;
   private final AbsoluteFieldDrive closedFieldAbsoluteDrive;
 
   // Auto
-  private final AutoRunner autoRunner = new AutoRunner(swerveSubsystem);
+  private final AutoRunner autoRunner;
   private final int[] autoAlignTargetNum = {0};
   //private final SmartDashboardLogger smartDashboardLogger = new SmartDashboardLogger();
   
   public RobotContainer() {
+    if (RobotBase.isReal()) {
+      aprilTagVisionIO = new AprilTagVisionIOReal();
+    }
+    else {
+      aprilTagVisionIO = new AprilTagVisionIOSim();
+    }
+    aprilTagVision = new AprilTagVision(aprilTagVisionIO);
+    swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"), aprilTagVision);
+
+    autoRunner = new AutoRunner(swerveSubsystem);
+    
     // Instantiate our controllers with proper ports.
     this.xboxTester = new XboxController(1);
     this.xboxOperator = new XboxController(2);
