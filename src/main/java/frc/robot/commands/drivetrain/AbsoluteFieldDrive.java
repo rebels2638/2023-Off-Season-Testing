@@ -22,6 +22,9 @@ public class AbsoluteFieldDrive extends CommandBase
   private final SwerveSubsystem swerve;
   private final DoubleSupplier  vX, vY, heading;
   private final boolean isOpenLoop;
+  private boolean resetRotation = false;
+  private double lastHeading = 0;
+  private Rotation2d desiredHeading = new Rotation2d(0);
 
   /**
    * Used to drive a swerve robot in full field-centric mode.  vX and vY supply translation inputs, where x is
@@ -46,6 +49,7 @@ public class AbsoluteFieldDrive extends CommandBase
     this.heading = heading;
     this.isOpenLoop = isOpenLoop;
 
+
     addRequirements(swerve);
   }
 
@@ -57,11 +61,18 @@ public class AbsoluteFieldDrive extends CommandBase
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute()
-  {
-
+  { 
+    desiredHeading = new Rotation2d(heading.getAsDouble() * Math.PI);
+    if (!resetRotation) {
+      desiredHeading = new Rotation2d(desiredHeading.getRadians() + lastHeading * Math.PI);
+    }
     // Get the desired chassis speeds based on a 2 joystick module.
-    ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
-                                                         new Rotation2d(heading.getAsDouble() * Math.PI));
+    ChassisSpeeds desiredSpeeds = 
+          swerve.getTargetSpeeds(
+            vX.getAsDouble(), 
+            vY.getAsDouble(),
+             desiredHeading
+             );
 
     // Limit velocity to prevent tippy
     Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
@@ -73,6 +84,7 @@ public class AbsoluteFieldDrive extends CommandBase
 
     // Make the robot move
     swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, true, isOpenLoop);
+    lastHeading = swerve.getHeading().getRadians();
 
   }
 
@@ -87,6 +99,10 @@ public class AbsoluteFieldDrive extends CommandBase
   public boolean isFinished()
   {
     return false;
+  }
+
+  public void toggleRotationMode() {
+      resetRotation = !resetRotation;
   }
 
 

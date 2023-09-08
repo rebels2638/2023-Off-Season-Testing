@@ -92,9 +92,9 @@ public class RobotContainer {
     () -> xboxDriver.getRightY(), false);
 
     closedFieldAbsoluteDrive = new AbsoluteFieldDrive(swerveSubsystem,
-    () -> MathUtil.applyDeadband(-xboxDriver.getLeftY(),OperatorConstants.LEFT_Y_DEADBAND)*0.5,
-    () -> MathUtil.applyDeadband(-xboxDriver.getLeftX(),OperatorConstants.LEFT_X_DEADBAND)*0.5,
-    () -> xboxDriver.getRightX() * 0.75, false); //TODO: tune the rightX value constant
+    () -> MathUtil.applyDeadband(-xboxDriver.getLeftY(),OperatorConstants.LEFT_Y_DEADBAND),
+    () -> MathUtil.applyDeadband(-xboxDriver.getLeftX(),OperatorConstants.LEFT_X_DEADBAND),
+    () -> xboxDriver.getRightX(), false); //TODO: tune the rightX value constant
 
     closedFieldRel = new TeleopDrive(
     swerveSubsystem,
@@ -108,18 +108,19 @@ public class RobotContainer {
 
     swerveSubsystem.setDefaultCommand(closedFieldAbsoluteDrive);
     
-    this.xboxDriver.getLeftBumper().onTrue(new InstantCommand( () ->  {
-        if (autoAlignTargetNum[0] > 0) {
-          autoAlignTargetNum[0]--;
-        }
-      } 
-    ));
-    this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> {
-      if (autoAlignTargetNum[0] < 8) {
-        autoAlignTargetNum[0]++;
-      }
-    }));
-    this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, () -> autoAlignTargetNum[0]));
+    // this.xboxDriver.getLeftBumper().onTrue(new InstantCommand( () ->  {
+    //     if (autoAlignTargetNum[0] > 0) {
+    //       autoAlignTargetNum[0]--;
+    //     }
+    //   } 
+    // ));
+    // this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> {
+    //   if (autoAlignTargetNum[0] < 8) {
+    //     autoAlignTargetNum[0]++;
+    //   }
+    // }));
+    // this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, () -> autoAlignTargetNum[0]));
+    this.xboxDriver.getBButton().onTrue( new InstantCommand(() -> closedFieldAbsoluteDrive.toggleRotationMode()) );
     
   }
   
