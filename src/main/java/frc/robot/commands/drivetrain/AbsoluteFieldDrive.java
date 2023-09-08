@@ -64,7 +64,7 @@ public class AbsoluteFieldDrive extends CommandBase
   { 
     desiredHeading = new Rotation2d(heading.getAsDouble() * Math.PI);
     if (!resetRotation) {
-      desiredHeading = new Rotation2d(desiredHeading.getRadians() + lastHeading * Math.PI);
+      desiredHeading = new Rotation2d(desiredHeading.getRadians() + lastHeading);
     }
     // Get the desired chassis speeds based on a 2 joystick module.
     ChassisSpeeds desiredSpeeds = 
