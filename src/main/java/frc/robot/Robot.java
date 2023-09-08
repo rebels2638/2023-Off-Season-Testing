@@ -43,7 +43,7 @@ public class Robot extends LoggedRobot {
     // DataLogManager.start();
 
     if (isReal()) {
-        Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/sda1/")); // Log to a USB stick
+       // Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/sda1/")); // Log to a USB stick
         Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
         new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
     } else {
@@ -51,7 +51,7 @@ public class Robot extends LoggedRobot {
         //logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
         logPath = "/Users/edan/Downloads/test.wpilog";
        // Logger.getInstance().setReplaySource(new WPILOGReader(logPath)); // Read replay log
-        Logger.getInstance().addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+        //Logger.getInstance().addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
         System.err.println(logPath);
     }
 

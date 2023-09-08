@@ -9,8 +9,8 @@
       "angle": 17
     },
     "rampRate": {
-      "drive": 5,
-      "angle": 5
+      "drive": 0.7,
+      "angle": 0.25
     },
     "encoderPulsePerRotation": {
       "drive": 2048,

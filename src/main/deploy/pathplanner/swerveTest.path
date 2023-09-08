@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.946448286619825,
-        "y": 3.05
+        "x": 1.7859532834450307,
+        "y": 3.044635704656026
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.803044779777033,
-        "y": 3.05
+        "x": 2.7859532834450325,
+        "y": 3.044635704656026
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -24,67 +24,18 @@
     },
     {
       "anchorPoint": {
-        "x": 1.6163338230075395,
-        "y": 3.05
+        "x": 3.163747289033042,
+        "y": 3.044635704656026
       },
       "prevControl": {
-        "x": 1.7398355480040564,
-        "y": 3.0098718570298915
+        "x": 2.163747289033042,
+        "y": 3.044635704656026
       },
       "nextControl": {
-        "x": 1.7398355480040564,
-        "y": 3.0098718570298915
+        "x": 4.163747289033045,
+        "y": 3.044635704656026
       },
-      "holonomicAngle": 0,
-      "isReversal": true,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [
-          "autoPlace"
-        ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 5.588610962552874,
-        "y": 2.997133293014351
-      },
-      "prevControl": {
-        "x": 4.804218565194454,
-        "y": 2.997133293014351
-      },
-      "nextControl": {
-        "x": 4.804218565194454,
-        "y": 2.997133293014351
-      },
-      "holonomicAngle": 0,
-      "isReversal": true,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 3.8904761404387282,
-        "y": 3.0
-      },
-      "prevControl": {
-        "x": 4.427995346651445,
-        "y": 3.0
-      },
-      "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -93,6 +44,78 @@
         "names": [
           "autoBalance"
         ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 4.136874523749049,
+        "y": 2.9868261659600246
+      },
+      "prevControl": {
+        "x": 3.9479775209550434,
+        "y": 2.7604054727340226
+      },
+      "nextControl": {
+        "x": 4.325771526543055,
+        "y": 3.2132468591860266
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 4.29103329360505,
+        "y": 3.9503184775600326
+      },
+      "prevControl": {
+        "x": 3.662862561302047,
+        "y": 4.179147901565033
+      },
+      "nextControl": {
+        "x": 4.919204025908053,
+        "y": 3.7214890535550316
+      },
+      "holonomicAngle": 200.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.9401120533010314,
+        "y": 3.006096012192025
+      },
+      "prevControl": {
+        "x": 1.8302608023485292,
+        "y": 3.1325543780895266
+      },
+      "nextControl": null,
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
