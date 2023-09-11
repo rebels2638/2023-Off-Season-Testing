@@ -1,5 +1,5 @@
 {
-    "maxSpeed": 0.1,
+    "maxSpeed": 0.001,
     "optimalVoltage": 12.0,
     "imu": {
       "type": "navx",

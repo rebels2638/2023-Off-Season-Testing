@@ -94,7 +94,7 @@ public class RobotContainer {
     closedFieldAbsoluteDrive = new AbsoluteFieldDrive(swerveSubsystem,
     () -> MathUtil.applyDeadband(-xboxDriver.getLeftY(),OperatorConstants.LEFT_Y_DEADBAND),
     () -> MathUtil.applyDeadband(-xboxDriver.getLeftX(),OperatorConstants.LEFT_X_DEADBAND),
-    () -> xboxDriver.getRightX(), false); //TODO: tune the rightX value constant
+    () -> -xboxDriver.getRightX(), false); //TODO: tune the rightX value constant
 
     closedFieldRel = new TeleopDrive(
     swerveSubsystem,
@@ -121,6 +121,7 @@ public class RobotContainer {
     // }));
     // this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, () -> autoAlignTargetNum[0]));
     this.xboxDriver.getBButton().onTrue( new InstantCommand(() -> closedFieldAbsoluteDrive.toggleRotationMode()) );
+    this.xboxDriver.getXButton().onTrue( new InstantCommand( () -> swerveSubsystem.resetGyro()));
     
   }
   

@@ -423,4 +423,8 @@ public class SwerveSubsystem extends SubsystemBase
     return swerveDrive.getStates();
   }
 
+  public void resetGyro() {
+    swerveDrive.setGyro(new Rotation3d());
+  }
+
 }

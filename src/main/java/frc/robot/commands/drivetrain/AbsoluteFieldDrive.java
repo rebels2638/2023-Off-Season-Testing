@@ -74,7 +74,7 @@ public class AbsoluteFieldDrive extends CommandBase
              desiredHeading
              );
 
-    // Limit velocity to prevent tippy
+    // Limit velocity to prevent tipsy turby
     Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
     translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
                                            Constants.LOOP_TIME, Constants.ROBOT_MASS, List.of(Constants.CHASSIS),
