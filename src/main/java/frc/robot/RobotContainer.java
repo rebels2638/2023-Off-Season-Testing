@@ -122,6 +122,7 @@ public class RobotContainer {
     // this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, () -> autoAlignTargetNum[0]));
     this.xboxDriver.getBButton().onTrue( new InstantCommand(() -> closedFieldAbsoluteDrive.toggleRotationMode()) );
     this.xboxDriver.getXButton().onTrue( new InstantCommand( () -> swerveSubsystem.resetGyro()));
+    this.xboxDriver.getAButton().onTrue(new InstantCommand(() -> swerveSubsystem.lock()));
     
   }
   
