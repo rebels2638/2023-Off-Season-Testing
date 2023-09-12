@@ -5,7 +5,6 @@ import org.photonvision.SimVisionSystem;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.Constants;
 
 public class AprilTagVisionIOSim implements AprilTagVisionIO {

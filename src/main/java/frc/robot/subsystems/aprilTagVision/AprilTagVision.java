@@ -1,6 +1,8 @@
 package frc.robot.subsystems.aprilTagVision;
 
 
+import java.util.ArrayList;
+
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -16,7 +18,7 @@ public class AprilTagVision extends SubsystemBase{
 
     private AprilTagVisionIO aprilTagVisionIO;
     private AprilTagVisionIOInputsAutoLogged inputs = new AprilTagVisionIOInputsAutoLogged();
-    private Pose3d refrencePose;
+    private Pose3d refrencePose = new Pose3d();
     public AprilTagVision(AprilTagVisionIO aprilTagVisionIO) {
         this.aprilTagVisionIO = aprilTagVisionIO;
     }
@@ -24,26 +26,34 @@ public class AprilTagVision extends SubsystemBase{
     @Override
     public void periodic() {
         aprilTagVisionIO.updateInputs(inputs, refrencePose);
-        Logger.getInstance().processInputs("AprilTagVision", inputs);
+        Logger.getInstance().processInputs("AprilTagVision/inputs", inputs);
     }
     public Pose3d getEstimatedPosition(Pose3d refrencePose) {
         this.refrencePose = refrencePose;
         Pose3d robotPoseEst = new Pose3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
         int valid = 0;
 
+        Logger.getInstance().recordOutput("AprilTagVision/frontRightBestTarget", false);
+        Logger.getInstance().recordOutput("AprilTagVision/frontLeftBestTarget", false);
+        Logger.getInstance().recordOutput("AprilTagVision/backRightBestTarget", false);
+        Logger.getInstance().recordOutput("AprilTagVision/backLeftBestTarget", false);
         if (inputs.frontRightBestTarget != null) {
+            Logger.getInstance().recordOutput("AprilTagVision/frontRightBestTarget", true);
             robotPoseEst = getPoseToTarget(robotPoseEst, inputs.frontRightBestTarget, Constants.VisionConstants.FRONT_RIGHT_CAMERA_ROBOT_TO_CAMERA);
             valid++;
         }
         if (inputs.frontLeftBestTarget != null) {
+            Logger.getInstance().recordOutput("AprilTagVision/frontLeftBestTarget", true);
             robotPoseEst = getPoseToTarget(robotPoseEst, inputs.frontLeftBestTarget, Constants.VisionConstants.FRONT_LEFT_CAMERA_ROBOT_TO_CAMERA);
             valid++;
         }
         if (inputs.backRightBestTarget != null) {
+            Logger.getInstance().recordOutput("AprilTagVision/backRightBestTarget", true);
             robotPoseEst = getPoseToTarget(robotPoseEst, inputs.backRightBestTarget, Constants.VisionConstants.BACK_RIGHT_CAMERA_ROBOT_TO_CAMERA);
             valid++;
         }
         if (inputs.backLeftBestTarget != null) {
+            Logger.getInstance().recordOutput("AprilTagVision/backLeftBestTarget", true);
             robotPoseEst = getPoseToTarget(robotPoseEst, inputs.backLeftBestTarget, Constants.VisionConstants.BACK_LEFT_CAMERA_ROBOT_TO_CAMERA);
             valid++;
         }
@@ -60,6 +70,11 @@ public class AprilTagVision extends SubsystemBase{
                 robotPoseEst.getRotation().getX() / valid, 
                 robotPoseEst.getRotation().getY() / valid, 
                 robotPoseEst.getRotation().getZ() / valid));
+        double[] outLog = { robotPoseEst.getX(), robotPoseEst.getY(), robotPoseEst.getZ(),
+        Math.toDegrees(robotPoseEst.getRotation().getX()), 
+        Math.toDegrees(robotPoseEst.getRotation().getY()), 
+        Math.toDegrees(robotPoseEst.getRotation().getZ()) };
+        Logger.getInstance().recordOutput("AprilTagVisionMeasurment", outLog);
         return robotPoseEst;
     }
     public double getPiplineLatency() {
