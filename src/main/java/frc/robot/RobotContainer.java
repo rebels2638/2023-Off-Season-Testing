@@ -14,10 +14,10 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lib.input.XboxController;
-import frc.robot.subsystems.aprilTagVision.AprilTagVision;
-import frc.robot.subsystems.aprilTagVision.AprilTagVisionIO;
-import frc.robot.subsystems.aprilTagVision.AprilTagVisionIOReal;
-import frc.robot.subsystems.aprilTagVision.AprilTagVisionIOSim;
+// import frc.robot.subsystems.aprilTagVision.AprilTagVision;
+// import frc.robot.subsystems.aprilTagVision.AprilTagVisionIO;
+// import frc.robot.subsystems.aprilTagVision.AprilTagVisionIOReal;
+// import frc.robot.subsystems.aprilTagVision.AprilTagVisionIOSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.Constants.OperatorConstants;
 import frc.robot.commands.automation.AutoAlign;
@@ -45,9 +45,9 @@ public class RobotContainer {
   private final XboxController xboxTester;
   
   
-  // Robot Subsystems
-  private final AprilTagVisionIO aprilTagVisionIO;
-  private final AprilTagVision aprilTagVision;
+  // // Robot Subsystems
+  // private final AprilTagVisionIO aprilTagVisionIO;
+  // private final AprilTagVision aprilTagVision;
   private final SwerveSubsystem swerveSubsystem;
   private final TeleopDrive closedFieldRel;
   private final AbsoluteDrive closedAbsoluteDrive;
@@ -59,14 +59,14 @@ public class RobotContainer {
   //private final SmartDashboardLogger smartDashboardLogger = new SmartDashboardLogger();
   
   public RobotContainer() {
-    if (RobotBase.isReal()) {
-      aprilTagVisionIO = new AprilTagVisionIOReal();
-    }
-    else {
-      aprilTagVisionIO = new AprilTagVisionIOSim();
-    }
-    aprilTagVision = new AprilTagVision(aprilTagVisionIO);
-    swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"), aprilTagVision);
+    // if (RobotBase.isReal()) {
+    //   aprilTagVisionIO = new AprilTagVisionIOReal();
+    // }
+    // else {
+    //   aprilTagVisionIO = new AprilTagVisionIOSim();
+    // }
+    // aprilTagVision = new AprilTagVision(aprilTagVisionIO);
+    swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"));
 
     autoRunner = new AutoRunner(swerveSubsystem);
     
@@ -92,9 +92,9 @@ public class RobotContainer {
     () -> xboxDriver.getRightY(), false);
 
     closedFieldAbsoluteDrive = new AbsoluteFieldDrive(swerveSubsystem,
-    () -> MathUtil.applyDeadband(xboxDriver.getLeftY(),OperatorConstants.LEFT_Y_DEADBAND),
-    () -> MathUtil.applyDeadband(xboxDriver.getLeftX(),OperatorConstants.LEFT_X_DEADBAND),
-    () -> xboxDriver.getRightX(), false); //TODO: tune the rightX value constant
+    () -> MathUtil.applyDeadband(-xboxDriver.getLeftY(),OperatorConstants.LEFT_Y_DEADBAND),
+    () -> MathUtil.applyDeadband(-xboxDriver.getLeftX(),OperatorConstants.LEFT_X_DEADBAND),
+    () -> -xboxDriver.getRightX(), false); //TODO: tune the rightX value constant
 
     closedFieldRel = new TeleopDrive(
     swerveSubsystem,
@@ -108,18 +108,21 @@ public class RobotContainer {
 
     swerveSubsystem.setDefaultCommand(closedFieldAbsoluteDrive);
     
-    this.xboxDriver.getLeftBumper().onTrue(new InstantCommand( () ->  {
-        if (autoAlignTargetNum[0] > 0) {
-          autoAlignTargetNum[0]--;
-        }
-      } 
-    ));
-    this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> {
-      if (autoAlignTargetNum[0] < 8) {
-        autoAlignTargetNum[0]++;
-      }
-    }));
-    this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, () -> autoAlignTargetNum[0]));
+    // this.xboxDriver.getLeftBumper().onTrue(new InstantCommand( () ->  {
+    //     if (autoAlignTargetNum[0] > 0) {
+    //       autoAlignTargetNum[0]--;
+    //     }
+    //   } 
+    // ));
+    // this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> {
+    //   if (autoAlignTargetNum[0] < 8) {
+    //     autoAlignTargetNum[0]++;
+    //   }
+    // }));
+    // this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, () -> autoAlignTargetNum[0]));
+    this.xboxDriver.getBButton().onTrue( new InstantCommand(() -> closedFieldAbsoluteDrive.toggleRotationMode()) );
+    this.xboxDriver.getXButton().onTrue( new InstantCommand( () -> swerveSubsystem.resetGyro()));
+    this.xboxDriver.getAButton().onTrue(new InstantCommand(() -> swerveSubsystem.lock()));
     
   }
   
