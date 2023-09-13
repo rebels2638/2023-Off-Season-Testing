@@ -3,6 +3,7 @@ package frc.robot.commands.drivetrain;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -24,6 +25,7 @@ public class AbsoluteFieldDrive extends CommandBase
   private final boolean isOpenLoop;
   private boolean resetRotation = false;
   private double lastHeading = 0;
+  private double lastTime = 0;
   private Rotation2d desiredHeading = new Rotation2d(0);
 
   /**
@@ -56,6 +58,7 @@ public class AbsoluteFieldDrive extends CommandBase
   @Override
   public void initialize()
   {
+    lastTime = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -65,7 +68,10 @@ public class AbsoluteFieldDrive extends CommandBase
     desiredHeading = new Rotation2d(heading.getAsDouble() * Math.PI);
    //TODO: Sus code 
     if (!resetRotation) {
-      desiredHeading = new Rotation2d(desiredHeading.getRadians() + lastHeading);
+      desiredHeading = new Rotation2d( (heading.getAsDouble() * 
+      Constants.Drivebase.MAX_DEG_SEC_ROTATIONAL_VELOCITY *
+      Timer.getFPGATimestamp() - lastTime) // delta time
+       + lastHeading);
     }
     // Get the desired chassis speeds based on a 2 joystick module.
     ChassisSpeeds desiredSpeeds = 
@@ -86,7 +92,7 @@ public class AbsoluteFieldDrive extends CommandBase
     // Make the robot move
     swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, true, isOpenLoop);
     lastHeading = swerve.getHeading().getRadians();
-
+    lastTime = Timer.getFPGATimestamp();
   }
 
   // Called once the command ends or is interrupted.
