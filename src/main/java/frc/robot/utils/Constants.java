@@ -8,7 +8,9 @@ import com.pathplanner.lib.auto.PIDConstants;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.MathShared;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -46,6 +48,7 @@ public final class Constants
 
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 3; // seconds
+    public static final double MAX_DEG_SEC_ROTATIONAL_VELOCITY = 10;
   }
 
   public static class OperatorConstants
@@ -80,37 +83,37 @@ public final class Constants
     public static final String BACK_RIGHT_CAMERA_NAME = "backRightCamera";
     public static final String BACK_LEFT_CAMERA_NAME = "backLeftCamera";
     
-    public static final double FRONT_RIGHT_CAMERA_FOV_DIAGONAL = 0;
-    public static final Transform3d FRONT_RIGHT_CAMERA_ROBOT_TO_CAMERA = null;
-    public static final double FRONT_RIGHT_MAX_LED_RANGE_METERS = 0;
-    public static final int FRONT_RIGHT_CAMERA_RESOLUTION_WIDTH = 0;
-    public static final int FRONT_RIGHT_CAMERA_RESOLUTION_HEIGHT = 0;
-    public static final double FRONT_RIGHT_CAMERA_MIN_TARGET_AREA = 0;
-    public static final Transform3d frontRightCameraToRobot = new Transform3d();
+    public static final double FRONT_RIGHT_CAMERA_FOV_DIAGONAL = 90;
+    public static final Transform3d FRONT_RIGHT_CAMERA_ROBOT_TO_CAMERA
+     = new Transform3d(new Translation3d(.33, .33, 0), new Rotation3d(0, -0.59, -0.79));
+    public static final double FRONT_RIGHT_MAX_LED_RANGE_METERS = 100;
+    public static final int FRONT_RIGHT_CAMERA_RESOLUTION_WIDTH = 1280;
+    public static final int FRONT_RIGHT_CAMERA_RESOLUTION_HEIGHT = 720;
+    public static final double FRONT_RIGHT_CAMERA_MIN_TARGET_AREA = 0.05;
 
-    public static final double FRONT_LEFT_CAMERA_FOV_DIAGONAL = 0;
-    public static final Transform3d FRONT_LEFT_CAMERA_ROBOT_TO_CAMERA = null;
-    public static final double FRONT_LEFT_MAX_LED_RANGE_METERS = 0;
-    public static final int FRONT_LEFT_CAMERA_RESOLUTION_WIDTH = 0;
-    public static final int FRONT_LEFT_CAMERA_RESOLUTION_HEIGHT = 0;
-    public static final double FRONT_LEFT_CAMERA_MIN_TARGET_AREA = 0;
-    public static final Transform3d frontLeftCameraToRobot = new Transform3d();
+    public static final double FRONT_LEFT_CAMERA_FOV_DIAGONAL = 90;
+    public static final Transform3d FRONT_LEFT_CAMERA_ROBOT_TO_CAMERA 
+    = new Transform3d(new Translation3d(-.33, .33, 0), new Rotation3d(0, -0.59, 0.79));
+    public static final double FRONT_LEFT_MAX_LED_RANGE_METERS = 100;
+    public static final int FRONT_LEFT_CAMERA_RESOLUTION_WIDTH = 1280;
+    public static final int FRONT_LEFT_CAMERA_RESOLUTION_HEIGHT = 720;
+    public static final double FRONT_LEFT_CAMERA_MIN_TARGET_AREA = 0.05;
 
-    public static final double BACK_RIGHT_CAMERA_FOV_DIAGONAL = 0;
-    public static final Transform3d BACK_RIGHT_CAMERA_ROBOT_TO_CAMERA = null;
-    public static final double BACK_RIGHT_MAX_LED_RANGE_METERS = 0;
-    public static final int BACK_RIGHT_CAMERA_RESOLUTION_WIDTH = 0;
-    public static final int BACK_RIGHT_CAMERA_RESOLUTION_HEIGHT = 0;
-    public static final double BACK_RIGHT_CAMERA_MIN_TARGET_AREA = 0;
-    public static final Transform3d backRightCameraToRobot = new Transform3d();
+    public static final double BACK_RIGHT_CAMERA_FOV_DIAGONAL = 90;
+    public static final Transform3d BACK_RIGHT_CAMERA_ROBOT_TO_CAMERA 
+    = new Transform3d(new Translation3d(.33, -.33, 0), new Rotation3d(0, 0.59, -0.79 + Math.PI));
+    public static final double BACK_RIGHT_MAX_LED_RANGE_METERS = 100;
+    public static final int BACK_RIGHT_CAMERA_RESOLUTION_WIDTH = 1280;
+    public static final int BACK_RIGHT_CAMERA_RESOLUTION_HEIGHT = 720;
+    public static final double BACK_RIGHT_CAMERA_MIN_TARGET_AREA = 0.05;
 
-    public static final double BACK_LEFT_CAMERA_FOV_DIAGONAL = 0;
-    public static final Transform3d BACK_LEFT_CAMERA_ROBOT_TO_CAMERA = null;
-    public static final double BACK_LEFT_MAX_LED_RANGE_METERS = 0;
-    public static final int BACK_LEFT_CAMERA_RESOLUTION_WIDTH = 0;
-    public static final int BACK_LEFT_CAMERA_RESOLUTION_HEIGHT = 0;
-    public static final double BACK_LEFT_CAMERA_MIN_TARGET_AREA = 0;
-    public static final Transform3d backLeftCameraToRobot = new Transform3d();
+    public static final double BACK_LEFT_CAMERA_FOV_DIAGONAL = 90;
+    public static final Transform3d BACK_LEFT_CAMERA_ROBOT_TO_CAMERA 
+    = new Transform3d(new Translation3d(-.33, -.33, 0), new Rotation3d(0, 0.59, 0.79 + Math.PI));
+    public static final double BACK_LEFT_MAX_LED_RANGE_METERS = 100;
+    public static final int BACK_LEFT_CAMERA_RESOLUTION_WIDTH = 1280;
+    public static final int BACK_LEFT_CAMERA_RESOLUTION_HEIGHT = 720;
+    public static final double BACK_LEFT_CAMERA_MIN_TARGET_AREA = 0.05;
 
     public static AprilTagFieldLayout aprilTagFieldLayout;
     public VisionConstants() {

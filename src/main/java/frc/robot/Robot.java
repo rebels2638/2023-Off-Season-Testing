@@ -44,14 +44,17 @@ public class Robot extends LoggedRobot {
     // DataLogManager.start();
 
     if (isReal()) {
+
+      Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/Downloads/")); // TODO: Check if the file path works
        // Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/sda1/")); // Log to a USB stick
-       SmartDashboard.putBoolean("isAutonomous", isAutonomous());
+
         Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
         new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
     } else {
         setUseTiming(true); // Run as fast as possible
         //logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
-        logPath = "/Users/edan/Downloads/test.wpilog";
+
+        logPath = "/Users/edan/Downloads/test.wpilog"; // specific to each user
        // Logger.getInstance().setReplaySource(new WPILOGReader(logPath)); // Read replay log
         //Logger.getInstance().addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
         //System.err.println(logPath);
