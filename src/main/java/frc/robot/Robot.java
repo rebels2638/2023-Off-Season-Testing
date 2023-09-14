@@ -54,7 +54,7 @@ public class Robot extends LoggedRobot {
         logPath = "/Users/edan/Downloads/test.wpilog";
        // Logger.getInstance().setReplaySource(new WPILOGReader(logPath)); // Read replay log
         //Logger.getInstance().addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
-        System.err.println(logPath);
+        //System.err.println(logPath);
     }
 
     // Logger.getInstance().disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
@@ -143,7 +143,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     // m_robotContainer.checkControllers();
-    System.out.println(logPath);
+    //System.out.println(logPath);
   }
 
   @Override

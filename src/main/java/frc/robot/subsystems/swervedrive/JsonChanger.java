@@ -31,7 +31,7 @@ public class JsonChanger extends SubsystemBase {
     private GenericEntry angleIz;
 
     public JsonChanger() throws IOException {
-        System.err.println("jsonchanger");
+        //System.err.println("jsonchanger");
         String filecontentraw = new String(Files.readAllBytes(Paths.get(Filesystem.getDeployDirectory()+ "/swerve/falcon/modules/pidfproperties.json")));
         JSONObject filecontentjson = new JSONObject(filecontentraw);
         JSONObject driveJSON = filecontentjson.getJSONObject("drive");
@@ -40,8 +40,8 @@ public class JsonChanger extends SubsystemBase {
         this.drive = drive.fromJSON(driveJSON);
         this.angle = angle.fromJSON(angleJSON);
 
-        System.out.println("Drive: P = " + drive.p + ", I = " + drive.i + ", D = " + drive.d + ", F = " + drive.f + ", Iz = " + drive.iz);
-        System.out.println("Angle: P = " + angle.p + ", I = " + angle.i + ", D = " + angle.d + ", F = " + angle.f + ", Iz = " + angle.iz);
+        //System.out.println("Drive: P = " + drive.p + ", I = " + drive.i + ", D = " + drive.d + ", F = " + drive.f + ", Iz = " + drive.iz);
+        //System.out.println("Angle: P = " + angle.p +c ", I = " + angle.i + ", D = " + angle.d + ", F = " + angle.f + ", Iz = " + angle.iz);
 
         tab = Shuffleboard.getTab("SwerveJson");
         // Tabs init.

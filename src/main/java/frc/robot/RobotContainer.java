@@ -102,7 +102,7 @@ public class RobotContainer {
     () -> MathUtil.applyDeadband(xboxDriver.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
     () -> MathUtil.applyDeadband(xboxDriver.getRightX(),OperatorConstants.RIGHT_X_DEADBAND), () -> true, false, true, xboxDriver);
 
-    System.out.println(xboxDriver.getRightX()+","+xboxDriver.getRightY());
+    //System.out.println(xboxDriver.getRightX()+","+xboxDriver.getRightY());
 
     //swerveSubsystem.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
 

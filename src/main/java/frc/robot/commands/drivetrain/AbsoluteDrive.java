@@ -66,8 +66,8 @@ public class AbsoluteDrive extends CommandBase
   public void execute()
   {
 
-    System.out.println(vX+", "+vY);
-    System.out.println(headingHorizontal+", "+headingVertical);
+    //System.out.println(vX+", "+vY);
+    //System.out.println(headingHorizontal+", "+headingVertical);
 
     // Get the desired chassis speeds based on a 2 joystick module.
 
