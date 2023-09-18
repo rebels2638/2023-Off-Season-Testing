@@ -68,12 +68,10 @@ public class AbsoluteFieldDrive extends CommandBase
     desiredHeading = new Rotation2d(heading.getAsDouble() * Math.PI);
    //TODO: Sus code 
     if (!resetRotation) {
-      desiredHeading = new Rotation2d( (heading.getAsDouble() * 
-      Constants.Drivebase.MAX_DEG_SEC_ROTATIONAL_VELOCITY *
-      Timer.getFPGATimestamp() - lastTime) // delta time
-       + lastHeading);
-    }
-    // Get the desired chassis speeds based on a 2 joystick module.
+      desiredHeading = new Rotation2d(lastHeading + heading.getAsDouble() * 
+        Math.toRadians(Constants.Drivebase.MAX_DEG_SEC_ROTATIONAL_VELOCITY) * Constants.LOOP_TIME);
+    } 
+    // Get the desired chassis speeds based on a 2 joystick module. 
     ChassisSpeeds desiredSpeeds = 
           swerve.getTargetSpeeds(
             vX.getAsDouble(), 

@@ -18,19 +18,6 @@
       }
     }
   },
-  "NTProvider": {
-    "types": {
-      "/FMSInfo": "FMSInfo",
-      "/Shuffleboard/Auto/Path Chooser": "String Chooser",
-      "/Shuffleboard/Auto/Update Selected Command Output": "Command",
-      "/SmartDashboard/Field": "Field2d",
-      "/SmartDashboard/backLeftCamera Sim Field": "Field2d",
-      "/SmartDashboard/backRightCamera Sim Field": "Field2d",
-      "/SmartDashboard/frontLeftCamera Sim Field": "Field2d",
-      "/SmartDashboard/frontRightCamera Sim Field": "Field2d",
-      "/SmartDashboard/navX-Sensor[1]": "Gyro"
-    }
-  },
   "NetworkTables": {
     "transitory": {
       "Shuffleboard": {
