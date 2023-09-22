@@ -39,10 +39,6 @@ public class Robot extends LoggedRobot {
 
     Logger.getInstance().recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
-    // // all nt values
-    // DataLogManager.
-    // DataLogManager.start();
-
     if (isReal()) {
 
       Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/Downloads/")); // TODO: Check if the file path works

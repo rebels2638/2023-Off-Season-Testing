@@ -137,6 +137,7 @@ public class SwerveSubsystem extends SubsystemBase
     Logger.getInstance().recordOutput("swerve/maxAngularVelocity", SwerveDriveTelemetry.maxAngularVelocity);
     Logger.getInstance().recordOutput("swerve/measuredChassisSpeeds", SwerveDriveTelemetry.measuredChassisSpeeds);
     Logger.getInstance().recordOutput("swerve/desiredChassisSpeeds", SwerveDriveTelemetry.desiredChassisSpeeds);
+  
   }
 
   @Override
