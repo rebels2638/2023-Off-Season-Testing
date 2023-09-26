@@ -124,6 +124,7 @@ public class SwerveSubsystem extends SubsystemBase
     //     true, 1);
     // }
     //log all tlemetry to a log file
+    
     Logger.getInstance().recordOutput("swerve/moduleCount", SwerveDriveTelemetry.moduleCount);
     Logger.getInstance().recordOutput("swerve/wheelLocations", SwerveDriveTelemetry.wheelLocations);
     Logger.getInstance().recordOutput("swerve/measuredStates", SwerveDriveTelemetry.measuredStates);
