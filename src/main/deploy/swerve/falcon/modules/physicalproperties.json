@@ -1,5 +1,5 @@
 {
-    "wheelDiameter": 0.1016,
+    "wheelDiameter": 4,
     "gearRatio": {
       "drive": 6.12,
       "angle": 21.43
