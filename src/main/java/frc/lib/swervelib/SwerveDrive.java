@@ -24,6 +24,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
 import frc.lib.swervelib.imu.SwerveIMU;
 import frc.lib.swervelib.math.SwerveKinematics2;
 import frc.lib.swervelib.math.SwerveMath;
@@ -272,6 +277,7 @@ public class SwerveDrive
     SwerveModuleState2[] swerveModuleStates = kinematics.toSwerveModuleStates(velocity);
 
     setRawModuleStates(swerveModuleStates, isOpenLoop);
+
   }
 
   /**
@@ -339,6 +345,11 @@ public class SwerveDrive
             module.lastState.angle.getDegrees());
       }
     }
+
+    WPI_TalonFX m = (WPI_TalonFX) swerveModules[3].getDriveMotor().getMotor();
+    Logger.getInstance().recordOutput("swerve/modules/wheelMeasuredStateAngle", swerveModules[3].getDriveMotor().getPosition());
+    Logger.getInstance().recordOutput("swerve/modules/wheelMeasuredStateREncoder", m.getSelectedSensorPosition());
+
   }
 
   /**

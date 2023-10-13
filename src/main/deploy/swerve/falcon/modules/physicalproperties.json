@@ -16,5 +16,5 @@
       "drive": 2048,
       "angle": 2048
     },
-    "wheelGripCoefficientOfFriction": 0.5
-  }
+    "wheelGripCoefficientOfFriction": 1.19
+}
