@@ -41,7 +41,7 @@ public class Robot extends LoggedRobot {
 
     if (isReal()) {
 
-      Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/Downloads/robotLog.wpilog")); // TODO: Check if the file path works
+      Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/sda1/robot.wpilog")); // TODO: Check if the file path works
        // Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/sda1/")); // Log to a USB stick
 
         Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
