@@ -13,6 +13,7 @@ import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -40,30 +41,26 @@ public class AutoAlign extends CommandBase {
 
         Translation2d currentTranslation = swerveSubsystem.getPose().getTranslation();
         Translation2d targetTranslation = Constants.FeildConstants.autoAlignTranslationArr[targetNum];
+        
+        // current telem so the robot doesent to a funny and stop
+        // pathPoints.add(new PathPoint(currentTranslation,
+        //         angleToTarget,
+        //         new Rotation2d(Math.toRadians(0)),
+        //         (Math.abs(swerveSubsystem.getRobotVelocity().vxMetersPerSecond) + 
+        //           Math.abs(swerveSubsystem.getRobotVelocity().vyMetersPerSecond))));
 
 
-        Rotation2d angleToTarget;
-        if (currentTranslation.getX() - targetTranslation.getX() > .5 && currentTranslation.getX() - targetTranslation.getX() > 1) {
-            angleToTarget = new Rotation2d(Math.toRadians(180));
-        }
-        else if (currentTranslation.getY() > targetTranslation.getY() +1.5) {
-            angleToTarget = new Rotation2d(Math.toRadians(270));
-        }
-        else {
-            angleToTarget = new Rotation2d(Math.toRadians(90));
-        }
-        SmartDashboard.putNumber("swerve/angleToTarget", angleToTarget.getDegrees());
-        pathPoints.add(new PathPoint(currentTranslation,
-                angleToTarget,
-                new Rotation2d(Math.toRadians(0)),
-                (Math.abs(swerveSubsystem.getRobotVelocity().vxMetersPerSecond) + 
-                  Math.abs(swerveSubsystem.getRobotVelocity().vyMetersPerSecond))));
-
-        SmartDashboard.putNumber("swerve/totalVelocity", Math.abs(swerveSubsystem.getRobotVelocity().vxMetersPerSecond) + 
-        Math.abs(swerveSubsystem.getRobotVelocity().vyMetersPerSecond));
+        Translation2d interiorTranslation = new Translation2d(targetTranslation.getX() + .5, targetTranslation.getY());
+        pathPoints.add(new PathPoint(interiorTranslation, 
+        new Rotation2d(
+            Math.atan((currentTranslation.getY() - targetTranslation.getY())
+             / (currentTranslation.getX() - targetTranslation.getX())) ) 
+        ));
         // end goal
         pathPoints.add( new PathPoint(targetTranslation, 
-        angleToTarget,
+        new Rotation2d(
+            Math.atan((interiorTranslation.getY() - targetTranslation.getY())
+             / (interiorTranslation.getX() - targetTranslation.getX())) ),
         new Rotation2d(Math.toRadians(0)), 0));
 
         double[] log = { swerveSubsystem.getPose().getTranslation().getX(), swerveSubsystem.getPose().getTranslation().getY() };
@@ -87,7 +84,6 @@ public class AutoAlign extends CommandBase {
                                                     rotationController, 
                                                     swerveSubsystem::setChassisSpeeds, swerveSubsystem);
 
-        SmartDashboard.putNumber("swerve/poseLog", swerveSubsystem.getPose().getTranslation().getX());               
         return pathCommand;
     }
 

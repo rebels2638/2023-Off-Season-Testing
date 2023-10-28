@@ -138,8 +138,6 @@ public class SwerveSubsystem extends SubsystemBase
     Logger.getInstance().recordOutput("swerve/maxAngularVelocity", SwerveDriveTelemetry.maxAngularVelocity);
     Logger.getInstance().recordOutput("swerve/measuredChassisSpeeds", SwerveDriveTelemetry.measuredChassisSpeeds);
     Logger.getInstance().recordOutput("swerve/desiredChassisSpeeds", SwerveDriveTelemetry.desiredChassisSpeeds);
-
-    
   
   }
 
@@ -423,10 +421,6 @@ public class SwerveSubsystem extends SubsystemBase
   public SwerveModuleState2[] getStates()
   {
     return swerveDrive.getStates();
-  }
-
-  public void resetGyro() {
-    swerveDrive.setGyro(new Rotation3d());
   }
 
 }
