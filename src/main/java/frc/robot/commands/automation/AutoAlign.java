@@ -28,12 +28,14 @@ import frc.robot.utils.Constants;
 public class AutoAlign extends CommandBase {
     private SwerveSubsystem swerveSubsystem;
     private IntSupplier targetNum;
+    private Command pathCommand;
     public AutoAlign (SwerveSubsystem swerveSubsystem, IntSupplier targetNum) {
         SmartDashboard.putNumber("swerve/aligment/targetNum", targetNum.getAsInt());
 
         this.targetNum = targetNum;
         this.swerveSubsystem = swerveSubsystem;
-        addRequirements(swerveSubsystem);
+        // dont need to add swerve sub as a requiremtn because it never uses it. 
+        // otherwise, pathCommand cant execute
     }
 
     private Command align( int targetNum ) {
@@ -42,26 +44,23 @@ public class AutoAlign extends CommandBase {
         Translation2d currentTranslation = swerveSubsystem.getPose().getTranslation();
         Translation2d targetTranslation = Constants.FeildConstants.autoAlignTranslationArr[targetNum];
         
-        // current telem so the robot doesent to a funny and stop
-        // pathPoints.add(new PathPoint(currentTranslation,
-        //         angleToTarget,
-        //         new Rotation2d(Math.toRadians(0)),
-        //         (Math.abs(swerveSubsystem.getRobotVelocity().vxMetersPerSecond) + 
-        //           Math.abs(swerveSubsystem.getRobotVelocity().vyMetersPerSecond))));
+        PathPoint startPoint = new PathPoint(currentTranslation, new Rotation2d(Math.atan2((targetTranslation.getY() - currentTranslation.getY()),(targetTranslation.getX() - currentTranslation.getX()))), swerveSubsystem.getYaw(), 
+            swerveSubsystem.getFieldVelocity().vxMetersPerSecond + swerveSubsystem.getFieldVelocity().vyMetersPerSecond);
+        pathPoints.add(startPoint);
 
+        // align just infront of the target
+        Translation2d interiorTranslation = new Translation2d(targetTranslation.getX() + .01, targetTranslation.getY());
 
-        Translation2d interiorTranslation = new Translation2d(targetTranslation.getX() + .5, targetTranslation.getY());
-        pathPoints.add(new PathPoint(interiorTranslation, 
-        new Rotation2d(
-            Math.atan((currentTranslation.getY() - targetTranslation.getY())
-             / (currentTranslation.getX() - targetTranslation.getX())) ) 
-        ));
+        PathPoint interiorPathPoint = new PathPoint(interiorTranslation,  new Rotation2d(Math.PI));
+
+        pathPoints.add(interiorPathPoint);
+
         // end goal
-        pathPoints.add( new PathPoint(targetTranslation, 
-        new Rotation2d(
-            Math.atan((interiorTranslation.getY() - targetTranslation.getY())
-             / (interiorTranslation.getX() - targetTranslation.getX())) ),
-        new Rotation2d(Math.toRadians(0)), 0));
+        PathPoint endPoint = new PathPoint(targetTranslation, 
+        new Rotation2d(Math.toRadians(Math.PI)),
+        new Rotation2d(Math.toRadians(Math.PI)));
+
+        pathPoints.add(endPoint);
 
         double[] log = { swerveSubsystem.getPose().getTranslation().getX(), swerveSubsystem.getPose().getTranslation().getY() };
         SmartDashboard.putNumberArray("swerve/align", log);
@@ -89,11 +88,11 @@ public class AutoAlign extends CommandBase {
 
     @Override
     public void initialize() {
-        Command pathCommand = align(targetNum.getAsInt());
+        pathCommand = align(targetNum.getAsInt());
         CommandScheduler.getInstance().schedule(pathCommand);
     }
     @Override
     public boolean isFinished() {
-        return true;
+        return pathCommand.isFinished();
     }
 }
