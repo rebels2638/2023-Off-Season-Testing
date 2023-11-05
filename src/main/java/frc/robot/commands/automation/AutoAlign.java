@@ -13,6 +13,7 @@ import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -27,12 +28,14 @@ import frc.robot.utils.Constants;
 public class AutoAlign extends CommandBase {
     private SwerveSubsystem swerveSubsystem;
     private IntSupplier targetNum;
+    private Command pathCommand;
     public AutoAlign (SwerveSubsystem swerveSubsystem, IntSupplier targetNum) {
         SmartDashboard.putNumber("swerve/aligment/targetNum", targetNum.getAsInt());
 
         this.targetNum = targetNum;
         this.swerveSubsystem = swerveSubsystem;
-        addRequirements(swerveSubsystem);
+        // dont need to add swerve sub as a requiremtn because it never uses it. 
+        // otherwise, pathCommand cant execute
     }
 
     private Command align( int targetNum ) {
@@ -40,31 +43,24 @@ public class AutoAlign extends CommandBase {
 
         Translation2d currentTranslation = swerveSubsystem.getPose().getTranslation();
         Translation2d targetTranslation = Constants.FeildConstants.autoAlignTranslationArr[targetNum];
+        
+        PathPoint startPoint = new PathPoint(currentTranslation, new Rotation2d(Math.atan2((targetTranslation.getY() - currentTranslation.getY()),(targetTranslation.getX() - currentTranslation.getX()))), swerveSubsystem.getYaw(), 
+            swerveSubsystem.getFieldVelocity().vxMetersPerSecond + swerveSubsystem.getFieldVelocity().vyMetersPerSecond);
+        pathPoints.add(startPoint);
 
+        // align just infront of the target
+        Translation2d interiorTranslation = new Translation2d(targetTranslation.getX() + .01, targetTranslation.getY());
 
-        Rotation2d angleToTarget;
-        if (currentTranslation.getX() - targetTranslation.getX() > .5 && currentTranslation.getX() - targetTranslation.getX() > 1) {
-            angleToTarget = new Rotation2d(Math.toRadians(180));
-        }
-        else if (currentTranslation.getY() > targetTranslation.getY() +1.5) {
-            angleToTarget = new Rotation2d(Math.toRadians(270));
-        }
-        else {
-            angleToTarget = new Rotation2d(Math.toRadians(90));
-        }
-        SmartDashboard.putNumber("swerve/angleToTarget", angleToTarget.getDegrees());
-        pathPoints.add(new PathPoint(currentTranslation,
-                angleToTarget,
-                new Rotation2d(Math.toRadians(0)),
-                (Math.abs(swerveSubsystem.getRobotVelocity().vxMetersPerSecond) + 
-                  Math.abs(swerveSubsystem.getRobotVelocity().vyMetersPerSecond))));
+        PathPoint interiorPathPoint = new PathPoint(interiorTranslation,  new Rotation2d(Math.PI));
 
-        SmartDashboard.putNumber("swerve/totalVelocity", Math.abs(swerveSubsystem.getRobotVelocity().vxMetersPerSecond) + 
-        Math.abs(swerveSubsystem.getRobotVelocity().vyMetersPerSecond));
+        pathPoints.add(interiorPathPoint);
+
         // end goal
-        pathPoints.add( new PathPoint(targetTranslation, 
-        angleToTarget,
-        new Rotation2d(Math.toRadians(0)), 0));
+        PathPoint endPoint = new PathPoint(targetTranslation, 
+        new Rotation2d(Math.toRadians(Math.PI)),
+        new Rotation2d(Math.toRadians(Math.PI)));
+
+        pathPoints.add(endPoint);
 
         double[] log = { swerveSubsystem.getPose().getTranslation().getX(), swerveSubsystem.getPose().getTranslation().getY() };
         SmartDashboard.putNumberArray("swerve/align", log);
@@ -87,17 +83,16 @@ public class AutoAlign extends CommandBase {
                                                     rotationController, 
                                                     swerveSubsystem::setChassisSpeeds, swerveSubsystem);
 
-        SmartDashboard.putNumber("swerve/poseLog", swerveSubsystem.getPose().getTranslation().getX());               
         return pathCommand;
     }
 
     @Override
     public void initialize() {
-        Command pathCommand = align(targetNum.getAsInt());
+        pathCommand = align(targetNum.getAsInt());
         CommandScheduler.getInstance().schedule(pathCommand);
     }
     @Override
     public boolean isFinished() {
-        return true;
+        return pathCommand.isFinished();
     }
 }

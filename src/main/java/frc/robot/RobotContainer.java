@@ -108,20 +108,20 @@ public class RobotContainer {
 
     swerveSubsystem.setDefaultCommand(closedFieldAbsoluteDrive);
     
-    // this.xboxDriver.getLeftBumper().onTrue(new InstantCommand( () ->  {
-    //     if (autoAlignTargetNum[0] > 0) {
-    //       autoAlignTargetNum[0]--;
-    //     }
-    //   } 
-    // ));
-    // this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> {
-    //   if (autoAlignTargetNum[0] < 8) {
-    //     autoAlignTargetNum[0]++;
-    //   }
-    // }));
-    // this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, () -> autoAlignTargetNum[0]));
+    this.xboxDriver.getLeftBumper().onTrue(new InstantCommand( () ->  {
+        if (autoAlignTargetNum[0] > 0) {
+          autoAlignTargetNum[0]--;
+        }
+      } 
+    ));
+    this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> {
+      if (autoAlignTargetNum[0] < 8) {
+        autoAlignTargetNum[0]++;
+      }
+    }));
+    this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, () -> autoAlignTargetNum[0]));
     this.xboxDriver.getBButton().onTrue( new InstantCommand(() -> closedFieldAbsoluteDrive.toggleRotationMode()) );
-    this.xboxDriver.getXButton().onTrue( new InstantCommand( () -> swerveSubsystem.resetGyro()));
+    this.xboxDriver.getXButton().onTrue( new InstantCommand( () -> swerveSubsystem.zeroGyro()));
     this.xboxDriver.getAButton().onTrue(new InstantCommand(() -> swerveSubsystem.lock()));
     
   }
