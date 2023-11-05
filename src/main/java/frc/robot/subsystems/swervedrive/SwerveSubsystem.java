@@ -124,7 +124,8 @@ public class SwerveSubsystem extends SubsystemBase
     //     true, 1);
     // }
     //log all tlemetry to a log file
-    
+    // SmartDashboard.putBoolean("myMind", false);
+    // Logger.getInstance().recordOutput("swerve/heading", getHeading().getDegrees());
     Logger.getInstance().recordOutput("swerve/moduleCount", SwerveDriveTelemetry.moduleCount);
     Logger.getInstance().recordOutput("swerve/wheelLocations", SwerveDriveTelemetry.wheelLocations);
     Logger.getInstance().recordOutput("swerve/measuredStates", SwerveDriveTelemetry.measuredStates);
@@ -221,9 +222,13 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @return The yaw angle
    */
+  public Rotation2d getYaw() {
+    return swerveDrive.getYaw();
+  }
   public Rotation2d getHeading()
   {
-    return swerveDrive.getYaw();
+    // YAGSl doesent return the heading but instead gyro yaw??
+    return new Rotation2d(Math.atan2(swerveDrive.getRobotVelocity().vyMetersPerSecond, swerveDrive.getRobotVelocity().vxMetersPerSecond));
   }
 
   /**
@@ -239,7 +244,7 @@ public class SwerveSubsystem extends SubsystemBase
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY)
   {
     
-    return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, headingX, headingY, getHeading().getRadians());
+    return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, headingX, headingY, getYaw().getRadians());
   }
 
   /**
@@ -252,7 +257,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle)
   {
-    return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, angle.getRadians(), getHeading().getRadians());
+    return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, angle.getRadians(), getYaw().getRadians());
   }
 
   /**
