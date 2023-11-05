@@ -42,7 +42,7 @@ public class AutoRunner {
 
     public Command getAutonomousCommand() {
         return swerveSubsystem.creatPathPlannerCommand
-            ("taxi", 
+            ("0_2Lcone_1cube_dock_better", 
             new PathConstraints(Constants.Auton.MAX_SPEED, 
             Constants.Auton.MAX_ACCELERATION), EVENT_MAP, 
             Constants.Auton.TRANSLATION_PID_CONFIG, 

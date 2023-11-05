@@ -36,8 +36,8 @@ public final class Constants
   public static final class Auton
   {
 
-    public static final PIDConstants TRANSLATION_PID_CONFIG = new PIDConstants(0, 0, 0);
-    public static final PIDConstants ANGLE_PID_CONFIG = new PIDConstants(0, 0, 0);
+    public static final PIDConstants TRANSLATION_PID_CONFIG = new PIDConstants(0.1, 0, 0);
+    public static final PIDConstants ANGLE_PID_CONFIG = new PIDConstants(0.1, 0, 0);
 
     public static final double MAX_SPEED = 8;
     public static final double MAX_ACCELERATION = .5;
@@ -56,8 +56,8 @@ public final class Constants
 
     // Joystick Deadband
     // yes, this high
-    public static final double LEFT_X_DEADBAND = 0.07;
-    public static final double LEFT_Y_DEADBAND = 0.07;
+    public static final double LEFT_X_DEADBAND = 0.1;
+    public static final double LEFT_Y_DEADBAND = 0.1;
 
     public static final double RIGHT_X_DEADBAND = 0.09;
   }

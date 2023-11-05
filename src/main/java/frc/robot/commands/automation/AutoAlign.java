@@ -1,9 +1,6 @@
 package frc.robot.commands.automation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
 import com.pathplanner.lib.PathConstraints;
@@ -13,25 +10,26 @@ import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.Constants;
+import frc.lib.input.XboxController;
+
 
 // helper class
 public class AutoAlign extends CommandBase {
     private SwerveSubsystem swerveSubsystem;
     private IntSupplier targetNum;
     private Command pathCommand;
-    public AutoAlign (SwerveSubsystem swerveSubsystem, IntSupplier targetNum) {
+    XboxController xboxController;
+    public AutoAlign (SwerveSubsystem swerveSubsystem, IntSupplier targetNum, XboxController xboxController) {
         SmartDashboard.putNumber("swerve/aligment/targetNum", targetNum.getAsInt());
-
+        this.xboxController = xboxController;
         this.targetNum = targetNum;
         this.swerveSubsystem = swerveSubsystem;
         // dont need to add swerve sub as a requiremtn because it never uses it. 
@@ -44,7 +42,8 @@ public class AutoAlign extends CommandBase {
         Translation2d currentTranslation = swerveSubsystem.getPose().getTranslation();
         Translation2d targetTranslation = Constants.FeildConstants.autoAlignTranslationArr[targetNum];
         
-        PathPoint startPoint = new PathPoint(currentTranslation, new Rotation2d(Math.atan2((targetTranslation.getY() - currentTranslation.getY()),(targetTranslation.getX() - currentTranslation.getX()))), swerveSubsystem.getYaw(), 
+        PathPoint startPoint = new PathPoint(currentTranslation, 
+            new Rotation2d(Math.atan2(xboxController.getLeftY(), xboxController.getLeftX())), swerveSubsystem.getYaw(), 
             swerveSubsystem.getFieldVelocity().vxMetersPerSecond + swerveSubsystem.getFieldVelocity().vyMetersPerSecond);
         pathPoints.add(startPoint);
 

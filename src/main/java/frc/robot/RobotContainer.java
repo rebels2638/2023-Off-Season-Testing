@@ -10,7 +10,6 @@ import java.io.File;
 import frc.robot.commands.drivetrain.AbsoluteFieldDrive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lib.input.XboxController;
@@ -108,18 +107,18 @@ public class RobotContainer {
 
     swerveSubsystem.setDefaultCommand(closedFieldAbsoluteDrive);
     
-    this.xboxDriver.getLeftBumper().onTrue(new InstantCommand( () ->  {
+    this.xboxDriver.getRightBumper().onTrue(new InstantCommand( () ->  {
         if (autoAlignTargetNum[0] > 0) {
           autoAlignTargetNum[0]--;
         }
       } 
     ));
-    this.xboxDriver.getRightBumper().onTrue(new InstantCommand(() -> {
+    this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> {
       if (autoAlignTargetNum[0] < 8) {
         autoAlignTargetNum[0]++;
       }
     }));
-    this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, () -> autoAlignTargetNum[0]));
+    this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, () -> autoAlignTargetNum[0], xboxDriver));
     this.xboxDriver.getBButton().onTrue( new InstantCommand(() -> closedFieldAbsoluteDrive.toggleRotationMode()) );
     this.xboxDriver.getXButton().onTrue( new InstantCommand( () -> swerveSubsystem.zeroGyro()));
     this.xboxDriver.getAButton().onTrue(new InstantCommand(() -> swerveSubsystem.lock()));

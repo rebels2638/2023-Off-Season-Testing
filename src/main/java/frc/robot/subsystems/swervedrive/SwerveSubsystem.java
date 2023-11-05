@@ -127,6 +127,7 @@ public class SwerveSubsystem extends SubsystemBase
     //log all tlemetry to a log file
     // SmartDashboard.putBoolean("myMind", false);
     // Logger.getInstance().recordOutput("swerve/heading", getHeading().getDegrees());
+    Logger.getInstance().recordOutput("swerve/heading", getHeading().getDegrees());
     Logger.getInstance().recordOutput("swerve/moduleCount", SwerveDriveTelemetry.moduleCount);
     Logger.getInstance().recordOutput("swerve/wheelLocations", SwerveDriveTelemetry.wheelLocations);
     Logger.getInstance().recordOutput("swerve/measuredStates", SwerveDriveTelemetry.measuredStates);
@@ -229,7 +230,7 @@ public class SwerveSubsystem extends SubsystemBase
   public Rotation2d getHeading()
   {
     // YAGSl doesent return the heading but instead gyro yaw??
-    return new Rotation2d(Math.atan2(swerveDrive.getRobotVelocity().vyMetersPerSecond, swerveDrive.getRobotVelocity().vxMetersPerSecond));
+    return new Rotation2d(-Math.atan2(swerveDrive.getFieldVelocity().vyMetersPerSecond, swerveDrive.getRobotVelocity().vxMetersPerSecond));
   }
 
   /**
