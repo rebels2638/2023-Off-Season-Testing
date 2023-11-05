@@ -6,6 +6,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -73,7 +74,7 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
     swerveDrive.setMotorIdleMode(true);
-    
+    swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(0.47, 1.45, 0.04));
   }
 
   /**
