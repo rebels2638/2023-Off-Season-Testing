@@ -11,6 +11,9 @@ import frc.robot.utils.Constants;
 
 import java.util.List;
 import java.util.function.DoubleSupplier;
+
+import javax.swing.plaf.DesktopIconUI;
+
 import frc.lib.swervelib.SwerveController;
 import frc.lib.swervelib.math.SwerveMath;
 
@@ -66,24 +69,25 @@ public class AbsoluteFieldDrive extends CommandBase
   public void execute()
   { 
     desiredHeading = new Rotation2d(heading.getAsDouble() * Math.PI);
-   //TODO: Sus code 
-    // if (!resetRotation) {
-    //   desiredHeading = new Rotation2d(lastHeading + (heading.getAsDouble() * 
-    //     Math.toRadians(Constants.Drivebase.MAX_DEG_SEC_ROTATIONAL_VELOCITY) * Constants.LOOP_TIME));
-    // } 
-    // Get the desired chassis speeds based on a 2 joystick module. 
-    ChassisSpeeds desiredSpeeds = 
-          swerve.getTargetSpeeds(
-            vX.getAsDouble(), 
-            vY.getAsDouble(),
-             desiredHeading
-             );
+    ChassisSpeeds desiredSpeeds; 
+    if (!resetRotation) {
+      desiredSpeeds = new ChassisSpeeds(vX.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC,
+        vY.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC, 
+        heading.getAsDouble() * Math.toRadians(Constants.Drivebase.MAX_DEG_SEC_ROTATIONAL_VELOCITY));
+    } 
+    else {
+      desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(), desiredHeading);
+      desiredSpeeds = new ChassisSpeeds(vX.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC,
+      vY.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC, desiredSpeeds.omegaRadiansPerSecond);
+    }
 
     // Limit velocity to prevent tipsy turby
     Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
     translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
                                            Constants.LOOP_TIME, Constants.ROBOT_MASS, List.of(Constants.CHASSIS),
                                            swerve.getSwerveDriveConfiguration());
+
+    
     SmartDashboard.putNumber("LimitedTranslation", translation.getX());
     SmartDashboard.putString("Translation", translation.toString());
 
@@ -92,6 +96,7 @@ public class AbsoluteFieldDrive extends CommandBase
     // lastHeading = swerve.getHeading().getRadians();
     lastHeading = desiredHeading.getRadians();
     lastTime = Timer.getFPGATimestamp();
+    return;
   }
 
   // Called once the command ends or is interrupted.
