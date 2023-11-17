@@ -1,5 +1,6 @@
 package frc.robot.commands.drivetrain;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -68,17 +69,33 @@ public class AbsoluteFieldDrive extends CommandBase
   @Override
   public void execute()
   { 
+    PIDController translationPID = new PIDController(3,0, 0);
+    translationPID.setTolerance(0.1);
+    double xCorrection = 0;
+    double yCorrection = 0;
+    if (Math.abs(swerve.getFieldVelocity().vxMetersPerSecond) + Math.abs(swerve.getFieldVelocity().vyMetersPerSecond) > 1 && Math.abs(Math.toDegrees(swerve.getFieldVelocity().omegaRadiansPerSecond)) > 60) {
+      translationPID.setSetpoint(vX.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC);
+      xCorrection = translationPID.calculate(swerve.getFieldVelocity().vxMetersPerSecond);
+  
+      translationPID.setSetpoint(vY.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC);
+      yCorrection = translationPID.calculate(swerve.getFieldVelocity().vyMetersPerSecond);
+    }
+    
+
+    SmartDashboard.putNumber("swerve/yCorrection", yCorrection);
+    SmartDashboard.putNumber("swerve/xCorrection", xCorrection);
+
     desiredHeading = new Rotation2d(heading.getAsDouble() * Math.PI);
     ChassisSpeeds desiredSpeeds; 
     if (!resetRotation) {
-      desiredSpeeds = new ChassisSpeeds(vX.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC,
-        vY.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC, 
+      desiredSpeeds = new ChassisSpeeds(vX.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC + xCorrection,
+        vY.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC + yCorrection, 
         heading.getAsDouble() * Math.toRadians(Constants.Drivebase.MAX_DEG_SEC_ROTATIONAL_VELOCITY));
     } 
     else {
       desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(), desiredHeading);
-      desiredSpeeds = new ChassisSpeeds(vX.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC,
-      vY.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC, desiredSpeeds.omegaRadiansPerSecond);
+      desiredSpeeds = new ChassisSpeeds(vX.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC + xCorrection,
+      vY.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC + yCorrection, desiredSpeeds.omegaRadiansPerSecond);
     }
 
     // Limit velocity to prevent tipsy turby
