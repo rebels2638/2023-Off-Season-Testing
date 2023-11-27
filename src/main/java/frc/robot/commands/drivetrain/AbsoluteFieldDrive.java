@@ -31,6 +31,7 @@ public class AbsoluteFieldDrive extends CommandBase
   private double lastHeading = 0;
   private double lastTime = 0;
   private Rotation2d desiredHeading = new Rotation2d(0);
+  PIDController translationPID = new PIDController(3,0, 0);
 
   /**
    * Used to drive a swerve robot in full field-centric mode.  vX and vY supply translation inputs, where x is
@@ -68,9 +69,9 @@ public class AbsoluteFieldDrive extends CommandBase
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute()
-  { 
-    PIDController translationPID = new PIDController(3,0, 0);
-    translationPID.setTolerance(0.1);
+  {
+    //TranslationalVelocity Correction Via PID controls.
+    translationPID.setTolerance(0.1); //Note : Moved the PID 
     double xCorrection = 0;
     double yCorrection = 0;
     if (Math.abs(swerve.getFieldVelocity().vxMetersPerSecond) + Math.abs(swerve.getFieldVelocity().vyMetersPerSecond) > 1 && Math.abs(Math.toDegrees(swerve.getFieldVelocity().omegaRadiansPerSecond)) > 60) {
@@ -98,7 +99,7 @@ public class AbsoluteFieldDrive extends CommandBase
       vY.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC + yCorrection, desiredSpeeds.omegaRadiansPerSecond);
     }
 
-    // Limit velocity to prevent tipsy turby
+    // Limit velocity to prevent tipsy turby  
     Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
     translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
                                            Constants.LOOP_TIME, Constants.ROBOT_MASS, List.of(Constants.CHASSIS),

@@ -2,6 +2,7 @@ package frc.lib.swervelib;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.swervelib.encoders.SwerveAbsoluteEncoder;
@@ -180,7 +181,8 @@ public class SwerveModule
     // Prevent module rotation if angle is the same as the previous angle.
     if (desiredState.angle != lastState.angle || synchronizeEncoderQueued)
     {
-      double moduleFF = desiredState.omegaRadPerSecond * configuration.moduleSteerFFCL;
+      // TODO: check if * 0.042 * desiredState.speedMetersPerSecond works
+      double moduleFF = desiredState.omegaRadPerSecond * configuration.moduleSteerFFCL * 0.042 * desiredState.speedMetersPerSecond;
       // Synchronize encoders if queued and send in the current position as the value from the absolute encoder.
       if (absoluteEncoder != null && synchronizeEncoderQueued)
       {
