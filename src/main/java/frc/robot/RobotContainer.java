@@ -7,12 +7,16 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 
 import java.io.File;
+import frc.robot.commands.pivot.PickUpCube;
+import frc.robot.commands.pivot.RollIntake;
 import frc.robot.commands.drivetrain.AbsoluteFieldDrive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lib.input.XboxController;
+import frc.robot.subsystems.pivot.Intake;
+import frc.robot.subsystems.pivot.Pivot;
 // import frc.robot.subsystems.aprilTagVision.AprilTagVision;
 // import frc.robot.subsystems.aprilTagVision.AprilTagVisionIO;
 // import frc.robot.subsystems.aprilTagVision.AprilTagVisionIOReal;
@@ -21,6 +25,7 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.Constants.OperatorConstants;
 import frc.robot.commands.automation.AutoAlign;
 import frc.robot.commands.drivetrain.AbsoluteDrive;
+import frc.robot.commands.pivot.RollIntake;
 import frc.robot.auto.AutoRunner;
 
 
@@ -51,6 +56,9 @@ public class RobotContainer {
   private final TeleopDrive closedFieldRel;
   private final AbsoluteDrive closedAbsoluteDrive;
   private final AbsoluteFieldDrive closedFieldAbsoluteDrive;
+  
+  private final Intake intakeSubsystem;
+  private final Pivot pivotSubsystem;
 
   // Auto
   private final AutoRunner autoRunner;
@@ -66,13 +74,17 @@ public class RobotContainer {
     // }
     // aprilTagVision = new AprilTagVision(aprilTagVisionIO);
     swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"));
-
+    
     autoRunner = new AutoRunner(swerveSubsystem);
+
+    pivotSubsystem = new Pivot();
+    intakeSubsystem = new Intake();
     
     // Instantiate our controllers with proper ports.
     this.xboxTester = new XboxController(1);
     this.xboxOperator = new XboxController(2);
     this.xboxDriver = new XboxController(3);
+
 
     // try {
     //   JsonChanger jsonChanger = new JsonChanger();
@@ -121,8 +133,10 @@ public class RobotContainer {
     this.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, () -> autoAlignTargetNum[0], xboxDriver));
     this.xboxDriver.getBButton().onTrue( new InstantCommand(() -> closedFieldAbsoluteDrive.toggleRotationMode()) );
     this.xboxDriver.getXButton().onTrue( new InstantCommand( () -> swerveSubsystem.zeroGyro()));
-    this.xboxDriver.getAButton().onTrue(new InstantCommand(() -> swerveSubsystem.lock()));
-    
+    // this.xboxDriver.getAButton().onTrue(new InstantCommand(() -> swerveSubsystem.lock()));
+    // this.xboxDriver.getYButton().onTrue(new PickUpCube(intakeSubsystem, pivotSubsystem));
+    this.xboxDriver.getYButton().onTrue(new RollIntake(intakeSubsystem));
+
   }
   
 
