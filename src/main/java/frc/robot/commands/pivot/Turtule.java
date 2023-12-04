@@ -14,7 +14,7 @@ public class Turtule extends CommandBase {
 
     @Override
     public void execute() { 
-        pivotSubsystem.setDegAngle(200);
+        pivotSubsystem.setDegAngle(0);
     }
 
     @Override

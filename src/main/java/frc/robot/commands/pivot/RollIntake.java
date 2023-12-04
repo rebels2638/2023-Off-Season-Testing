@@ -18,6 +18,7 @@ public class RollIntake extends CommandBase{
 
     @Override
     public boolean isFinished() {
-        return intakeSubsystem.isSpike();
+        //return intakeSubsystem.isSpike();
+        return false;
     }
 }

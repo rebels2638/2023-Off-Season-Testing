@@ -5,10 +5,12 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase{
-    private CANSparkMax m_motor = new CANSparkMax(1, MotorType.kBrushless); 
+    private CANSparkMax m_motor = new CANSparkMax(21, MotorType.kBrushless); 
 
     private static final double kMotorToOutputShaftRatio = 0.25;
     private static final double kPulsePerRotation = 42;
@@ -17,7 +19,7 @@ public class Intake extends SubsystemBase{
 
 
     private final PIDController feedBackController = new PIDController(0, 0, 0);
-    private ArmFeedforward feedForwardController = new ArmFeedforward(0, 0, 0);
+    private SimpleMotorFeedforward feedForwardController = new SimpleMotorFeedforward(1.2, 0.03, 0);
 
     private double goalVelocityRadSec = 0;
 
@@ -30,12 +32,15 @@ public class Intake extends SubsystemBase{
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("intake/measuredVelocityRadSec", getVelocityRadSec());
         double feedForwardVoltage = feedForwardController.calculate(getVelocityRadSec(), goalVelocityRadSec);
-        
         feedBackController.setSetpoint(goalVelocityRadSec);
         double feedBackControllerVoltage = feedBackController.calculate(getVelocityRadSec());
         double output = feedForwardVoltage + feedBackControllerVoltage;
-        m_motor.setVoltage(Math.min(voltageLimit, output));
+        SmartDashboard.putNumber("intake/goalVelocityRadSec", goalVelocityRadSec);
+        
+        m_motor.setVoltage(output);
+        
     }
 
     public double getVelocityRadSec() {
