@@ -18,7 +18,7 @@ public class PickUpCube extends CommandBase{
     public void initialize() {
         SequentialCommandGroup group = new SequentialCommandGroup(
             new ParallelRaceGroup(new RollIntake(intakeSubsystem), new PivotToCube(pivotSubsystem)),
-            new Turtule(pivotSubsystem)
+            new Turtle(pivotSubsystem)
         );
         group.schedule();
     }
