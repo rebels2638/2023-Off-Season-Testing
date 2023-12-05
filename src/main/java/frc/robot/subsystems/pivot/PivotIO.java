@@ -20,4 +20,6 @@ public interface PivotIO {
 
     public default void configureController(ArmFeedforward ff, PIDController fb) {
     }
+
+    public abstract boolean reachedSetpoint();
 }

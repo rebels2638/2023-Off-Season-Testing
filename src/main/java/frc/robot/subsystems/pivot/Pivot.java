@@ -53,4 +53,7 @@ public class Pivot extends SubsystemBase{
         inputs.positionDeg = 0;
         inputs.positionRad = 0;
     }
+    public boolean reachedSetpoint() {
+        return io.reachedSetpoint();
+    }
 }

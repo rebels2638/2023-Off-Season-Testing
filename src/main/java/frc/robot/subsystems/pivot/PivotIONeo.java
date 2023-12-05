@@ -43,4 +43,9 @@ public class PivotIONeo extends SubsystemBase implements PivotIO {
         feedForwardController = ff;
     }
 
+    @Override
+    public boolean reachedSetpoint() {
+        return feedBackController.atSetpoint();
+    }
+
 }
