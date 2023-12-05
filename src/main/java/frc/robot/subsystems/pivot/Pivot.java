@@ -1,55 +1,37 @@
 package frc.robot.subsystems.pivot;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Pivot extends SubsystemBase{
 
-    private CANSparkMax m_motor = new CANSparkMax(21, MotorType.kBrushless); 
-    private boolean velocityControlmode;
+    private static final double kRadPositionTolerance = Math.toRadians(8);
+    private double goalRadAngle = 0;
 
-    private static final double kMotorToOutputShaftRatio = 0.01;
-    private static final double kPulsePerRotation = 42;
+    private final PivotIO io;
+    private final PivotIOInputsAutoLogged inputs = new PivotIOInputsAutoLogged();
 
-    private final PIDController feedBackController = new PIDController(0, 0, 0); //TODO: modify for future 
-    private ArmFeedforward feedForwardController = new ArmFeedforward(0, 0, 0); //TODO:  modify for future
+    public Pivot(PivotIO io) {
+        this.io = io;
+        if (RobotBase.isReal()) {
+            PIDController feedBackController = new PIDController(0, 0, 0);
+            ArmFeedforward feedForwardController = new ArmFeedforward(0, 0, 0);
+            feedBackController.setTolerance(kRadPositionTolerance);
 
-    private final PIDController velocityPIDController = new PIDController(1,0,0); //TODO: modify for future
-    private static final double kRadPositionTolerance = Math.toRadians(12);
-    private double goalRadAngle = 0; // initials
-    private double velocitySetPoint = 0;
-
-    public Pivot() {
-        feedBackController.setTolerance(kRadPositionTolerance);
-        m_motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+            io.configureController(new ArmFeedforward(0, 0, 0), new PIDController(0, 0, 0));
+        }
     }
 
     @Override
     public void periodic() {
-        if(!velocityControlmode){
-        double feedForwardVoltage = feedForwardController.calculate(getRadAngle(), goalRadAngle);
-        
-        feedBackController.setSetpoint(goalRadAngle);
-        double feedBackControllerVoltage = feedBackController.calculate(getRadAngle());
-        updateShuffleBoard();
-        SmartDashboard.putNumber("pivot/ExpectedOutputVoltage", feedForwardVoltage);
-        driveVoltage(feedForwardVoltage + feedBackControllerVoltage);
-        }
-        else{
-            if(velocityControlmode){
-                
-            }
-        }
-    }
+        io.updateInputs(inputs);
+        Logger.getInstance().processInputs("Pivot", inputs);
 
-    void updateShuffleBoard(){
-        SmartDashboard.putNumber("pivot/pivotMeasuredDegAngle", getDegAngle());
-        SmartDashboard.putNumber("pivot/pivotMeasuredRadAngle", getRadAngle());
+        io.setPosition(inputs.positionRad, goalRadAngle);
     }
 
     public void setDegAngle(double angle) {
@@ -75,16 +57,16 @@ public class Pivot extends SubsystemBase{
 
 
     public double getDegAngle() {
-        return m_motor.getEncoder().getPosition() * 360 * kMotorToOutputShaftRatio;
+        return m_motor.getEncoder().getPosition() * (360 / kPulsePerRotation) * kMotorToOutputShaftRatio;
     }
     public double getRadAngle() {
-        return m_motor.getEncoder().getPosition() * 2 * Math.PI * kMotorToOutputShaftRatio;
-    }
-    public boolean reachedSetpoint() {
-        return feedBackController.atSetpoint();
+        return inputs.positionRad;
     }
     public void zeroAngle() {
-        
-        m_motor.getEncoder().setPosition(0);
+        inputs.positionDeg = 0;
+        inputs.positionRad = 0;
+    }
+    public boolean reachedSetpoint() {
+        return io.reachedSetpoint();
     }
 }
