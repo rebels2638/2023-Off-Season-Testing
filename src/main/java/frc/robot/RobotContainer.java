@@ -14,11 +14,14 @@ import frc.robot.commands.pivot.Turtule;
 import frc.robot.commands.drivetrain.AbsoluteFieldDrive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lib.input.XboxController;
 import frc.robot.subsystems.pivot.Intake;
 import frc.robot.subsystems.pivot.Pivot;
+import frc.robot.subsystems.pivot.PivotIO;
+import frc.robot.subsystems.pivot.PivotIONeo;
 // import frc.robot.subsystems.aprilTagVision.AprilTagVision;
 // import frc.robot.subsystems.aprilTagVision.AprilTagVisionIO;
 // import frc.robot.subsystems.aprilTagVision.AprilTagVisionIOReal;
@@ -78,8 +81,12 @@ public class RobotContainer {
     swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"));
     
     autoRunner = new AutoRunner(swerveSubsystem);
-
-    pivotSubsystem = new Pivot();
+    
+    PivotIO pivotIO = new PivotIONeo();
+    // if (RobotBase.isReal()) {
+    //   pivotIO = new PivotIONeo();
+    // }
+    pivotSubsystem = new Pivot(pivotIO);
     //intakeSubsystem = new Intake();
     
     // Instantiate our controllers with proper ports.
