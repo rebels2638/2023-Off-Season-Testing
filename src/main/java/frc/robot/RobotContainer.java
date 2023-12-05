@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 import java.io.File;
 import frc.robot.commands.pivot.PickUpCube;
+import frc.robot.commands.pivot.PivotController;
 import frc.robot.commands.pivot.PivotToCube;
 import frc.robot.commands.pivot.RollIntake;
 import frc.robot.commands.pivot.Turtle;
@@ -32,6 +33,7 @@ import frc.robot.commands.automation.AutoAlign;
 import frc.robot.commands.drivetrain.AbsoluteDrive;
 import frc.robot.commands.pivot.RollIntake;
 import frc.robot.auto.AutoRunner;
+
 
 
 import frc.robot.commands.drivetrain.TeleopDrive;
@@ -147,9 +149,11 @@ public class RobotContainer {
     //this.xboxDriver.getYButton().onTrue(new RollIntake(intakeSubsystem));
     
     // this.xboxDriver.getRightStick.onTrue(new InstantCommand(() -> ))
+    //this.xboxDriver.getYButton().onTrue(new InstantCommand(() -> pivotSubsystem.zeroAngle()));
     this.xboxDriver.getYButton().onTrue(new InstantCommand(() -> pivotSubsystem.zeroAngle()));
+    pivotSubsystem.setDefaultCommand(new pivotController(pivotSubsystem, xboxOperator.getLeftStick()));;
     //this.xboxDriver.getAButton().onTrue(new Turtule(pivotSubsystem));
-    //this.xboxDriver.getBButton().onTrue(new PivotToCube(pivotSubsystem));
+    //this.xboxDriver.getBButton().onTrue(new PivotToCube(pivotSu  bsystem));
 
 
   }

@@ -10,19 +10,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Pivot extends SubsystemBase{
 
     private static final double kRadPositionTolerance = Math.toRadians(8);
-    private double goalRadAngle = 0;
 
     private final PivotIO io;
     private final PivotIOInputsAutoLogged inputs = new PivotIOInputsAutoLogged();
+    private boolean velocityControlmode;
 
     public Pivot(PivotIO io) {
         this.io = io;
         if (RobotBase.isReal()) {
-            PIDController feedBackController = new PIDController(0, 0, 0);
-            ArmFeedforward feedForwardController = new ArmFeedforward(0, 0, 0);
-            feedBackController.setTolerance(kRadPositionTolerance);
+            PIDController positionFeedBackController = new PIDController(0, 0, 0);
+            ArmFeedforward positionFeedForwardController = new ArmFeedforward(0, 0, 0);
+            positionFeedBackController.setTolerance(kRadPositionTolerance);
 
-            io.configureController(new ArmFeedforward(0, 0, 0), new PIDController(0, 0, 0));
+            PIDController velocityFeedBackController = new PIDController(0, 0, 0);
+            ArmFeedforward velocityFeedForwardController = new ArmFeedforward(0, 0, 0);
+
+
+            io.configureController(positionFeedForwardController, positionFeedBackController,
+                velocityFeedForwardController, velocityFeedBackController);
         }
     }
 
@@ -30,20 +35,11 @@ public class Pivot extends SubsystemBase{
     public void periodic() {
         io.updateInputs(inputs);
         Logger.getInstance().processInputs("Pivot", inputs);
-
-        io.setPosition(inputs.positionRad, goalRadAngle);
     }
 
     public void setDegAngle(double angle) {
-        if(goalRadAngle < 0){
-            goalRadAngle = 0;
-            return;
-        }
-        goalRadAngle = angle;
+        io.setPosition(Math.toRadians(angle), inputs.positionRad);
         return;
-    }
-    public void driveVoltage(double output){
-        m_motor.setVoltage(output);
     }
 
     public void setVelocityControlMode(boolean b){  
@@ -51,22 +47,23 @@ public class Pivot extends SubsystemBase{
     };
 
     public void setVelocitySetPoint(double setPoint){
-        velocityPIDController.setSetpoint(setPoint);
+        io.setVelocity(setPoint, inputs.velocityRadSec);
         return;
     }
 
-
     public double getDegAngle() {
-        return m_motor.getEncoder().getPosition() * (360 / kPulsePerRotation) * kMotorToOutputShaftRatio;
+        return inputs.positionDeg;
     }
+
     public double getRadAngle() {
         return inputs.positionRad;
     }
+
     public void zeroAngle() {
         inputs.positionDeg = 0;
         inputs.positionRad = 0;
     }
     public boolean reachedSetpoint() {
-        return io.reachedSetpoint();
+        return io.reachedSetpoint(velocityControlmode);
     }
 }

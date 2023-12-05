@@ -16,8 +16,6 @@ public class PivotIONeo extends SubsystemBase implements PivotIO {
     private PIDController velocityFeedBackController = new PIDController(0, 0, 0);
     private ArmFeedforward velocityFeedForwardController = new ArmFeedforward(0, 0, 0);
 
-    private double goalPositionRad = 0;
-
     public PivotIONeo() {
         m_motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     }
@@ -26,6 +24,9 @@ public class PivotIONeo extends SubsystemBase implements PivotIO {
     public void updateInputs(PivotIOInputs inputs) {
         inputs.positionRad = m_motor.getEncoder().getPosition() * kMotorToOutputShaftRatio * Math.PI * 2;
         inputs.positionDeg = m_motor.getEncoder().getPosition() * kMotorToOutputShaftRatio * 360;
+
+        inputs.velocityRadSec = m_motor.getEncoder().getVelocity() / 60 * kMotorToOutputShaftRatio * Math.PI * 2;
+        inputs.velocityDegSec = m_motor.getEncoder().getVelocity() / 60 * kMotorToOutputShaftRatio * 360;
     }
 
     @Override

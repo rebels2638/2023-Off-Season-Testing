@@ -10,6 +10,8 @@ public interface PivotIO {
     public static class PivotIOInputs {
         public double positionRad;
         public double positionDeg;
+        public double velocityDegSec;
+        public double velocityRadSec;
     }
 
     public default void updateInputs(PivotIOInputs inputs) {

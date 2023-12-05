@@ -17,13 +17,12 @@ public class PivotController extends CommandBase{
     @Override
     public void execute() { 
 
-        pivotSubsystem.driveVoltage(Math.pow());
+        pivotSubsystem.setDegAngle(60 * controllerVal.getAsDouble());
     }
 
     @Override
     public boolean isFinished() {
-        return pivotSubsystem.reachedSetpoint();
+        return false;
     }
 }
 
-}
