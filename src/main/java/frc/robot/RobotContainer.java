@@ -151,9 +151,9 @@ public class RobotContainer {
     // this.xboxDriver.getRightStick.onTrue(new InstantCommand(() -> ))
     //this.xboxDriver.getYButton().onTrue(new InstantCommand(() -> pivotSubsystem.zeroAngle()));
     this.xboxDriver.getYButton().onTrue(new InstantCommand(() -> pivotSubsystem.zeroAngle()));
-    pivotSubsystem.setDefaultCommand(new pivotController(pivotSubsystem, xboxOperator.getLeftStick()));;
+    pivotSubsystem.setDefaultCommand(new PivotController(pivotSubsystem, xboxOperator));;
     //this.xboxDriver.getAButton().onTrue(new Turtule(pivotSubsystem));
-    //this.xboxDriver.getBButton().onTrue(new PivotToCube(pivotSu  bsystem));
+    //this.xboxDriver.getBButton().onTrue(new PivotToCube(pivotSubsystem));
 
 
   }

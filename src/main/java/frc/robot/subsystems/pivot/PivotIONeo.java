@@ -61,11 +61,12 @@ public class PivotIONeo extends SubsystemBase implements PivotIO {
     }
 
     @Override
-    public boolean reachedSetpoint(boolean isPositionalControll) {
-        if (isPositionalControll) {
+    public boolean reachedSetpoint(boolean isPositionalControl) {
+        if (isPositionalControl) {
             return positionFeedBackController.atSetpoint();
-        }
+        } else{
         return velocityFeedBackController.atSetpoint();
+        }
     }
 
 }
