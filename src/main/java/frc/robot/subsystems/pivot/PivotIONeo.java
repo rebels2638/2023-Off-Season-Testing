@@ -1,10 +1,13 @@
 package frc.robot.subsystems.pivot;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PivotIONeo extends SubsystemBase implements PivotIO {
@@ -18,6 +21,7 @@ public class PivotIONeo extends SubsystemBase implements PivotIO {
 
     public PivotIONeo() {
         m_motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        m_motor.setInverted(true);
     }
 
     @Override
@@ -36,7 +40,9 @@ public class PivotIONeo extends SubsystemBase implements PivotIO {
         
         positionFeedBackController.setSetpoint(goalPositionRad);
         double feedBackControllerVoltage = positionFeedBackController.calculate(currentRadAngle);
-
+        System.out.println("CALLED");
+        Logger.getInstance().recordOutput("Pivot/voltageOut", feedForwardVoltage + feedBackControllerVoltage);
+        //SmartDashboard.putNumber("Pivot/voltageOut", feedForwardVoltage + feedBackControllerVoltage);
         m_motor.setVoltage(feedForwardVoltage + feedBackControllerVoltage);
     } 
 
@@ -47,9 +53,14 @@ public class PivotIONeo extends SubsystemBase implements PivotIO {
         
         velocityFeedBackController.setSetpoint(goalVelocityRadPerSec);
         double feedBackControllerVoltage = velocityFeedBackController.calculate(currentVelocityRadPerSec);
-
+        Logger.getInstance().recordOutput("Pivot/voltageOut", feedForwardVoltage + feedBackControllerVoltage);
         m_motor.setVoltage(feedForwardVoltage + feedBackControllerVoltage);
+
     } 
+
+    public void setVoltage(double voltage){
+        m_motor.setVoltage(voltage);
+    }
 
     @Override
     public void configureController(ArmFeedforward pff, PIDController pfb, 
@@ -67,6 +78,11 @@ public class PivotIONeo extends SubsystemBase implements PivotIO {
         } else{
         return velocityFeedBackController.atSetpoint();
         }
+    }
+
+    @Override
+    public void zeroAngle() {
+        m_motor.getEncoder().setPosition(0.0);
     }
 
 }

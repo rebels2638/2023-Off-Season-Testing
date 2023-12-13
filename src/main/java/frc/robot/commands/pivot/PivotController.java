@@ -17,13 +17,19 @@ public class PivotController extends CommandBase{
     }
     @Override
     public void execute() { 
-
-        pivotSubsystem.setDegAngle(60 * controller.getLeftY());
+    //     pivotSubsystem.setVelocityControlMode(true);
+    //    pivotSubsystem.setVelocitySetPoint(0.1 * controller.getRightY());
+       pivotSubsystem.setVoltage(3 * controller.getRightY());
     }
 
     @Override
     public boolean isFinished() {
         return false;
+    }
+    public void end(boolean interrupted){
+        System.out.println("CALLED END");
+        pivotSubsystem.setVelocitySetPoint(0);
+        return;
     }
 }
 

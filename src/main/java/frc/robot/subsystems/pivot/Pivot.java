@@ -17,8 +17,8 @@ public class Pivot extends SubsystemBase{
 
     public Pivot(PivotIO io) {
         this.io = io;
-        if (RobotBase.isReal()) {
-            PIDController positionFeedBackController = new PIDController(0, 0, 0);
+        if (true) {
+            PIDController positionFeedBackController = new PIDController(3, 0, 0);
             ArmFeedforward positionFeedForwardController = new ArmFeedforward(0, 0, 0);
             positionFeedBackController.setTolerance(kRadPositionTolerance);
 
@@ -38,6 +38,7 @@ public class Pivot extends SubsystemBase{
     }
 
     public void setDegAngle(double angle) {
+        Logger.getInstance().recordOutput("Pivot/desiredDegAngle", angle);
         io.setPosition(Math.toRadians(angle), inputs.positionRad);
         return;
     }
@@ -50,6 +51,10 @@ public class Pivot extends SubsystemBase{
         io.setVelocity(setPoint, inputs.velocityRadSec);
         return;
     }
+    public void setVoltage(double voltage){
+        io.setVoltage(voltage);
+        return;
+    }
 
     public double getDegAngle() {
         return inputs.positionDeg;
@@ -60,8 +65,7 @@ public class Pivot extends SubsystemBase{
     }
 
     public void zeroAngle() {
-        inputs.positionDeg = 0;
-        inputs.positionRad = 0;
+        io.zeroAngle();
     }
     public boolean reachedSetpoint() {
         return io.reachedSetpoint(velocityControlmode);

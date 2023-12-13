@@ -7,10 +7,10 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 
 import java.io.File;
-import frc.robot.commands.pivot.PickUpCube;
+// import frc.robot.commands.pivot.PickUpCube;
 import frc.robot.commands.pivot.PivotController;
 import frc.robot.commands.pivot.PivotToCube;
-import frc.robot.commands.pivot.RollIntake;
+// import frc.robot.commands.pivot.RollIntake;
 import frc.robot.commands.pivot.Turtle;
 import frc.robot.commands.drivetrain.AbsoluteFieldDrive;
 import edu.wpi.first.math.MathUtil;
@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lib.input.XboxController;
-import frc.robot.subsystems.pivot.Intake;
+// import frc.robot.subsystems.pivot.Intake;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.pivot.PivotIO;
 import frc.robot.subsystems.pivot.PivotIONeo;
@@ -31,7 +31,7 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.Constants.OperatorConstants;
 import frc.robot.commands.automation.AutoAlign;
 import frc.robot.commands.drivetrain.AbsoluteDrive;
-import frc.robot.commands.pivot.RollIntake;
+// import frc.robot.commands.pivot.RollIntake;
 import frc.robot.auto.AutoRunner;
 
 
@@ -84,11 +84,12 @@ public class RobotContainer {
     
     autoRunner = new AutoRunner(swerveSubsystem);
     
-    PivotIO pivotIO = new PivotIONeo();
+    PivotIONeo pivotIO = new PivotIONeo();
     // if (RobotBase.isReal()) {
     //   pivotIO = new PivotIONeo();
     // }
     pivotSubsystem = new Pivot(pivotIO);
+    PivotController pivotController;
     //intakeSubsystem = new Intake();
     
     // Instantiate our controllers with proper ports.
@@ -96,7 +97,7 @@ public class RobotContainer {
     this.xboxOperator = new XboxController(2);
     this.xboxDriver = new XboxController(3);
 
-
+    pivotController = new PivotController(pivotSubsystem, xboxOperator);
     // try {
     //   JsonChanger jsonChanger = new JsonChanger();
     //  }
@@ -130,30 +131,30 @@ public class RobotContainer {
 
     //swerveSubsystem.setDefaultCommand(closedFieldAbsoluteDrive);
     
-    this.xboxDriver.getRightBumper().onTrue(new InstantCommand( () ->  {
-        if (autoAlignTargetNum[0] > 0) {
-          autoAlignTargetNum[0]--;
-        }
-      } 
-    ));
-    this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> {
-      if (autoAlignTargetNum[0] < 8) {
-        autoAlignTargetNum[0]++;
-      }
-    }));
+    // this.xboxDriver.getRightBumper().onTrue(new InstantCommand( () ->  {
+    //     if (autoAlignTargetNum[0] > 0) {
+    //       autoAlignTargetNum[0]--;
+    //     }
+    //   } 
+    // ));
+    // this.xboxDriver.getLeftBumper().onTrue(new InstantCommand(() -> {
+    //   if (autoAlignTargetNum[0] < 8) {
+    //     autoAlignTargetNum[0]++;
+    //   }
+    // }));
     //.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, () -> autoAlignTargetNum[0], xboxDriver));
-    //this.xboxDriver.getBButton().onTrue( new InstantCommand(() -> closedFieldAbsoluteDrive.toggleRotationMode()) );
-    //this.xboxDriver.getXButton().onTrue( new InstantCommand( () -> swerveSubsystem.zeroGyro()));
-    // this.xboxDriver.getAButton().onTrue(new InstantCommand(() -> swerveSubsystem.lock()));
-    // this.xboxDriver.getYButton().onTrue(new PickUpCube(intakeSubsystem, pivotSubsystem));
+    //this.xboxDriver.getBButton().onTrue(new InstantCommand(() -> closedFieldAbsoluteDrive.toggleRotationMode()) );
+    //this.xboxDriver.getXButton().onTrue(new InstantCommand(() -> swerveSubsystem.zeroGyro()));
+    //this.xboxDriver.getAButton().onTrue(new InstantCommand(() -> swerveSubsystem.lock()));
+    //this.xboxDriver.getYButton().onTrue(new PickUpCube(intakeSubsystem, pivotSubsystem));
     //this.xboxDriver.getYButton().onTrue(new RollIntake(intakeSubsystem));
     
     // this.xboxDriver.getRightStick.onTrue(new InstantCommand(() -> ))
     //this.xboxDriver.getYButton().onTrue(new InstantCommand(() -> pivotSubsystem.zeroAngle()));
-    this.xboxDriver.getYButton().onTrue(new InstantCommand(() -> pivotSubsystem.zeroAngle()));
-    pivotSubsystem.setDefaultCommand(new PivotController(pivotSubsystem, xboxOperator));;
-    //this.xboxDriver.getAButton().onTrue(new Turtule(pivotSubsystem));
-    //this.xboxDriver.getBButton().onTrue(new PivotToCube(pivotSubsystem));
+    this.xboxOperator.getYButton().onTrue(new InstantCommand(() -> pivotSubsystem.zeroAngle()));
+    this.pivotSubsystem.setDefaultCommand(pivotController);;
+    this.xboxOperator.getAButton().onTrue(new Turtle(pivotSubsystem));
+    // this.xboxDriver.getBButton().onTrue(new PivotToCube(pivotSubsystem));
 
 
   }

@@ -24,6 +24,12 @@ public interface PivotIO {
     public default void configureController(ArmFeedforward pff, PIDController pfb, 
                                                     ArmFeedforward vff, PIDController vfb) {
     }
+    public default void setVoltage(double voltage){
+        
+    };
 
     public abstract boolean reachedSetpoint(boolean isPositionalControll);
+
+    public abstract void zeroAngle();
+    
 }

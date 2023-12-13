@@ -19,6 +19,6 @@ public class PivotToCube extends CommandBase{
 
     @Override
     public boolean isFinished() {
-        return pivotSubsystem.reachedSetpoint();
+        return false;
     }
 }
