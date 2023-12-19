@@ -21,6 +21,7 @@ public class PivotIONeo extends SubsystemBase implements PivotIO {
 
     public PivotIONeo() {
         m_motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        m_motor.clearFaults();
         m_motor.setInverted(true);
     }
 
@@ -42,7 +43,6 @@ public class PivotIONeo extends SubsystemBase implements PivotIO {
         double feedBackControllerVoltage = positionFeedBackController.calculate(currentRadAngle);
         System.out.println("CALLED");
         Logger.getInstance().recordOutput("Pivot/voltageOut", feedForwardVoltage + feedBackControllerVoltage);
-        //SmartDashboard.putNumber("Pivot/voltageOut", feedForwardVoltage + feedBackControllerVoltage);
         m_motor.setVoltage(feedForwardVoltage + feedBackControllerVoltage);
     } 
 

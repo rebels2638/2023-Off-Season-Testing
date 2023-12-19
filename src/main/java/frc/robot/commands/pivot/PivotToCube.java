@@ -14,7 +14,7 @@ public class PivotToCube extends CommandBase{
 
     @Override
     public void execute() { 
-        pivotSubsystem.setDegAngle(50);
+        pivotSubsystem.setDegAngle(90);
     }
 
     @Override
