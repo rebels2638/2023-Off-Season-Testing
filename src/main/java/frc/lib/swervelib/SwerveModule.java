@@ -182,7 +182,7 @@ public class SwerveModule
     if (desiredState.angle != lastState.angle || synchronizeEncoderQueued)
     {
       // TODO: check if * 0.042 * desiredState.speedMetersPerSecond works
-      double moduleFF = desiredState.omegaRadPerSecond * configuration.moduleSteerFFCL * 0.042 * desiredState.speedMetersPerSecond;
+      double moduleFF = desiredState.omegaRadPerSecond * configuration.moduleSteerFFCL;
       // Synchronize encoders if queued and send in the current position as the value from the absolute encoder.
       if (absoluteEncoder != null && synchronizeEncoderQueued)
       {

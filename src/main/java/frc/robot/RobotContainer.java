@@ -65,7 +65,7 @@ public class RobotContainer {
   private final AbsoluteFieldDrive closedFieldAbsoluteDrive;
   
   //private final Intake intakeSubsystem;
-  private final Pivot pivotSubsystem;
+  // private final Pivot pivotSubsystem;
 
   // Auto
   private final AutoRunner autoRunner;
@@ -84,12 +84,12 @@ public class RobotContainer {
     
     autoRunner = new AutoRunner(swerveSubsystem);
     
-    PivotIONeo pivotIO = new PivotIONeo();
+    //PivotIONeo pivotIO = new PivotIONeo();
     // if (RobotBase.isReal()) {
     //   pivotIO = new PivotIONeo();
     // }
-    pivotSubsystem = new Pivot(pivotIO);
-    PivotController pivotController;
+    // pivotSubsystem = new Pivot(pivotIO);
+    // PivotController pivotController;
     //intakeSubsystem = new Intake();
     
     // Instantiate our controllers with proper ports.
@@ -97,7 +97,7 @@ public class RobotContainer {
     this.xboxOperator = new XboxController(2);
     this.xboxDriver = new XboxController(3);
 
-    pivotController = new PivotController(pivotSubsystem, xboxOperator);
+    //pivotController = new PivotController(pivotSubsystem, xboxOperator);
     // try {
     //   JsonChanger jsonChanger = new JsonChanger();
     //  }
@@ -129,7 +129,7 @@ public class RobotContainer {
 
     //swerveSubsystem.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
 
-    //swerveSubsystem.setDefaultCommand(closedFieldAbsoluteDrive);
+    swerveSubsystem.setDefaultCommand(closedFieldAbsoluteDrive);
     
     // this.xboxDriver.getRightBumper().onTrue(new InstantCommand( () ->  {
     //     if (autoAlignTargetNum[0] > 0) {
@@ -143,18 +143,18 @@ public class RobotContainer {
     //   }
     // }));
     //.xboxDriver.getAButton().onTrue(new AutoAlign(swerveSubsystem, () -> autoAlignTargetNum[0], xboxDriver));
-    //this.xboxDriver.getBButton().onTrue(new InstantCommand(() -> closedFieldAbsoluteDrive.toggleRotationMode()) );
-    //this.xboxDriver.getXButton().onTrue(new InstantCommand(() -> swerveSubsystem.zeroGyro()));
+    this.xboxDriver.getBButton().onTrue(new InstantCommand(() -> closedFieldAbsoluteDrive.toggleRotationMode()) );
+    this.xboxDriver.getXButton().onTrue(new InstantCommand(() -> swerveSubsystem.zeroGyro()));
     //this.xboxDriver.getAButton().onTrue(new InstantCommand(() -> swerveSubsystem.lock()));
     //this.xboxDriver.getYButton().onTrue(new PickUpCube(intakeSubsystem, pivotSubsystem));
     //this.xboxDriver.getYButton().onTrue(new RollIntake(intakeSubsystem));
     
     // this.xboxDriver.getRightStick.onTrue(new InstantCommand(() -> ))
     //this.xboxDriver.getYButton().onTrue(new InstantCommand(() -> pivotSubsystem.zeroAngle()));
-    this.xboxDriver.getYButton().onTrue(new InstantCommand(() -> pivotSubsystem.zeroAngle()));
+    // this.xboxDriver.getYButton().onTrue(new InstantCommand(() -> pivotSubsystem.zeroAngle()));
     // this.pivotSubsystem.setDefaultCommand(pivotController);
-    this.xboxDriver.getAButton().onTrue(new Turtle(pivotSubsystem));
-    this.xboxDriver.getBButton().onTrue(new PivotToCube(pivotSubsystem));
+    // this.xboxDriver.getAButton().onTrue(new Turtle(pivotSubsystem));
+    // this.xboxDriver.getBButton().onTrue(new PivotToCube(pivotSubsystem));
 
 
   }
