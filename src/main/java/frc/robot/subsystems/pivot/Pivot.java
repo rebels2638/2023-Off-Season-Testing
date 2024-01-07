@@ -4,11 +4,6 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Pivot extends SubsystemBase{
@@ -18,7 +13,6 @@ public class Pivot extends SubsystemBase{
     private final PivotIO io;
     private final PivotIOInputsAutoLogged inputs = new PivotIOInputsAutoLogged();
     private boolean velocityControlmode;
-    private ShuffleboardTab tab = Shuffleboard.getTab("Pivot");
     PIDController positionFeedBackController;
     ArmFeedforward positionFeedForwardController;
 
@@ -39,14 +33,10 @@ public class Pivot extends SubsystemBase{
             io.configureController(positionFeedForwardController, positionFeedBackController,
                 velocityFeedForwardController, velocityFeedBackController);
         }
-        tab.add("PIDPose", 0);
-        GenericEntry PIDPoseP = tab.add("PIDPose", new PIDController(0, kRadPositionTolerance, kRadPositionTolerance)).getEntry();
     }
 
     @Override
     public void periodic() {
-        double PIDPoseP = ;
-        positionFeedBackController = PIDPose.getNumber();
 
         io.configureController(positionFeedForwardController, positionFeedBackController,
             velocityFeedForwardController, velocityFeedBackController);

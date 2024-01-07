@@ -1,23 +1,37 @@
-// package frc.robot.subsystems.aprilTagVision;
+package frc.robot.subsystems.aprilTagVision;
 
-// import org.littletonrobotics.junction.AutoLog;
-// import org.photonvision.targeting.PhotonTrackedTarget;
+import java.util.Optional;
 
-// import edu.wpi.first.math.geometry.Pose3d;
+import org.littletonrobotics.junction.AutoLog;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
-// public interface AprilTagVisionIO {
-//     @AutoLog
-//     public static class AprilTagVisionIOInputs {
-//         public PhotonTrackedTarget frontRightBestTarget;
-//         public PhotonTrackedTarget frontLeftBestTarget;
-//         public PhotonTrackedTarget backRightBestTarget;
-//         public PhotonTrackedTarget backLeftBestTarget;
+import edu.wpi.first.math.geometry.Pose2d;
 
-//         public double frontRightPipleineLatency;
-//         public double frontLeftPipleineLatency;
-//         public double backRightPipleineLatency;
-//         public double backLeftPipleineLatency;
-//     }
+public interface AprilTagVisionIO {
+    @AutoLog
+    public static class AprilTagVisionIOInputs {
+        public PhotonTrackedTarget frontRightBestTarget;
+        public PhotonTrackedTarget frontLeftBestTarget;
+        public PhotonTrackedTarget backRightBestTarget;
+        public PhotonTrackedTarget backLeftBestTarget;
 
-//     public default void updateInputs(AprilTagVisionIOInputs inputs, Pose3d refrencePose) {}
-// }
+        public double frontRightPipleineLatency;
+        public double frontLeftPipleineLatency;
+        public double backRightPipleineLatency;
+        public double backLeftPipleineLatency;
+
+        public double frontRightTimestamp;
+        public double frontLeftTimestamp;
+        public double backRightTimestamp;
+        public double backLeftTimestamp;
+
+        public Optional<EstimatedRobotPose> frontRightEstimatedPose;
+        public Optional<EstimatedRobotPose> frontLeftEstimatedPose;
+        public Optional<EstimatedRobotPose> backRightEstimatedPose;
+        public Optional<EstimatedRobotPose> backLeftEstimatedPose;
+    }
+
+    public default void updateInputs(AprilTagVisionIOInputs inputs, Pose2d refrencePose) {
+    }
+}

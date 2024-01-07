@@ -8,15 +8,11 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.io.File;
@@ -35,6 +31,7 @@ import frc.lib.swervelib.parser.SwerveParser;
 import frc.lib.swervelib.telemetry.SwerveDriveTelemetry;
 import frc.lib.swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 //import frc.robot.subsystems.aprilTagVision.AprilTagVision;
+import frc.robot.subsystems.aprilTagVision.AprilTagVision;
 
 
 public class SwerveSubsystem extends SubsystemBase
@@ -52,6 +49,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   private SwerveAutoBuilder autoBuilder = null;
 
+  private AprilTagVision aprilTagVision;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -60,8 +58,9 @@ public class SwerveSubsystem extends SubsystemBase
   //private static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.16026, 0.0023745, 2.774E-05);
 
   // public SwerveSubsystem(File directory, AprilTagVision aprilTagVision)
-  public SwerveSubsystem(File directory)
+  public SwerveSubsystem(File directory, AprilTagVision aprilTagVision)
   {
+    this.aprilTagVision = aprilTagVision;
     //this.aprilTagVision = aprilTagVision;
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -111,19 +110,15 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
-     swerveDrive.updateOdometry();
+    swerveDrive.updateOdometry();
 
-    // Pose2d currentPose2d = swerveDrive.getPose();
-    // Pose3d refrencePose = new Pose3d( new Translation3d( currentPose2d.getX(), currentPose2d.getY(), 0), 
-    //   new Rotation3d(currentPose2d.getRotation().getRadians(), 0, 0));
-      
-    // Pose3d estimatedPose = aprilTagVision.getEstimatedPosition(refrencePose);
-
-    // if (estimatedPose != null) {
-    //   swerveDrive.addVisionMeasurement(estimatedPose.toPose2d(),
-    //     Timer.getFPGATimestamp() - aprilTagVision.getPiplineLatency(),
-    //     true, 1);
-    // }
+    Pose2d currentPose2d = swerveDrive.getPose();
+    
+    Pose2d estimatedPose = aprilTagVision.getEstimatedRobotPose(currentPose2d);
+    if (estimatedPose != null) {
+      swerveDrive.addVisionMeasurement(estimatedPose, aprilTagVision.getTimestampSeconds(), false, 1);
+    }
+    
     //log all tlemetry to a log file
     // SmartDashboard.putBoolean("myMind", false);
     // Logger.getInstance().recordOutput("swerve/heading", getHeading().getDegrees());

@@ -1,102 +1,93 @@
-// package frc.robot.subsystems.aprilTagVision;
+package frc.robot.subsystems.aprilTagVision;
 
 
-// import java.util.ArrayList;
+import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
 
-// import org.littletonrobotics.junction.Logger;
-// import org.photonvision.PhotonUtils;
-// import org.photonvision.targeting.PhotonTrackedTarget;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-// import edu.wpi.first.math.geometry.Pose3d;
-// import edu.wpi.first.math.geometry.Rotation3d;
-// import edu.wpi.first.math.geometry.Transform3d;
-// import edu.wpi.first.math.geometry.Translation3d;
-// import edu.wpi.first.wpilibj2.command.SubsystemBase;
-// import frc.robot.utils.Constants;
+public class AprilTagVision extends SubsystemBase{
+    private AprilTagVisionIO io;
+    private Pose2d prevEstimatedRobotPose = new Pose2d();
+    AprilTagVisionIOInputsAutoLogged inputs = new AprilTagVisionIOInputsAutoLogged();
+    double timestampSeconds = 0;
+    public AprilTagVision(AprilTagVisionIO io) {
+        this.io = io;
+    }
 
-// public class AprilTagVision extends SubsystemBase{
+    @Override
+    public void periodic() {
+        io.updateInputs(inputs, prevEstimatedRobotPose);
+        Logger.getInstance().processInputs("Pivot", inputs);
+ 
+    }
 
-//     private AprilTagVisionIO aprilTagVisionIO;
-//     private AprilTagVisionIOInputsAutoLogged inputs = new AprilTagVisionIOInputsAutoLogged();
-//     private Pose3d refrencePose = new Pose3d();
-//     public AprilTagVision(AprilTagVisionIO aprilTagVisionIO) {
-//         this.aprilTagVisionIO = aprilTagVisionIO;
-//     }
+    public Pose2d getEstimatedRobotPose(Pose2d prevEstimatedRobotPose) {
+        this.prevEstimatedRobotPose = prevEstimatedRobotPose;
 
-//     @Override
-//     public void periodic() {
-//         aprilTagVisionIO.updateInputs(inputs, refrencePose);
-//         Logger.getInstance().processInputs("AprilTagVision/inputs", inputs);
-//     }
-//     public Pose3d getEstimatedPosition(Pose3d refrencePose) {
-//         this.refrencePose = refrencePose;
-//         Pose3d robotPoseEst = new Pose3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
-//         int valid = 0;
+        // take the average of all poses that exist from the last input update
+        double xAverage = 0;
+        double yAverage = 0;
+        double rotAverage = 0;
+        timestampSeconds = 0;
+        int numPoses = 0;
+        if (inputs.backRightEstimatedPose != null) {
+            EstimatedRobotPose backRightEstimatedPose = inputs.backRightEstimatedPose.get();
+            if (inputs.backRightEstimatedPose.isPresent()) {
+                xAverage += backRightEstimatedPose.estimatedPose.getX();
+                yAverage += backRightEstimatedPose.estimatedPose.getY();
+                rotAverage += backRightEstimatedPose.estimatedPose.getRotation().getAngle();
+                numPoses++;
 
-//         Logger.getInstance().recordOutput("AprilTagVision/frontRightBestTarget", false);
-//         Logger.getInstance().recordOutput("AprilTagVision/frontLeftBestTarget", false);
-//         Logger.getInstance().recordOutput("AprilTagVision/backRightBestTarget", false);
-//         Logger.getInstance().recordOutput("AprilTagVision/backLeftBestTarget", false);
-//         if (inputs.frontRightBestTarget != null) {
-//             Logger.getInstance().recordOutput("AprilTagVision/frontRightBestTarget", true);
-//             robotPoseEst = getPoseToTarget(robotPoseEst, inputs.frontRightBestTarget, Constants.VisionConstants.FRONT_RIGHT_CAMERA_ROBOT_TO_CAMERA);
-//             valid++;
-//         }
-//         if (inputs.frontLeftBestTarget != null) {
-//             Logger.getInstance().recordOutput("AprilTagVision/frontLeftBestTarget", true);
-//             robotPoseEst = getPoseToTarget(robotPoseEst, inputs.frontLeftBestTarget, Constants.VisionConstants.FRONT_LEFT_CAMERA_ROBOT_TO_CAMERA);
-//             valid++;
-//         }
-//         if (inputs.backRightBestTarget != null) {
-//             Logger.getInstance().recordOutput("AprilTagVision/backRightBestTarget", true);
-//             robotPoseEst = getPoseToTarget(robotPoseEst, inputs.backRightBestTarget, Constants.VisionConstants.BACK_RIGHT_CAMERA_ROBOT_TO_CAMERA);
-//             valid++;
-//         }
-//         if (inputs.backLeftBestTarget != null) {
-//             Logger.getInstance().recordOutput("AprilTagVision/backLeftBestTarget", true);
-//             robotPoseEst = getPoseToTarget(robotPoseEst, inputs.backLeftBestTarget, Constants.VisionConstants.BACK_LEFT_CAMERA_ROBOT_TO_CAMERA);
-//             valid++;
-//         }
-//         if (valid == 0) {
-//             return null;
-//         }
-        
-//         robotPoseEst = new Pose3d(
-//             new Translation3d(
-//                 robotPoseEst.getX() / valid, 
-//                 robotPoseEst.getY() / valid, 
-//                 robotPoseEst.getZ() / valid), 
-//             new Rotation3d(
-//                 robotPoseEst.getRotation().getX() / valid, 
-//                 robotPoseEst.getRotation().getY() / valid, 
-//                 robotPoseEst.getRotation().getZ() / valid));
-//         double[] outLog = { robotPoseEst.getX(), robotPoseEst.getY(), robotPoseEst.getZ(),
-//         Math.toDegrees(robotPoseEst.getRotation().getX()), 
-//         Math.toDegrees(robotPoseEst.getRotation().getY()), 
-//         Math.toDegrees(robotPoseEst.getRotation().getZ()) };
-//         Logger.getInstance().recordOutput("AprilTagVisionMeasurment", outLog);
-//         return robotPoseEst;
-//     }
-//     public double getPiplineLatency() {
-//         return (inputs.frontRightPipleineLatency + inputs.frontLeftPipleineLatency + inputs.backRightPipleineLatency + inputs.backLeftPipleineLatency) / 4;
-//     }
+                timestampSeconds = backRightEstimatedPose.timestampSeconds;
+            }
+        }
+        if (inputs.backLeftEstimatedPose != null) {
+            EstimatedRobotPose backLeftEstimatedPose = inputs.backLeftEstimatedPose.get();
+            if (backLeftEstimatedPose != null) {
+                xAverage += backLeftEstimatedPose.estimatedPose.getX();
+                yAverage += backLeftEstimatedPose.estimatedPose.getY();
+                rotAverage += backLeftEstimatedPose.estimatedPose.getRotation().getAngle();
+                numPoses++;
 
-//     private Pose3d getPoseToTarget(Pose3d robotPoseEst, PhotonTrackedTarget target, Transform3d cameraToTarget) {
-//         if (target != null) {
-//             Pose3d tagPose3d = Constants.VisionConstants.aprilTagFieldLayout.getTagPose(target.getFiducialId()).get();
+                timestampSeconds = backLeftEstimatedPose.timestampSeconds;
+            }
+        }
+        if (inputs.frontRightEstimatedPose != null) {
+            EstimatedRobotPose frontRightEstimatedPose = inputs.frontRightEstimatedPose.get();
+            if (frontRightEstimatedPose != null) {
+                xAverage += frontRightEstimatedPose.estimatedPose.getX();
+                yAverage += frontRightEstimatedPose.estimatedPose.getY();
+                rotAverage += frontRightEstimatedPose.estimatedPose.getRotation().getAngle();
+                numPoses++;
 
-//             Pose3d robotTagEst = PhotonUtils.estimateFieldToRobotAprilTag(
-//                 cameraToTarget,
-//                 tagPose3d,
-//                 target.getBestCameraToTarget());
+                timestampSeconds = frontRightEstimatedPose.timestampSeconds;
+            }
+        }
+        if (inputs.frontLeftEstimatedPose != null) {
+            EstimatedRobotPose frontLeftEstimatedPose = inputs.frontLeftEstimatedPose.get();
+            if (frontLeftEstimatedPose != null) {
+                xAverage += frontLeftEstimatedPose.estimatedPose.getX();
+                yAverage += frontLeftEstimatedPose.estimatedPose.getY();
+                rotAverage += frontLeftEstimatedPose.estimatedPose.getRotation().getAngle();
+                numPoses++;
 
-//             robotPoseEst = new Pose3d(new Translation3d(robotPoseEst.getX() + robotTagEst.getX(), 
-//                 robotPoseEst.getY() + robotTagEst.getY(), robotPoseEst.getZ() + robotTagEst.getZ()), 
-//                 new Rotation3d(robotPoseEst.getRotation().getX() + robotTagEst.getRotation().getX(), 
-//                 robotPoseEst.getRotation().getY() + robotTagEst.getRotation().getY(), 
-//                 robotPoseEst.getRotation().getZ() + robotTagEst.getRotation().getZ()));
-//             return robotPoseEst;
-//         }
-//         return null;
-//     }
-// }
+                timestampSeconds = frontLeftEstimatedPose.timestampSeconds;
+            }
+        }
+
+        if (numPoses == 0) {
+            timestampSeconds = Timer.getFPGATimestamp();
+            return prevEstimatedRobotPose;
+        }
+        timestampSeconds /= numPoses;
+        return new Pose2d(xAverage/numPoses, yAverage/numPoses, new Rotation2d(rotAverage/numPoses));
+    }
+
+    public double getTimestampSeconds() {
+        return timestampSeconds;
+    }
+}
