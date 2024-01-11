@@ -181,7 +181,6 @@ public class SwerveModule
     // Prevent module rotation if angle is the same as the previous angle.
     if (desiredState.angle != lastState.angle || synchronizeEncoderQueued)
     {
-      // TODO: check if * 0.042 * desiredState.speedMetersPerSecond works
       double moduleFF = desiredState.omegaRadPerSecond * configuration.moduleSteerFFCL;
       // Synchronize encoders if queued and send in the current position as the value from the absolute encoder.
       if (absoluteEncoder != null && synchronizeEncoderQueued)

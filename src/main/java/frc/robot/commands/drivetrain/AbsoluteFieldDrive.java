@@ -31,8 +31,8 @@ public class AbsoluteFieldDrive extends CommandBase
   private double lastHeading = 0;
   private double lastTime = 0;
   private Rotation2d desiredHeading = new Rotation2d(0);
-  // PIDController translationPID = new PIDController(3,0, 0);
-  PIDController translationPID = new PIDController(0,0, 0);
+  PIDController translationPID = new PIDController(3,0, 0);
+  // PIDController translationPID = new PIDController(0,0, 0);
 
   /**
    * Used to drive a swerve robot in full field-centric mode.  vX and vY supply translation inputs, where x is

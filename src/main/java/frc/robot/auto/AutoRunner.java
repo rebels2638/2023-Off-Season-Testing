@@ -1,27 +1,47 @@
 package frc.robot.auto;
 
 import java.util.HashMap;
+import java.util.List;
 
 import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
 
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.lib.swervelib.SwerveDrive;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.Constants;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 // acts more like a helper class rather than a subsystem or command.
 public class AutoRunner {
 
 
     private final SendableChooser<String> pathChooser = new SendableChooser<String>();
-    private String pathChosen;
+    private String pathChosen = "taxi";
     private static final HashMap<String, String> PATH_CHOSEN_TO_NAME_HASH_MAP = new HashMap<>();
     private static final HashMap<String, Command> EVENT_MAP = new HashMap<>();
+    private static PathPlanner pathPlanner = new PathPlanner();
+    private static PPSwerveControllerCommand scc;
+    private static HolonomicDriveController hdc = new HolonomicDriveController(
+        new PIDController(0.1, 0, 0), new PIDController(.1, 0, 0), new ProfiledPIDController(0.1, 0, 0,new Constraints(Constants.Auton.MAX_SPEED, Constants.Auton.MAX_ACCELERATION)));
+    private static List<PathPlannerTrajectory> pathList;
 
     static {
         PATH_CHOSEN_TO_NAME_HASH_MAP.put("taxi", "taxi");
+        PATH_CHOSEN_TO_NAME_HASH_MAP.put("Turn Auto", "Turn Auto");
+        PATH_CHOSEN_TO_NAME_HASH_MAP.put("Turn In Place","Turn In Place");
+        PATH_CHOSEN_TO_NAME_HASH_MAP.put("Turn", "Turn");
+
+        
     }
 
     private SwerveSubsystem swerveSubsystem;
@@ -41,8 +61,13 @@ public class AutoRunner {
     }
 
     public Command getAutonomousCommand() {
+        // return pathPlanner.loadPath(pathChooser.getSelected(), Constants.Auton.MAX_SPEED, 
+        // Constants.Auton.MAX_ACCELERATION, false);
+        // scc = new PPSwerveControllerCommand(null, null, null, null, null, null, null); 
+        // return scc;
+        
         return swerveSubsystem.creatPathPlannerCommand
-            ("taxi", 
+            (pathChosen, 
             new PathConstraints(Constants.Auton.MAX_SPEED, 
             Constants.Auton.MAX_ACCELERATION), EVENT_MAP, 
             Constants.Auton.TRANSLATION_PID_CONFIG, 

@@ -52,7 +52,7 @@ public class Robot extends LoggedRobot {
         //logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
         SmartDashboard.putBoolean("swerve/REAL", false);
 
-        logPath = "/Users/edan/Downloads/test.wpilog"; // specific to each user
+        //logPath = "/Users/edan/Downloads/test.wpilog"; // specific to each user
        // Logger.getInstance().setReplaySource(new WPILOGReader(logPath)); // Read replay log
         //Logger.getInstance().addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
         //System.err.println(logPath);
