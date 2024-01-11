@@ -13,12 +13,17 @@ import java.io.File;
 // import frc.robot.commands.pivot.RollIntake;
 // import frc.robot.commands.pivot.Turtle;
 import frc.robot.commands.drivetrain.AbsoluteFieldDrive;
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lib.input.XboxController;
+import frc.robot.subsystems.aprilTagVision.AprilTagVision;
+import frc.robot.subsystems.aprilTagVision.AprilTagVisionIO;
+import frc.robot.subsystems.aprilTagVision.AprilTagVisionIOReal;
+import frc.robot.subsystems.aprilTagVision.AprilTagVisionIOSim;
 // import frc.robot.subsystems.pivot.Intake;
 // import frc.robot.subsystems.pivot.Pivot;
 // import frc.robot.subsystems.pivot.PivotIO;
@@ -55,11 +60,10 @@ public class RobotContainer {
   private final XboxController xboxOperator;
   private final XboxController xboxTester;
   
-  
   // // Robot Subsystems
   // private final AprilTagVisionIO aprilTagVisionIO;
   // private final AprilTagVision aprilTagVision;
-  private final SwerveSubsystem swerveSubsystem;
+  private SwerveSubsystem swerveSubsystem;
   private final TeleopDrive closedFieldRel;
   private final AbsoluteDrive closedAbsoluteDrive;
   private final AbsoluteFieldDrive closedFieldAbsoluteDrive;
@@ -71,16 +75,17 @@ public class RobotContainer {
   private final AutoRunner autoRunner;
   private final int[] autoAlignTargetNum = {0};
   //private final SmartDashboardLogger smartDashboardLogger = new SmartDashboardLogger();
-  
+  private AprilTagVision aprilTagVision;
+
   public RobotContainer() {
-    // if (RobotBase.isReal()) {
-    //   aprilTagVisionIO = new AprilTagVisionIOReal();
-    // }
-    // else {
-    //   aprilTagVisionIO = new AprilTagVisionIOSim();
-    // }
-    // aprilTagVision = new AprilTagVision(aprilTagVisionIO);
-    swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"));
+
+    AprilTagVisionIO aprilTagVisionIO = new AprilTagVisionIOSim();
+    swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"), new AprilTagVision(aprilTagVisionIO));
+    
+    if (RobotBase.isReal()) {
+      aprilTagVisionIO = new AprilTagVisionIOReal();
+      swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"), new AprilTagVision(aprilTagVisionIO));
+    }
     
     autoRunner = new AutoRunner(swerveSubsystem);
     
@@ -127,7 +132,7 @@ public class RobotContainer {
 
     //System.out.println(xboxDriver.getRightX()+","+xboxDriver.getRightY());
 
-    //swerveSubsystem.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
+    // swerveSubsystem.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
 
     swerveSubsystem.setDefaultCommand(closedFieldAbsoluteDrive);
     
