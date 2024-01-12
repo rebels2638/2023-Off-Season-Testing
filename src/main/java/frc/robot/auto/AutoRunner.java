@@ -20,6 +20,7 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.Constants;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 // acts more like a helper class rather than a subsystem or command.
 public class AutoRunner {
@@ -34,6 +35,7 @@ public class AutoRunner {
     private static HolonomicDriveController hdc = new HolonomicDriveController(
         new PIDController(0.1, 0, 0), new PIDController(.1, 0, 0), new ProfiledPIDController(0.1, 0, 0,new Constraints(Constants.Auton.MAX_SPEED, Constants.Auton.MAX_ACCELERATION)));
     private static List<PathPlannerTrajectory> pathList;
+    private static PathPlannerTrajectory traj;
 
     static {
         PATH_CHOSEN_TO_NAME_HASH_MAP.put("taxi", "taxi");
@@ -63,7 +65,21 @@ public class AutoRunner {
     public Command getAutonomousCommand() {
         // return pathPlanner.loadPath(pathChooser.getSelected(), Constants.Auton.MAX_SPEED, 
         // Constants.Auton.MAX_ACCELERATION, false);
-        // scc = new PPSwerveControllerCommand(null, null, null, null, null, null, null); 
+        traj = PathPlanner.fromPathFile(pathChosen);
+        scc = new PPSwerveControllerCommand(traj, 
+                                                    swerveSubsystem::getPose,
+                                                    new PIDController(Constants.Auton.TRANSLATION_PID_CONFIG.kP,
+                                                            Constants.Auton.TRANSLATION_PID_CONFIG.kI,
+                                                            Constants.Auton.TRANSLATION_PID_CONFIG.kD), 
+                                                    new PIDController(Constants.Auton.TRANSLATION_PID_CONFIG.kP,
+                                                            Constants.Auton.TRANSLATION_PID_CONFIG.kI,
+                                                            Constants.Auton.TRANSLATION_PID_CONFIG.kD), 
+                                                    new PIDController(Constants.Auton.ANGLE_PID_CONFIG.kP,
+                                                            Constants.Auton.ANGLE_PID_CONFIG.kI,
+                                                            Constants.Auton.ANGLE_PID_CONFIG.kD), 
+                                                    swerveSubsystem::setChassisSpeeds, swerveSubsystem);
+
+         return scc;
         // return scc;
         
         return swerveSubsystem.creatPathPlannerCommand
