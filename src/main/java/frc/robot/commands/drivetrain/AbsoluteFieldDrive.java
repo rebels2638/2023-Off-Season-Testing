@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Limelight.LimelightSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.Constants;
 
@@ -31,7 +32,9 @@ public class AbsoluteFieldDrive extends CommandBase
   private double lastHeading = 0;
   private double lastTime = 0;
   private Rotation2d desiredHeading = new Rotation2d(0);
-  PIDController translationPID = new PIDController(3,0, 0);
+  private PIDController translationPID = new PIDController(0,0, 0);
+
+  private LimelightSubsystem limelight;
 
   /**
    * Used to drive a swerve robot in full field-centric mode.  vX and vY supply translation inputs, where x is
@@ -48,13 +51,14 @@ public class AbsoluteFieldDrive extends CommandBase
    * @param heading DoubleSupplier that supplies the robot's heading angle.
    */
   public AbsoluteFieldDrive(SwerveSubsystem swerve, DoubleSupplier vX, DoubleSupplier vY,
-                            DoubleSupplier heading, boolean isOpenLoop)
+                            DoubleSupplier heading, boolean isOpenLoop, LimelightSubsystem limelight)
   {
     this.swerve = swerve;
     this.vX = vX;
     this.vY = vY;
     this.heading = heading;
     this.isOpenLoop = isOpenLoop;
+    this.limelight = limelight;
 
 
     addRequirements(swerve);
@@ -88,7 +92,11 @@ public class AbsoluteFieldDrive extends CommandBase
 
     desiredHeading = new Rotation2d(heading.getAsDouble() * Math.PI);
     ChassisSpeeds desiredSpeeds; 
-    if (!resetRotation) {
+    if (limelight.hasTargets()) {
+      desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(), 
+        new Rotation2d(Math.toRadians(swerve.getYaw().getDegrees() + -1 * limelight.getAngleToTarget())));
+    }
+    else if (!resetRotation) {
       desiredSpeeds = new ChassisSpeeds(vX.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC + xCorrection,
         vY.getAsDouble() * Constants.Drivebase.MAX_TRANSLATIONAL_VELOCITY_METER_PER_SEC + yCorrection, 
         heading.getAsDouble() * Math.toRadians(Constants.Drivebase.MAX_DEG_SEC_ROTATIONAL_VELOCITY));

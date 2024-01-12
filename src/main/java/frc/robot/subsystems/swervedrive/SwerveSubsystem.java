@@ -58,9 +58,9 @@ public class SwerveSubsystem extends SubsystemBase
   //private static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.16026, 0.0023745, 2.774E-05);
 
   // public SwerveSubsystem(File directory, AprilTagVision aprilTagVision)
-  public SwerveSubsystem(File directory, AprilTagVision aprilTagVision)
+  public SwerveSubsystem(File directory)
   {
-    this.aprilTagVision = aprilTagVision;
+    //this.aprilTagVision = aprilTagVision;
     //this.aprilTagVision = aprilTagVision;
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
