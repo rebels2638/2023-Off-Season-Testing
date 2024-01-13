@@ -30,8 +30,6 @@ import frc.lib.swervelib.parser.SwerveDriveConfiguration;
 import frc.lib.swervelib.parser.SwerveParser;
 import frc.lib.swervelib.telemetry.SwerveDriveTelemetry;
 import frc.lib.swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-//import frc.robot.subsystems.aprilTagVision.AprilTagVision;
-import frc.robot.subsystems.aprilTagVision.AprilTagVision;
 
 
 public class SwerveSubsystem extends SubsystemBase
@@ -49,7 +47,6 @@ public class SwerveSubsystem extends SubsystemBase
    */
   private SwerveAutoBuilder autoBuilder = null;
 
-  private AprilTagVision aprilTagVision;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -58,9 +55,8 @@ public class SwerveSubsystem extends SubsystemBase
   //private static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.16026, 0.0023745, 2.774E-05);
 
   // public SwerveSubsystem(File directory, AprilTagVision aprilTagVision)
-  public SwerveSubsystem(File directory, AprilTagVision aprilTagVision)
+  public SwerveSubsystem(File directory)
   {
-    this.aprilTagVision = aprilTagVision;
     //this.aprilTagVision = aprilTagVision;
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -111,13 +107,6 @@ public class SwerveSubsystem extends SubsystemBase
   public void periodic()
   {
     swerveDrive.updateOdometry();
-
-    Pose2d currentPose2d = swerveDrive.getPose();
-    
-    Pose2d estimatedPose = aprilTagVision.getEstimatedRobotPose(currentPose2d);
-    if (estimatedPose != null) {
-      swerveDrive.addVisionMeasurement(estimatedPose, aprilTagVision.getTimestampSeconds(), false, 1);
-    }
     
     //log all tlemetry to a log file
     // SmartDashboard.putBoolean("myMind", false);

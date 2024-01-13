@@ -15,12 +15,9 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.lib.swervelib.SwerveDrive;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.Constants;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 // acts more like a helper class rather than a subsystem or command.
 public class AutoRunner {
@@ -65,25 +62,25 @@ public class AutoRunner {
     public Command getAutonomousCommand() {
         // return pathPlanner.loadPath(pathChooser.getSelected(), Constants.Auton.MAX_SPEED, 
         // Constants.Auton.MAX_ACCELERATION, false);
-        traj = PathPlanner.fromPathFile(pathChosen);
-        scc = new PPSwerveControllerCommand(traj, 
-                                                    swerveSubsystem::getPose,
-                                                    new PIDController(Constants.Auton.TRANSLATION_PID_CONFIG.kP,
-                                                            Constants.Auton.TRANSLATION_PID_CONFIG.kI,
-                                                            Constants.Auton.TRANSLATION_PID_CONFIG.kD), 
-                                                    new PIDController(Constants.Auton.TRANSLATION_PID_CONFIG.kP,
-                                                            Constants.Auton.TRANSLATION_PID_CONFIG.kI,
-                                                            Constants.Auton.TRANSLATION_PID_CONFIG.kD), 
-                                                    new PIDController(Constants.Auton.ANGLE_PID_CONFIG.kP,
-                                                            Constants.Auton.ANGLE_PID_CONFIG.kI,
-                                                            Constants.Auton.ANGLE_PID_CONFIG.kD), 
-                                                    swerveSubsystem::setChassisSpeeds, swerveSubsystem);
+        // traj = PathPlanner.fromPathFile(pathChosen);
+        // scc = new PPSwerveControllerCommand(traj, 
+        //                                             swerveSubsystem::getPose,
+        //                                             new PIDController(Constants.Auton.TRANSLATION_PID_CONFIG.kP,
+        //                                                     Constants.Auton.TRANSLATION_PID_CONFIG.kI,
+        //                                                     Constants.Auton.TRANSLATION_PID_CONFIG.kD), 
+        //                                             new PIDController(Constants.Auton.TRANSLATION_PID_CONFIG.kP,
+        //                                                     Constants.Auton.TRANSLATION_PID_CONFIG.kI,
+        //                                                     Constants.Auton.TRANSLATION_PID_CONFIG.kD), 
+        //                                             new PIDController(Constants.Auton.ANGLE_PID_CONFIG.kP,
+        //                                                     Constants.Auton.ANGLE_PID_CONFIG.kI,
+        //                                                     Constants.Auton.ANGLE_PID_CONFIG.kD), 
+        //                                             swerveSubsystem::setChassisSpeeds, swerveSubsystem);
 
-         return scc;
+        //  return scc;
         // return scc;
         
         return swerveSubsystem.creatPathPlannerCommand
-            (pathChosen, 
+            ("Turn", 
             new PathConstraints(Constants.Auton.MAX_SPEED, 
             Constants.Auton.MAX_ACCELERATION), EVENT_MAP, 
             Constants.Auton.TRANSLATION_PID_CONFIG, 

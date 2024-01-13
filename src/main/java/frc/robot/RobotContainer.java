@@ -20,10 +20,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lib.input.XboxController;
-import frc.robot.subsystems.aprilTagVision.AprilTagVision;
-import frc.robot.subsystems.aprilTagVision.AprilTagVisionIO;
-import frc.robot.subsystems.aprilTagVision.AprilTagVisionIOReal;
-import frc.robot.subsystems.aprilTagVision.AprilTagVisionIOSim;
+
 // import frc.robot.subsystems.pivot.Intake;
 // import frc.robot.subsystems.pivot.Pivot;
 // import frc.robot.subsystems.pivot.PivotIO;
@@ -75,18 +72,10 @@ public class RobotContainer {
   private final AutoRunner autoRunner;
   private final int[] autoAlignTargetNum = {0};
   //private final SmartDashboardLogger smartDashboardLogger = new SmartDashboardLogger();
-  private AprilTagVision aprilTagVision;
 
   public RobotContainer() {
 
-    AprilTagVisionIO aprilTagVisionIO = new AprilTagVisionIOSim();
-    swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"), new AprilTagVision(aprilTagVisionIO));
-    
-    if (RobotBase.isReal()) {
-      aprilTagVisionIO = new AprilTagVisionIOReal();
-      swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"), new AprilTagVision(aprilTagVisionIO));
-    }
-    
+    swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"/swerve/falcon"));
     autoRunner = new AutoRunner(swerveSubsystem);
     
     //PivotIONeo pivotIO = new PivotIONeo();
